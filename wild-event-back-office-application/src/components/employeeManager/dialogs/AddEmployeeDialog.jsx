@@ -65,6 +65,8 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
             onChange={formik.handleChange}
             error={formik.touched.name && Boolean(formik.errors.name)}
             helperText={formik.touched.name && formik.errors.name}
+            margin="normal"
+            variant="outlined"
           />
           <TextField
             fullWidth
@@ -74,6 +76,8 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
             onChange={formik.handleChange}
             error={formik.touched.email && Boolean(formik.errors.email)}
             helperText={formik.touched.email && formik.errors.email}
+            margin="normal"
+            variant="outlined"
           />
           <TextField
             fullWidth
@@ -83,8 +87,10 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
             onChange={formik.handleChange}
             error={formik.touched.phone && Boolean(formik.errors.phone)}
             helperText={formik.touched.phone && formik.errors.phone}
+            margin="normal"
+            variant="outlined"
           />
-          <FormControl fullWidth error={formik.touched.roleIds && Boolean(formik.errors.roleIds)}>
+          <FormControl fullWidth margin="normal" variant="outlined" error={formik.touched.roleIds && Boolean(formik.errors.roleIds)}>
             <InputLabel>Roles</InputLabel>
             <Select
               multiple
@@ -100,7 +106,7 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
             </Select>
             <FormHelperText>{formik.touched.roleIds && formik.errors.roleIds}</FormHelperText>
           </FormControl>
-          <FormControl fullWidth error={formik.touched.locationIds && Boolean(formik.errors.locationIds)}>
+          <FormControl fullWidth margin="normal" variant="outlined" error={formik.touched.locationIds && Boolean(formik.errors.locationIds)}>
             <InputLabel>Locations</InputLabel>
             <Select
               multiple
@@ -128,6 +134,6 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
       </DialogContent>
     </Dialog>
   );
-};
+}
 
 export default AddEmployeeDialog;
