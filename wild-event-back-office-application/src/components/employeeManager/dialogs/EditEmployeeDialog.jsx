@@ -1,28 +1,9 @@
 import React, { useEffect } from 'react';
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, FormControl, InputLabel, Select, MenuItem, TextField, FormHelperText } from '@mui/material';
 import { useUser } from '../../../services/useUser';
 import { updateUser } from '../../../services/EmployeeManagement';
-
-const validationSchema = Yup.object({
-    name: Yup.string()
-        .min(3, 'Name should be at least 3 characters long')
-        .matches(/^[a-zA-Z\s]+$/, 'Name should contain only letters and spaces')
-        .required('Required'),
-    email: Yup.string()
-        .email('Invalid email format')
-        .required('Required'),
-    phone: Yup.string()
-        .matches(/^[\d]{9}$/, 'Phone number must have exactly 9 digits')
-        .required('Required'),
-    roleIds: Yup.array()
-        .min(1, 'At least one role must be assigned')
-        .required('Required'),
-    locationIds: Yup.array()
-        .min(1, 'At least one location must be assigned')
-        .required('Required'),
-});
+import dialogValidationSchema from './validationSchema';
 
 const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToEdit }) => {
     const { token } = useUser();
@@ -35,7 +16,9 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
             roleIds: [],
             locationIds: [],
         },
-        validationSchema,
+        validationSchema: dialogValidationSchema,
+        validateOnChange: true,  
+        validateOnBlur: true,    
         onSubmit: async (values) => {
             await updateUser(userToEdit.id, values, token);
             handleClose(false, values);
@@ -69,6 +52,7 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
                         margin="normal"
                         variant="outlined"
                         {...formik.getFieldProps('name')}
+                        onBlur={formik.handleBlur}
                         error={formik.touched.name && Boolean(formik.errors.name)}
                         helperText={formik.touched.name && formik.errors.name}
                     />
@@ -78,6 +62,7 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
                         margin="normal"
                         variant="outlined"
                         {...formik.getFieldProps('email')}
+                        onBlur={formik.handleBlur}
                         error={formik.touched.email && Boolean(formik.errors.email)}
                         helperText={formik.touched.email && formik.errors.email}
                     />
@@ -87,6 +72,7 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
                         margin="normal"
                         variant="outlined"
                         {...formik.getFieldProps('phone')}
+                        onBlur={formik.handleBlur}
                         error={formik.touched.phone && Boolean(formik.errors.phone)}
                         helperText={formik.touched.phone && formik.errors.phone}
                     />
@@ -96,6 +82,7 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
                             multiple
                             name="roleIds"
                             {...formik.getFieldProps('roleIds')}
+                            onBlur={formik.handleBlur}
                         >
                             {allRoles.map((role) => (
                                 <MenuItem key={role.id} value={role.id}>
@@ -111,6 +98,7 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
                             multiple
                             name="locationIds"
                             {...formik.getFieldProps('locationIds')}
+                            onBlur={formik.handleBlur}
                         >
                             {allLocations.map((location) => (
                                 <MenuItem key={location.id} value={location.id}>
