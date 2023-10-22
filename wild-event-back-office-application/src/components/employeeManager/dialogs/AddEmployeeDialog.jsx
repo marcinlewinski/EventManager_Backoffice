@@ -17,8 +17,8 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
       locationIds: []
     },
     validationSchema: dialogValidationSchema,
-    validateOnChange: true,  // Walidacja przy każdej zmianie wartości
-    validateOnBlur: true,    // Walidacja przy utracie fokusu przez pole
+    validateOnChange: true,
+    validateOnBlur: true, 
     onSubmit: async (values, { resetForm }) => {
       try {
         await registerUser(values);

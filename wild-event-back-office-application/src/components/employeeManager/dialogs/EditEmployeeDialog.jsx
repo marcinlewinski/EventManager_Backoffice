@@ -17,6 +17,8 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
             locationIds: [],
         },
         validationSchema: dialogValidationSchema,
+        validateOnChange: true,  
+        validateOnBlur: true,    
         onSubmit: async (values) => {
             await updateUser(userToEdit.id, values, token);
             handleClose(false, values);
