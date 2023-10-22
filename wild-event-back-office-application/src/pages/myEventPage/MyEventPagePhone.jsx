@@ -1,11 +1,11 @@
-import MyEventList from "../../components/myEvent/MyEventsList"
+import Calendar from "../../components/eventManager/calendar/Calendar"
 import { PhoneLayout } from "../layout/PhoneLayout"
 
 export const MyEventPagePhone = () => {
 	return (
 		<>
 			<PhoneLayout>
-				<MyEventList isMobileView={true} />
+				<Calendar isMyCalendar={true} isMobileView={true} />
 			</PhoneLayout>
 		</>
 	)

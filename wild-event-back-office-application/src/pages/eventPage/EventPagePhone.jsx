@@ -5,7 +5,7 @@ export const EventPagePhone = () => {
 	return (
 		<>
 			<PhoneLayout>
-				<Calendar isAdmin={true} isMobileView={true} />
+				<Calendar isMyCalendar={false} isAdmin={true} isMobileView={true} />
 			</PhoneLayout>
 		</>
 	)
