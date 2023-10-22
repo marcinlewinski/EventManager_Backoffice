@@ -16,7 +16,9 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
       roleIds: [],
       locationIds: []
     },
-    dialogValidationSchema,
+    validationSchema: dialogValidationSchema,
+    validateOnChange: true,  // Walidacja przy każdej zmianie wartości
+    validateOnBlur: true,    // Walidacja przy utracie fokusu przez pole
     onSubmit: async (values, { resetForm }) => {
       try {
         await registerUser(values);
@@ -44,6 +46,7 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
             label="Name and Surname"
             name="name"
             value={formik.values.name}
+            onBlur={formik.handleBlur}
             onChange={formik.handleChange}
             error={formik.touched.name && Boolean(formik.errors.name)}
             helperText={formik.touched.name && formik.errors.name}
@@ -55,6 +58,7 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
             label="Email Address"
             name="email"
             value={formik.values.email}
+            onBlur={formik.handleBlur}
             onChange={formik.handleChange}
             error={formik.touched.email && Boolean(formik.errors.email)}
             helperText={formik.touched.email && formik.errors.email}
@@ -66,6 +70,7 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
             label="Phone Number"
             name="phone"
             value={formik.values.phone}
+            onBlur={formik.handleBlur}
             onChange={formik.handleChange}
             error={formik.touched.phone && Boolean(formik.errors.phone)}
             helperText={formik.touched.phone && formik.errors.phone}
@@ -78,6 +83,7 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
               multiple
               name="roleIds"
               value={formik.values.roleIds}
+              onBlur={formik.handleBlur}
               onChange={formik.handleChange}
             >
               {allRoles.map((role) => (
@@ -95,6 +101,7 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
               name="locationIds"
               value={formik.values.locationIds}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
             >
               {allLocations.map((location) => (
                 <MenuItem key={location.id} value={location.id}>

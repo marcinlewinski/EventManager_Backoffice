@@ -3,6 +3,7 @@ import { useFormik } from 'formik';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, FormControl, InputLabel, Select, MenuItem, TextField, FormHelperText } from '@mui/material';
 import { useUser } from '../../../services/useUser';
 import { updateUser } from '../../../services/EmployeeManagement';
+import dialogValidationSchema from './validationSchema';
 
 const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToEdit }) => {
     const { token } = useUser();
@@ -15,7 +16,7 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
             roleIds: [],
             locationIds: [],
         },
-        dialogValidationSchema,
+        validationSchema: dialogValidationSchema,
         onSubmit: async (values) => {
             await updateUser(userToEdit.id, values, token);
             handleClose(false, values);
