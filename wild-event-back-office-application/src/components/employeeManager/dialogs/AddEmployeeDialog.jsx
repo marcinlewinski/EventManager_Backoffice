@@ -1,10 +1,9 @@
 import React from 'react';
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, FormControl, InputLabel, Select, MenuItem, FormHelperText, TextField, Typography } from '@mui/material';
 import { registerUser } from '../../../services/EmployeeManagement';
 import { useUser } from '../../../services/useUser';
-import addEmployeeValidationSchema from './validationSchemas'; 
+import dialogValidationSchema from './validationSchema';
 
 const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
   const { user, token } = useUser();
@@ -17,7 +16,7 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
       roleIds: [],
       locationIds: []
     },
-    addEmployeeValidationSchema,
+    dialogValidationSchema,
     onSubmit: async (values, { resetForm }) => {
       try {
         await registerUser(values);

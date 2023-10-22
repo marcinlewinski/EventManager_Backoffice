@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, FormControl, InputLabel, Select, MenuItem, TextField, FormHelperText } from '@mui/material';
 import { useUser } from '../../../services/useUser';
 import { updateUser } from '../../../services/EmployeeManagement';
@@ -16,7 +15,7 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
             roleIds: [],
             locationIds: [],
         },
-        validationSchema,
+        dialogValidationSchema,
         onSubmit: async (values) => {
             await updateUser(userToEdit.id, values, token);
             handleClose(false, values);
