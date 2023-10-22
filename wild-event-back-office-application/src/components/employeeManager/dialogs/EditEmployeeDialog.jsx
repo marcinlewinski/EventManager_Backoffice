@@ -5,25 +5,6 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, FormControl,
 import { useUser } from '../../../services/useUser';
 import { updateUser } from '../../../services/EmployeeManagement';
 
-const validationSchema = Yup.object({
-    name: Yup.string()
-        .min(3, 'Name should be at least 3 characters long')
-        .matches(/^[a-zA-Z\s]+$/, 'Name should contain only letters and spaces')
-        .required('Required'),
-    email: Yup.string()
-        .email('Invalid email format')
-        .required('Required'),
-    phone: Yup.string()
-        .matches(/^[\d]{9}$/, 'Phone number must have exactly 9 digits')
-        .required('Required'),
-    roleIds: Yup.array()
-        .min(1, 'At least one role must be assigned')
-        .required('Required'),
-    locationIds: Yup.array()
-        .min(1, 'At least one location must be assigned')
-        .required('Required'),
-});
-
 const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToEdit }) => {
     const { token } = useUser();
 

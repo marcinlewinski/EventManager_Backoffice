@@ -4,24 +4,7 @@ import * as Yup from 'yup';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, FormControl, InputLabel, Select, MenuItem, FormHelperText, TextField, Typography } from '@mui/material';
 import { registerUser } from '../../../services/EmployeeManagement';
 import { useUser } from '../../../services/useUser';
-
-const validationSchema = Yup.object({
-  name: Yup.string()
-    .min(3, 'Name must be at least 3 characters')
-    .matches(/^[a-zA-Z\s]+$/, 'Only letters and spaces are allowed')
-    .required('Required'),
-  email: Yup.string()
-    .email('Invalid email format')
-    .required('Required'),
-  phone: Yup.string()
-    .matches(/^[\d]{9}$/, 'Phone number must have exactly 9 digits')
-    .required('Required'),
-  roleIds: Yup.array()
-    .min(1, 'At least one role must be assigned')
-    .required('Required'),
-  locationIds: Yup.array()
-    .required('Required')
-});
+import addEmployeeValidationSchema from './validationSchemas'; 
 
 const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
   const { user, token } = useUser();
@@ -34,7 +17,7 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
       roleIds: [],
       locationIds: []
     },
-    validationSchema,
+    addEmployeeValidationSchema,
     onSubmit: async (values, { resetForm }) => {
       try {
         await registerUser(values);
