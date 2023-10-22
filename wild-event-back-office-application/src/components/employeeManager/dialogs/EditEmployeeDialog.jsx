@@ -50,6 +50,7 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
                         margin="normal"
                         variant="outlined"
                         {...formik.getFieldProps('name')}
+                        onBlur={formik.handleBlur}
                         error={formik.touched.name && Boolean(formik.errors.name)}
                         helperText={formik.touched.name && formik.errors.name}
                     />
@@ -59,6 +60,7 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
                         margin="normal"
                         variant="outlined"
                         {...formik.getFieldProps('email')}
+                        onBlur={formik.handleBlur}
                         error={formik.touched.email && Boolean(formik.errors.email)}
                         helperText={formik.touched.email && formik.errors.email}
                     />
@@ -68,6 +70,7 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
                         margin="normal"
                         variant="outlined"
                         {...formik.getFieldProps('phone')}
+                        onBlur={formik.handleBlur}
                         error={formik.touched.phone && Boolean(formik.errors.phone)}
                         helperText={formik.touched.phone && formik.errors.phone}
                     />
@@ -77,6 +80,7 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
                             multiple
                             name="roleIds"
                             {...formik.getFieldProps('roleIds')}
+                            onBlur={formik.handleBlur}
                         >
                             {allRoles.map((role) => (
                                 <MenuItem key={role.id} value={role.id}>
@@ -92,6 +96,7 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
                             multiple
                             name="locationIds"
                             {...formik.getFieldProps('locationIds')}
+                            onBlur={formik.handleBlur}
                         >
                             {allLocations.map((location) => (
                                 <MenuItem key={location.id} value={location.id}>
