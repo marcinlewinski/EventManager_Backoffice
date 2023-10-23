@@ -12,14 +12,16 @@ import {
 } from "./pages/index";
 import { UserProvider } from "./services/useUser";
 import { DarkModeProvider } from "./components/darkMode/DarkModeProvider";
-
+import { RoleProvider } from "./services/RolesProvieder";
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
       <DarkModeProvider>
         <UserProvider>
-          <Outlet />
+          <RoleProvider>
+            <Outlet />
+          </RoleProvider>
         </UserProvider>
       </DarkModeProvider>
     ),
@@ -52,8 +54,8 @@ const router = createBrowserRouter([
       },
       {
         path: "/map-config/map",
-				element: <MapPage/>,
-				errorElement: <ErrorPage />,
+        element: <MapPage />,
+        errorElement: <ErrorPage />,
       },
       {
         path: "/reset-password/:token",
