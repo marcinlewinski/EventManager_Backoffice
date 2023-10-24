@@ -12,14 +12,17 @@ import {
 } from "./pages/index";
 import { UserProvider } from "./services/useUser";
 import { DarkModeProvider } from "./components/darkMode/DarkModeProvider";
-import { RoleProvider } from "./services/RolesProvieder";
+import { RolesProvider } from "./services/RolesProvieder";
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
       <DarkModeProvider>
         <UserProvider>
+          <RolesProvider value={{ roles: [] }}>
             <Outlet />
+          </RolesProvider>
+
         </UserProvider>
       </DarkModeProvider>
     ),

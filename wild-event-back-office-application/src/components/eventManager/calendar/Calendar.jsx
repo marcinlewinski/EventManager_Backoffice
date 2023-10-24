@@ -18,61 +18,57 @@ import Snackbar from "@mui/material/Snackbar"
 import MuiAlert from "@mui/material/Alert"
 import { useUser } from "../../../services/useUser"
 import { getAllMyEvents } from "../../../services/MyEventService"
-import RoleContext from "../../../services/RolesProvieder";
+import { useRoles } from "../../../services/RolesProvieder"; 
 
+
+  
 const Calendar = ({ isMyCalendar, isMobileView }) => {
     const [snackbarInfo, setSnackbarInfo] = useState({
         open: false,
         message: "",
         severity: "success",
     })
-    const { user, token } = useUser()
-    const [userDB, setUserDB] = useState([])
-    const [events, setEvents] = useState([])
-    const [locationDB, setLocationDB] = useState([])
-    const [open, setOpen] = useState(false)
-    const [eventToUpdate, setEventToUpdate] = useState({})
-    const [isTimeGridWeek, setIsTimeGridWeek] = useState({})
-    const [isUpdateEvent, setIsUpdateEvent] = useState(false)
+    const { user, token } = useUser();
+    const [userDB, setUserDB] = useState([]);
+    const [events, setEvents] = useState([]);
+    const [locationDB, setLocationDB] = useState([]);
+    const [open, setOpen] = useState(false);
+    const [isTimeGridWeek, setIsTimeGridWeek] = useState({});
+    const [isUpdateEvent, setIsUpdateEvent] = useState(false);
     const [pickedEvent, setPickedEvent] = useState({
         id: "",
         title: "",
         start: "",
         end: "",
         locationId: {},
-    })
-    // const { userRoles } = useContext(RoleContext);
-
-    const calendarRef = useRef(null)
+    });
+    const { roles } = useRoles();
+    const calendarRef = useRef(null);
 
     const isAdmin = () => {
-        // const allPossibleRoles = userRoles?.map(role => role.name) ;
-        // const userRolesArr = user.roles?.map(role => role.name) ;
-
-        // if (!userRoles || !userRolesArr) {
-        //     return false;
-        // }
-
-        // return userRolesArr.every(role => allPossibleRoles.includes(role));
-        return true
+        const allPossibleRoles = roles?.map(role => role.name) ;
+        const userRolesArr = user.roles?.map(role => role.name) ;
+      
+        if (!roles || !userRolesArr) {
+            return false;
+        }
+        return userRolesArr.every(role => allPossibleRoles.includes(role));
     }
 
     const getEvents = async () => {
         try {
             const data = isMyCalendar
                 ? await getAllMyEvents(token)
-                : await getAllEvents(token)
+                : await getAllEvents(token);
             setEvents(
                 data.map(eventDataFromDB => {
-                    const startDate = new Date(eventDataFromDB.startsAt)
-                    const endDate = new Date(eventDataFromDB.endsAt)
-
-                    const isSingleDay = isDatesDifferenceOneDay(startDate, endDate)
-
+                    const startDate = new Date(eventDataFromDB.startsAt);
+                    const endDate = new Date(eventDataFromDB.endsAt);
+                    const isSingleDay = isDatesDifferenceOneDay(startDate, endDate);
                     const formattedStart = isSingleDay
                         ? eventDataFromDB.startsAt.toString().split("T")[0]
-                        : eventDataFromDB.startsAt
-                    const formattedEnd = isSingleDay ? null : endDate.toISOString()
+                        : eventDataFromDB.startsAt;
+                    const formattedEnd = isSingleDay ? null : endDate.toISOString();
 
                     return {
                         title: eventDataFromDB.title,
@@ -84,17 +80,19 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
                         organizers: eventDataFromDB.organizers,
                     }
                 })
-            )
+            );
         } catch (error) {
             console.error("Error fetching events", error)
-            setEvents([])
+            setEvents([]);
         }
     }
+
     function isDatesDifferenceOneDay(date1, date2) {
-        const oneDayMilliseconds = 24 * 60 * 60 * 1000
-        const differenceMilliseconds = Math.abs(date1 - date2)
-        return differenceMilliseconds === oneDayMilliseconds
+        const oneDayMilliseconds = 24 * 60 * 60 * 1000;
+        const differenceMilliseconds = Math.abs(date1 - date2);
+        return differenceMilliseconds === oneDayMilliseconds;
     }
+
     const getAllLocations = async () => {
         try {
             const data = await getLocations(token)
@@ -111,39 +109,38 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
     }
     const getAllUsers = async () => {
         try {
-            const data = await getUsers(token)
+            const data = await getUsers(token);
             setUserDB(
                 data.map(userData => ({
                     id: userData.id,
                     name: userData.name,
                 }))
-            )
+            );
         } catch (error) {
-            console.error("Error fetching users", error)
-            setUserDB([])
+            console.error("Error fetching users", error);
+            setUserDB([]);
         }
     }
     useEffect(() => {
-        getEvents()
-        getAllLocations()
-        getAllUsers()
-    }, [])
+        getEvents();
+        getAllLocations();
+        getAllUsers();
+    }, []);
 
     const handleDateClick = selected => {
-        setOpen(true)
-        setIsUpdateEvent(false)
-        setEventToUpdate(selected)
-        setIsTimeGridWeek(selected.view.type === "timeGridWeek")
+        setOpen(true);
+        setIsUpdateEvent(false);
+        setIsTimeGridWeek(selected.view.type === "timeGridWeek");
         setPickedEvent({
             id: "",
             title: "",
             start: selected.startStr,
             end: selected.endStr,
-        })
+        });
     }
     const handleModalClose = () => {
-        setIsUpdateEvent(false)
-        setOpen(false)
+        setIsUpdateEvent(false);
+        setOpen(false);
         setPickedEvent({
             id: "",
             title: "",
@@ -153,23 +150,18 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
             location: "",
             organizers: [],
             locationId: {},
-        })
+        });
     }
 
-    const getEventFromSelectedField = id => {
-        return events.find(event => event.id === id)
-    }
     const isUUID = str => {
         const uuidRegex =
             /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
         return uuidRegex.test(str)
     }
     const handleEventClick = selected => {
-        setOpen(true)
-
-        setEventToUpdate(selected)
-        setIsUpdateEvent(true)
-        const event = getEventFromSelectedField(selected.event.id)
+        setOpen(true);
+        setIsUpdateEvent(true);
+        const event = events.find(event => event.id === selected.event.id);
         setPickedEvent({
             id: selected.event.id,
             title: selected.event.title,
@@ -188,29 +180,28 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
                     location.title === event.location || location.id === event.location
             ),
             allDay: selected.event.allDay,
-        })
+        });
     }
 
     const handleDeleteEvent = async dto => {
         try {
-            const eventExistsInDatabase = events.some(event => event.id === dto.id)
+            const eventExistsInDatabase = events.some(event => event.id === dto.id);
 
             if (eventExistsInDatabase) {
-                await deleteEvent(dto.id, token)
-                setEvents(prevEvents => prevEvents.filter(event => event.id !== dto.id))
-                dto.selected.event.remove()
-                handleModalClose()
-
+                await deleteEvent(dto.id, token);
+                setEvents(prevEvents => prevEvents.filter(event => event.id !== dto.id));
+                dto.selected.event.remove();
+                handleModalClose();
                 setSnackbarInfo({
                     open: true,
                     message: `Event has been deleted`,
                     severity: "success",
-                })
+                });
             } else {
-                console.log("This event doesn't exist in the database.")
+                console.error("This event doesn't exist in the database.");
             }
         } catch (error) {
-            console.error("An error occurred while deleting the event:", error)
+            console.error("An error occurred while deleting the event:", error);
         }
     }
 
@@ -219,17 +210,18 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
             prevEvents.map(event =>
                 event.id === id ? { ...event, start: newStart, end: newEnd } : event
             )
-        )
+        );
     }
+
     const handleDateUpdate = info => {
-        const id = info.event._def.publicId
-        const newStart = dayjs(info.event.startStr)
-        let newEnd = dayjs(info.event.endStr)
-        const formattedStart = newStart.format("YYYY-MM-DDTHH:mm:ss")
+        const id = info.event._def.publicId;
+        const newStart = dayjs(info.event.startStr);
+        let newEnd = dayjs(info.event.endStr);
+        const formattedStart = newStart.format("YYYY-MM-DDTHH:mm:ss");
 
         if (!newEnd.isValid()) {
-            const defaultEndEvent = newStart.add(1, "hour")
-            newEnd = defaultEndEvent
+            const defaultEndEvent = newStart.add(1, "hour");
+            newEnd = defaultEndEvent;
         }
         const dto = {
             id: id,
@@ -237,37 +229,37 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
                 startsAt: "",
                 endsAt: "",
             },
-        }
+        };
 
         if (info.event.allDay) {
-            changeDate(id, info.event.startStr, null)
+            changeDate(id, info.event.startStr, null);
 
-            dto.dateRange.startsAt = formattedStart
-            const endDate = newStart.add(1, "day")
-            dto.dateRange.endsAt = endDate.format("YYYY-MM-DDTHH:mm:ss")
+            dto.dateRange.startsAt = formattedStart;
+            const endDate = newStart.add(1, "day");
+            dto.dateRange.endsAt = endDate.format("YYYY-MM-DDTHH:mm:ss");
         } else {
-            const formattedEnd = newEnd.format("YYYY-MM-DDTHH:mm:ss")
-            dto.dateRange.startsAt = formattedStart
-            dto.dateRange.endsAt = formattedEnd
-            changeDate(id, dto.dateRange.startsAt, dto.dateRange.endsAt)
+            const formattedEnd = newEnd.format("YYYY-MM-DDTHH:mm:ss");
+            dto.dateRange.startsAt = formattedStart;
+            dto.dateRange.endsAt = formattedEnd;
+            changeDate(id, dto.dateRange.startsAt, dto.dateRange.endsAt);
         }
-        updateDateEvent(dto, token)
+        updateDateEvent(dto, token);
     }
     const handleEvent = (eventData, id) => {
-        let calendarApi = calendarRef.current.getApi()
+        let calendarApi = calendarRef.current.getApi();
 
-        const existingEvent = events.find(event => event.id === id)
+        const existingEvent = events.find(event => event.id === id);
         const formattedStart = dayjs(eventData.dateRange.startsAt).format(
             "YYYY-MM-DDTHH:mm:ss"
-        )
+        );
         const formattedEnd = dayjs(eventData.dateRange.endsAt).format(
             "YYYY-MM-DDTHH:mm:ss"
-        )
+        );
 
         const isSingleDay = isDatesDifferenceOneDay(
             new Date(formattedStart),
             new Date(formattedEnd)
-        )
+        );
 
         const dtoObj = {
             id: id,
@@ -279,27 +271,28 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
             description: eventData.description,
             location: eventData.locationId,
             organizers: eventData.organizers,
-        }
+        };
 
         if (existingEvent) {
-            calendarApi.getEventById(existingEvent.id)?.remove()
+            calendarApi.getEventById(existingEvent.id)?.remove();
             setEvents(prevEvents =>
                 prevEvents.map(event =>
                     event.id === id ? { ...event, ...dtoObj } : event
                 )
-            )
+            );
         } else {
-            setEvents(prevEvents => [...prevEvents, dtoObj])
+            setEvents(prevEvents => [...prevEvents, dtoObj]);
         }
 
         setSnackbarInfo({
             open: true,
             message: `Event has been ${existingEvent ? "updated" : "added"}`,
             severity: "success",
-        })
+        });
 
         calendarApi.addEvent(dtoObj)
     }
+    
     const handleCloseSnackbar = () => {
         setSnackbarInfo(prev => ({
             ...prev,
@@ -324,7 +317,6 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         }
 
     const initialViewMode = isMobileView ? "timeGridDay" : "dayGridMonth"
-
     return (
         <>
             <Container maxWidth='lg' sx={{ mt: { xs: 2, sm: 3, md: 10 } }}>
