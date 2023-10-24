@@ -41,18 +41,20 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         end: "",
         locationId: {},
     })
-    const { userRoles } = useContext(RoleContext);
+    // const { userRoles } = useContext(RoleContext);
 
     const calendarRef = useRef(null)
+
     const isAdmin = () => {
-        const allPossibleRoles = userRoles?.map(role => role.name) || [];
-        const userRolesArr = user?.roles?.map(role => role.name) || [];
-        
-        if (allPossibleRoles.length === 0 || userRolesArr.length === 0) {
-            return false; 
-        }
-        
-        return userRolesArr.every(role => allPossibleRoles.includes(role));
+        // const allPossibleRoles = userRoles?.map(role => role.name) ;
+        // const userRolesArr = user.roles?.map(role => role.name) ;
+
+        // if (!userRoles || !userRolesArr) {
+        //     return false;
+        // }
+
+        // return userRolesArr.every(role => allPossibleRoles.includes(role));
+        return true
     }
 
     const getEvents = async () => {
@@ -348,7 +350,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
                         }}></FullCallendar>
                 </Box>
             </Container>
-            {isMyCalendar ? (
+            {!isMyCalendar ? (
                 <EventForm
                     open={open}
                     isTimeGridWeek={isTimeGridWeek}

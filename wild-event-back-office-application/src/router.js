@@ -19,9 +19,7 @@ const router = createBrowserRouter([
     element: (
       <DarkModeProvider>
         <UserProvider>
-          <RoleProvider>
             <Outlet />
-          </RoleProvider>
         </UserProvider>
       </DarkModeProvider>
     ),
