@@ -19,12 +19,8 @@ export const RolesProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchRoles = async () => {
-      try {
-        const response  = await getAllRoles(token);
+      const response  = await getAllRoles(token);
         setRoles(response);
-      } catch (error) {
-        console.error(error);
-      }
     };
 
     fetchRoles();
