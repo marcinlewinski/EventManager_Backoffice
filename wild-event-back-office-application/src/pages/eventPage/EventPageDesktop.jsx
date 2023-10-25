@@ -5,7 +5,7 @@ export const EventPageDesktop = () => {
 	return (
 		<>
 			<DesktopLayout>
-				<Calendar isAdmin={true} />
+				<Calendar isMyCalendar={false}  />
 			</DesktopLayout>
 		</>
 	)

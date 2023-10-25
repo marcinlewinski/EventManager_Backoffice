@@ -1,6 +1,6 @@
 const getAllEvents = async token => {
 	try {
-		const response = await fetch(`${process.env.REACT_APP_GET_EVENT}`, {
+		const response = await fetch(`${process.env.REACT_APP_CRUD_EVENT}`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -15,7 +15,7 @@ const getAllEvents = async token => {
 }
 const addEvent = async (eventData, token) => {
 	try {
-		const response = await fetch(`${process.env.REACT_APP_ADD_EVENT}`, {
+		const response = await fetch(`${process.env.REACT_APP_CRUD_EVENT}`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -53,7 +53,7 @@ const deleteEvent = async (id, token) => {
 
 const updateEvent = async (event, id, token) => {
 	try {
-		const response = await fetch(`${process.env.REACT_APP_PATCH_EVENT}/${id}`, {
+		const response = await fetch(`${process.env.REACT_APP_CRUD_EVENT}/${id}`, {
 			method: "PATCH",
 			headers: {
 				"Content-Type": "application/json",
@@ -72,7 +72,7 @@ const updateEvent = async (event, id, token) => {
 
 const updateDateEvent = async (eventDTO, token) => {
 	try {
-		const response = await fetch(`${process.env.REACT_APP_PATCH_EVENT}`, {
+		const response = await fetch(`${process.env.REACT_APP_CRUD_EVENT}`, {
 			method: "PATCH",
 			headers: {
 				"Content-Type": "application/json",
