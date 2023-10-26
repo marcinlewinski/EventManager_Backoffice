@@ -26,8 +26,12 @@ export const LocationsProvider = ({ children }) => {
     fetchLocations();
   }, [token]);
 
+  const addLocation = (newLocation) => {
+    setLocations(prevLocations => [...prevLocations, newLocation]);
+  };  
+
   return (
-    <LocationsContext.Provider value={{ locations }}>
+    <LocationsContext.Provider value={{ locations, addLocation}}>
       {children}
     </LocationsContext.Provider>
   );
