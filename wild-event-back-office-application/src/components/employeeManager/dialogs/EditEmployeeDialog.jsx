@@ -79,6 +79,7 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
                     <FormControl fullWidth margin="normal" variant="outlined" error={formik.touched.roleIds && Boolean(formik.errors.roleIds)}>
                         <InputLabel>Roles</InputLabel>
                         <Select
+                            label="Roles"
                             multiple
                             name="roleIds"
                             {...formik.getFieldProps('roleIds')}
@@ -95,6 +96,7 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
                     <FormControl fullWidth margin="normal" variant="outlined" error={formik.touched.locationIds && Boolean(formik.errors.locationIds)}>
                         <InputLabel>Locations</InputLabel>
                         <Select
+                            label="Locations"
                             multiple
                             name="locationIds"
                             {...formik.getFieldProps('locationIds')}

@@ -18,7 +18,7 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
     },
     validationSchema: dialogValidationSchema,
     validateOnChange: true,
-    validateOnBlur: true, 
+    validateOnBlur: true,
     onSubmit: async (values, { resetForm }) => {
       try {
         await registerUser(values);
@@ -80,6 +80,7 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
           <FormControl fullWidth margin="normal" variant="outlined" error={formik.touched.roleIds && Boolean(formik.errors.roleIds)}>
             <InputLabel>Roles</InputLabel>
             <Select
+              label="Roles"
               multiple
               name="roleIds"
               value={formik.values.roleIds}
@@ -97,6 +98,7 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
           <FormControl fullWidth margin="normal" variant="outlined" error={formik.touched.locationIds && Boolean(formik.errors.locationIds)}>
             <InputLabel>Locations</InputLabel>
             <Select
+              label="Locations"
               multiple
               name="locationIds"
               value={formik.values.locationIds}
