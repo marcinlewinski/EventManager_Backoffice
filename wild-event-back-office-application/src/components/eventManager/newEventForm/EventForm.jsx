@@ -20,8 +20,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import { addEvent, updateEvent } from '../../../services/EventService';
 import basicSchema from '../validationSchema/EventFormSchema';
-import { Field, useFormik, } from 'formik';
+import { useFormik, } from 'formik';
 import { useUser } from '../../../services/useUser';
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 
@@ -33,7 +34,6 @@ const EventForm = ({
     isUpdateEvent,
     pickedEvent,
     handleDeleteEvent,
-    onEventAdded,
     userDB,
     handleEvent,
 }) => {
@@ -45,6 +45,7 @@ const EventForm = ({
     const { user, token } = useUser();
     const today = dayjs();
     const tomorrow = dayjs().add(1, 'day');
+    const [isLoading, setIsLoading] = useState(false);
 
     const formik = useFormik({
         initialValues: {
@@ -61,6 +62,7 @@ const EventForm = ({
         },
         validationSchema: basicSchema,
         onSubmit: async (values) => {
+            setIsLoading(!isLoading);
             let id = null;
             isUpdateEvent
                 ? (id = await updateEvent(values, pickedEvent.id, token))
@@ -75,6 +77,8 @@ const EventForm = ({
         formik.resetForm();
     }
     useEffect(() => {
+        setIsLoading(false);
+
         formik.resetForm();
         if (pickedEvent && pickedEvent.organizers && userDB) {
             formik.setFieldValue('title', pickedEvent.title);
@@ -130,7 +134,10 @@ const EventForm = ({
         });
         return selectedNames.join(', ');
     };
-
+    const deleteEvent = () => {
+        handleDeleteEvent(pickedEvent);
+        setIsLoading(true);
+    }
     return (
         isDataLoaded ? (
             <Dialog fullWidth open={open} onClose={handleModalClose}>
@@ -174,12 +181,12 @@ const EventForm = ({
                                         disablePast={true}
                                         slotProps={{
                                             textField: {
-                                                helperText:  formik.errors.dateRange?.startsAt 
+                                                helperText: formik.errors.dateRange?.startsAt
                                             },
                                         }}
                                         spacing={0.5}
                                         defaultValue={
-                                           formik.values.dateRange?.startsAt
+                                            formik.values.dateRange?.startsAt
                                         }
                                         name="dateRange.startsAt"
                                         className='dateRange.startsAt'
@@ -193,7 +200,7 @@ const EventForm = ({
                                     />
 
                                 </LocalizationProvider>
-                               
+
                             </FormControl>
 
                             <FormControl margin="normal">
@@ -204,7 +211,7 @@ const EventForm = ({
                                         className='dateRange.endsAt'
                                         slotProps={{
                                             textField: {
-                                                helperText:  formik.errors.dateRange?.endsAt
+                                                helperText: formik.errors.dateRange?.endsAt
                                             },
                                         }}
                                         disablePast={true}
@@ -221,7 +228,7 @@ const EventForm = ({
                                         error={!!formik.touched.dateRange?.endsAt && !!formik.errors.dateRange?.endsAt}
                                     />
                                 </LocalizationProvider>
-                               
+
                             </FormControl>
 
 
@@ -291,10 +298,16 @@ const EventForm = ({
                             onClick={(event) => formik.handleSubmit(event, true)}
                             color="primary"
                             type="submit"
+                            disabled={isLoading}
                         >
                             Update
                         </Button>
-                        <Button onClick={() => handleDeleteEvent(pickedEvent)} color="error">
+                        <Button
+                            onClick={() => deleteEvent(pickedEvent)}
+                            color="error"
+                            type="submit"
+                            disabled={isLoading}
+                        >
                             Delete
                         </Button>
                     </DialogActions>
@@ -303,8 +316,26 @@ const EventForm = ({
                         <Button onClick={closeModal} color="primary">
                             Cancel
                         </Button>
-                        <Button onClick={formik.handleSubmit} color="primary" type="submit">
-                            Submit
+
+                        <Button
+                            onClick={formik.handleSubmit}
+                            color="primary"
+                            type="submit"
+                            disabled={isLoading}
+                        >
+                            {isLoading ? (
+                                <CircularProgress
+                                    sx={{
+                                        color: (theme) => (theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8'),
+                                        position: 'absolute',
+                                    }}
+                                    size={20}
+                                    thickness={4}
+                                />
+
+                            ) : (
+                                "Submit"
+                            )}
                         </Button>
                     </DialogActions>
                 )}
