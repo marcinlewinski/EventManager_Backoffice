@@ -34,7 +34,7 @@ const addEvent = async (eventData, token) => {
 const deleteEvent = async (id, token) => {
 	try {
 		const response = await fetch(
-			`${process.env.REACT_APP_DELETE_EVENT}/${id}`,
+			`${process.env.REACT_APP_CRUD_EVENT}/${id}`,
 			{
 				method: "DELETE",
 				headers: {
