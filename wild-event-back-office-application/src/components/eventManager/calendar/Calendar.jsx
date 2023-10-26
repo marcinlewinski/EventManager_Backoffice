@@ -18,10 +18,11 @@ import Snackbar from "@mui/material/Snackbar"
 import MuiAlert from "@mui/material/Alert"
 import { useUser } from "../../../services/useUser"
 import { getAllMyEvents } from "../../../services/MyEventService"
-import { useRoles } from "../../../services/RolesProvider"; 
+import { useRoles } from "../../../services/RolesProvider";
+import CircularProgress from '@mui/material/CircularProgress';
 
 
-  
+
 const Calendar = ({ isMyCalendar, isMobileView }) => {
     const [snackbarInfo, setSnackbarInfo] = useState({
         open: false,
@@ -42,13 +43,14 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         end: "",
         locationId: {},
     });
+    const [isLoading, setIsLoading] = useState(true);
     const { roles } = useRoles();
     const calendarRef = useRef(null);
 
     const isAdmin = () => {
-        const allPossibleRoles = roles?.map(role => role.name) ;
-        const userRolesArr = user.roles?.map(role => role.name) ;
-      
+        const allPossibleRoles = roles?.map(role => role.name);
+        const userRolesArr = user.roles?.map(role => role.name);
+
         if (!roles || !userRolesArr) {
             return false;
         }
@@ -81,6 +83,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
                     }
                 })
             );
+            setIsLoading(false);
         } catch (error) {
             console.error("Error fetching events", error)
             setEvents([]);
@@ -292,7 +295,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
 
         calendarApi.addEvent(dtoObj)
     }
-    
+
     const handleCloseSnackbar = () => {
         setSnackbarInfo(prev => ({
             ...prev,
@@ -317,32 +320,40 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         }
 
     const initialViewMode = isMobileView ? "timeGridDay" : "dayGridMonth"
+
     return (
         <>
-            <Container maxWidth='lg' sx={{ mt: { xs: 2, sm: 3, md: 10 } }}>
-                <Box>
-                    <FullCallendar
-                        ref={calendarRef}
-                        timeZone='local'
-                        height={window.innerWidth <= 600 ? "60vh" : "70vh"}
-                        plugins={plugins}
-                        headerToolbar={headerToolbar}
-                        initialView={initialViewMode}
-                        editable={!isMyCalendar && isAdmin()}
-                        selectable={!isMyCalendar && isAdmin()}
-                        select={handleDateClick}
-                        eventClick={handleEventClick}
-                        events={events}
-                        selectMirror={!isMyCalendar && isAdmin()}
-                        dayMaxEvents={!isMyCalendar && isAdmin()}
-                        eventDrop={handleDateUpdate}
-                        eventResize={handleDateUpdate}
-                        validRange={{
-                            start: new Date(),
-                        }}></FullCallendar>
-                </Box>
-            </Container>
-            {!isMyCalendar ? (
+            {isLoading ? (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                    <CircularProgress />
+                </div>
+            ) : (
+                <Container maxWidth="lg" sx={{ mt: { xs: 2, sm: 3, md: 10 } }}>
+                    <Box>
+                        <FullCallendar
+                            ref={calendarRef}
+                            timeZone="local"
+                            height={window.innerWidth <= 600 ? '60vh' : '70vh'}
+                            plugins={plugins}
+                            headerToolbar={headerToolbar}
+                            initialView={initialViewMode}
+                            editable={!isMyCalendar && isAdmin()}
+                            selectable={!isMyCalendar && isAdmin()}
+                            select={handleDateClick}
+                            eventClick={handleEventClick}
+                            events={events}
+                            selectMirror={!isMyCalendar && isAdmin()}
+                            dayMaxEvents={!isMyCalendar && isAdmin()}
+                            eventDrop={handleDateUpdate}
+                            eventResize={handleDateUpdate}
+                            validRange={{
+                                start: new Date(),
+                            }}
+                        />
+                    </Box>
+                </Container>
+            )}
+            {!isMyCalendar && (
                 <EventForm
                     open={open}
                     isTimeGridWeek={isTimeGridWeek}
@@ -353,22 +364,15 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
                     handleModalClose={handleModalClose}
                     isUpdateEvent={isUpdateEvent}
                     pickedEvent={pickedEvent}
-                ></EventForm>
-            ) : null}
-            <Snackbar
-                open={snackbarInfo.open}
-                autoHideDuration={3000}
-                onClose={handleCloseSnackbar}>
-                <MuiAlert
-                    onClose={handleCloseSnackbar}
-                    severity={snackbarInfo.severity}
-                    elevation={6}
-                    variant='filled'>
+                />
+            )}
+            <Snackbar open={snackbarInfo.open} autoHideDuration={3000} onClose={handleCloseSnackbar}>
+                <MuiAlert onClose={handleCloseSnackbar} severity={snackbarInfo.severity} elevation={6} variant="filled">
                     {snackbarInfo.message}
                 </MuiAlert>
             </Snackbar>
         </>
-    )
+    );
 }
 
-export default Calendar
+export default Calendar;

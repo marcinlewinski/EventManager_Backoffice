@@ -52,7 +52,7 @@ const EmployeeTable = () => {
                 setUsers(fetchedUsers);
                 setAllRoles(roles);
                 setAllLocations(locations);
-                setIsLoading(false)
+                setIsLoading(false);
             } catch (error) {
                 console.error("There is an error during fetch data:", error);
             }
