@@ -1,30 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    FormGroup,
-    FormControl,
-    InputLabel,
-    Button,
-    TextField,
-    Select,
-    MenuItem,
-    Checkbox,
-    FormControlLabel,
-    FormHelperText
-} from '@mui/material';
-import { LocalizationProvider, DateTimePicker, } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { Dialog, DialogTitle, DialogContent } from '@mui/material';
 import dayjs from 'dayjs';
 import { addEvent, updateEvent } from '../../../services/EventService';
 import basicSchema from '../validationSchema/EventFormSchema';
 import { useFormik, } from 'formik';
 import { useUser } from '../../../services/useUser';
-import CircularProgress from '@mui/material/CircularProgress';
-
-
+import { EventFormFields } from './EventFormFields';
+import { EventFormActions } from './EventFormActions';
 
 const EventForm = ({
     open,
@@ -37,14 +19,11 @@ const EventForm = ({
     userDB,
     handleEvent,
 }) => {
-    const [error, setError] = React.useState(null);
 
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const STARTS_AT = 'startsAt';
     const ENDS_AT = 'endsAt';
-    const { user, token } = useUser();
-    const today = dayjs();
-    const tomorrow = dayjs().add(1, 'day');
+    const { token } = useUser();
     const [isLoading, setIsLoading] = useState(false);
 
     const formik = useFormik({
@@ -143,203 +122,26 @@ const EventForm = ({
             <Dialog fullWidth open={open} onClose={handleModalClose}>
                 <DialogTitle>{isUpdateEvent ? 'Event details' : 'Add New Event'}</DialogTitle>
                 <DialogContent>
-                    <form onSubmit={formik.handleSubmit}>
-                        <FormGroup>
-                            <FormControl margin="normal">
-
-                                <TextField
-                                    label="Event title"
-                                    variant="outlined"
-                                    name="title"
-                                    value={formik.values.title}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={!!formik.touched.title && !!formik.errors.title}
-                                    helperText={formik.touched.title && formik.errors.title}
-
-                                />
-                            </FormControl>
-                            <FormControl margin="normal">
-                                <TextField
-                                    label="Description"
-                                    variant="outlined"
-                                    name="description"
-                                    value={formik.values.description}
-                                    multiline
-                                    rows={3}
-                                    onChange={handleInputChange}
-                                    onBlur={formik.handleBlur}
-                                    error={!!formik.touched.description && !!formik.errors.description}
-                                    helperText={formik.touched.description && formik.errors.description}
-
-                                />
-                            </FormControl>
-                            <FormControl margin="normal">
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DateTimePicker
-                                        minDate={today}
-                                        disablePast={true}
-                                        slotProps={{
-                                            textField: {
-                                                helperText: formik.errors.dateRange?.startsAt
-                                            },
-                                        }}
-                                        spacing={0.5}
-                                        defaultValue={
-                                            formik.values.dateRange?.startsAt
-                                        }
-                                        name="dateRange.startsAt"
-                                        className='dateRange.startsAt'
-                                        label="Starts At"
-                                        value={dayjs(formik.values.dateRange.startsAt)}
-                                        onChange={(newValue) => handleDateChange(newValue, STARTS_AT)}
-                                        onBlur={formik.handleBlur}
-                                        error={!!formik.touched.dateRange?.startsAt && !!formik.errors.dateRange?.startsAt}
-                                        onError={(newError) => setError(newError)}
-
-                                    />
-
-                                </LocalizationProvider>
-
-                            </FormControl>
-
-                            <FormControl margin="normal">
-                                <LocalizationProvider name="dateRange.endsAt" dateAdapter={AdapterDayjs}>
-                                    <DateTimePicker
-                                        label="Ends At"
-                                        name="dateRange.endsAt"
-                                        className='dateRange.endsAt'
-                                        slotProps={{
-                                            textField: {
-                                                helperText: formik.errors.dateRange?.endsAt
-                                            },
-                                        }}
-                                        disablePast={true}
-                                        minDate={tomorrow}
-                                        defaultValue={
-                                            pickedEvent.end.trim() !== ''
-                                                ? dayjs(pickedEvent.end)
-                                                : dayjs(pickedEvent.start).add(1, 'day')
-                                        }
-                                        value={dayjs(formik.values.dateRange.endsAt)}
-                                        onChange={(newValue) => handleDateChange(newValue, ENDS_AT)}
-                                        onBlur={formik.handleBlur}
-
-                                        error={!!formik.touched.dateRange?.endsAt && !!formik.errors.dateRange?.endsAt}
-                                    />
-                                </LocalizationProvider>
-
-                            </FormControl>
-
-
-                            <FormControl margin="normal">
-                                <InputLabel>Locations</InputLabel>
-                                <Select
-                                    label="Locations"
-                                    value={formik.values.locationId || ''}
-                                    name="locationId"
-                                    onChange={handleInputChange}
-                                    onBlur={formik.handleBlur}
-                                    error={!!formik.touched.locationId && !!formik.errors.locationId}
-
-                                >
-                                    {locationDB.map((location) => (
-                                        <MenuItem key={location.id} value={location.id}>
-                                            {location.title}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                                <FormHelperText>{formik.touched.locationId && formik.errors.locationId}</FormHelperText>
-
-                            </FormControl>
-                            <FormControl margin="normal">
-                                <InputLabel>Select Users</InputLabel>
-                                <Select
-                                    label="Select Users"
-                                    multiple
-                                    value={formik.values.organizers}
-                                    name="organizers"
-                                    onChange={handleInputChange}
-                                    renderValue={getNameFromId}
-                                    onBlur={formik.handleBlur}
-                                    error={!!formik.touched.organizers && !!formik.errors.organizers}
-                                >
-                                    {userDB.map((user, index) => (
-                                        <MenuItem key={index} value={user.id}>
-                                            {user.name}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                                <FormHelperText>{formik.touched.organizers && formik.errors.organizers}</FormHelperText>
-                            </FormControl>
-                            <FormControl margin="normal">
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            onChange={(event) =>
-                                                formik.setFieldValue('openToPublic', !formik.values.openToPublic)
-                                            }
-
-                                        />
-                                    }
-                                    label="Available for everyone?"
-                                />
-                            </FormControl>
-
-                        </FormGroup>
-                    </form>
+                    <EventFormFields
+                        STARTS_AT={STARTS_AT}
+                        ENDS_AT={ENDS_AT}
+                        pickedEvent={pickedEvent}
+                        getNameFromId={getNameFromId}
+                        formik={formik}
+                        handleInputChange={handleInputChange}
+                        handleDateChange={handleDateChange}
+                        locationDB={locationDB}
+                        userDB={userDB}>
+                    </EventFormFields>
                 </DialogContent>
-                {isUpdateEvent ? (
-                    <DialogActions>
-                        <Button onClick={closeModal} color="primary">
-                            Cancel
-                        </Button>
-                        <Button
-                            onClick={(event) => formik.handleSubmit(event, true)}
-                            color="primary"
-                            type="submit"
-                            disabled={isLoading}
-                        >
-                            Update
-                        </Button>
-                        <Button
-                            onClick={() => deleteEvent(pickedEvent)}
-                            color="error"
-                            type="submit"
-                            disabled={isLoading}
-                        >
-                            Delete
-                        </Button>
-                    </DialogActions>
-                ) : (
-                    <DialogActions>
-                        <Button onClick={closeModal} color="primary">
-                            Cancel
-                        </Button>
-
-                        <Button
-                            onClick={formik.handleSubmit}
-                            color="primary"
-                            type="submit"
-                            disabled={isLoading}
-                        >
-                            {isLoading ? (
-                                <CircularProgress
-                                    sx={{
-                                        color: (theme) => (theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8'),
-                                        position: 'absolute',
-                                    }}
-                                    size={20}
-                                    thickness={4}
-                                />
-
-                            ) : (
-                                "Submit"
-                            )}
-                        </Button>
-                    </DialogActions>
-                )}
-
+                <EventFormActions
+                    pickedEvent={pickedEvent}
+                    isUpdateEvent={isUpdateEvent}
+                    formik={formik}
+                    isLoading={isLoading}
+                    closeModal={closeModal}
+                    deleteEvent={deleteEvent}>
+                </EventFormActions>
             </Dialog>
         ) : null
     );
