@@ -21,13 +21,13 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { Button } from '@mui/material';
 import { useUser } from '../../../services/useUser';
+import { useLocations } from '../../../services/LocationsProvider'; 
 import { mapRoleIdsToNames, mapLocationIdsToTitles } from "./UserMappers";
 import CircularProgress from '@mui/material/CircularProgress';
 
 const EmployeeTable = () => {
     const [users, setUsers] = useState([]);
     const [allRoles, setAllRoles] = useState([]);
-    const [allLocations, setAllLocations] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [selectedLocation, setSelectedLocation] = useState("");
@@ -38,12 +38,13 @@ const EmployeeTable = () => {
     const [snackbarInfo, setSnackbarInfo] = useState({ open: false, message: '', severity: 'success' });
     const [isLoading, setIsLoading] = useState(true);
     const { token } = useUser();
+    const { locations } = useLocations();
 
-
+    console.log(locations)
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [fetchedUsers, roles, locations] = await Promise.all([
+                const [fetchedUsers, roles] = await Promise.all([
                     getAllActiveUsers(token),
                     getAllRoles(token),
                     getAllLocations(token)
@@ -51,7 +52,6 @@ const EmployeeTable = () => {
 
                 setUsers(fetchedUsers);
                 setAllRoles(roles);
-                setAllLocations(locations);
                 setIsLoading(false);
             } catch (error) {
                 console.error("There is an error during fetch data:", error);
@@ -91,7 +91,7 @@ const EmployeeTable = () => {
         }
         if (newUser) {
             const roles = mapRoleIdsToNames(newUser.roleIds, allRoles);
-            const locations = mapLocationIdsToTitles(newUser.locationIds, allLocations);
+            const locations = mapLocationIdsToTitles(newUser.locationIds, locations);
 
             setUsers(prevUsers => [...prevUsers, {
                 ...newUser,
@@ -112,7 +112,7 @@ const EmployeeTable = () => {
 
         if (updatedUser) {
             const roles = mapRoleIdsToNames(updatedUser.roleIds, allRoles);
-            const locations = mapLocationIdsToTitles(updatedUser.locationIds, allLocations);
+            const locations = mapLocationIdsToTitles(updatedUser.locationIds, locations);
 
             setUsers(prevUsers => prevUsers.map(user => {
                 if (user.id === updatedUser.id) {
@@ -168,7 +168,7 @@ const EmployeeTable = () => {
                                     <TableCell align="center">
                                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                             <span style={{ marginRight: '8px', fontWeight: 'bold', fontSize: '1.1rem' }}>Location</span>
-                                            <LocationFilter allLocations={allLocations} onLocationSelect={setSelectedLocation} />
+                                            <LocationFilter allLocations={locations} onLocationSelect={setSelectedLocation} />
                                         </div>
                                     </TableCell>
                                     <TableCell align="center">
@@ -243,9 +243,9 @@ const EmployeeTable = () => {
                     <Button variant="contained" color="primary" onClick={() => toggleDialog('add', true)}>
                         Add New Employee
                     </Button>
-                    <AddEmployeeDialog open={dialogState.add} handleClose={handleCloseAdd} allRoles={allRoles} allLocations={allLocations} />
+                    <AddEmployeeDialog open={dialogState.add} handleClose={handleCloseAdd} allRoles={allRoles} allLocations={locations} />
                     <ConfirmationDialog open={dialogState.confirm} handleClose={() => toggleDialog('confirm', false)} handleConfirm={handleDeactivateUser} />
-                    <EditEmployeeDialog open={dialogState.edit} handleClose={handleCloseEdit} allRoles={allRoles} allLocations={allLocations} userToEdit={pickedUser} />
+                    <EditEmployeeDialog open={dialogState.edit} handleClose={handleCloseEdit} allRoles={allRoles} allLocations={locations} userToEdit={pickedUser} />
                     <Snackbar open={snackbarInfo.open} autoHideDuration={3000} onClose={handleCloseSnackbar}>
                         <MuiAlert onClose={handleCloseSnackbar} severity={snackbarInfo.severity} elevation={6} variant="filled">
                             {snackbarInfo.message}
