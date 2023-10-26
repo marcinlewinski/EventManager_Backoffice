@@ -30,8 +30,12 @@ export const LocationsProvider = ({ children }) => {
     setLocations(prevLocations => [...prevLocations, newLocation]);
   };  
 
+  const removeLocation = (locationId) => {
+    setLocations(prevLocations => prevLocations.filter(location => location.id !== locationId));
+  };
+
   return (
-    <LocationsContext.Provider value={{ locations, addLocation}}>
+    <LocationsContext.Provider value={{ locations, addLocation, removeLocation}}>
       {children}
     </LocationsContext.Provider>
   );

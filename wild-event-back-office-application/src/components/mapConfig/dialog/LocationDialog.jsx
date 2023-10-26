@@ -6,6 +6,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { submitLocation } from '../../../services/LocationService';
 import MapForm from '../map/MapForm';
 import { useUser } from "../../../services/useUser";
+import { useLocations } from "../../services/LocationsProvider";
 
 const LocationDialog = ({mapLocations, open, location, handleClose }) => {
     const { token } = useUser();
@@ -14,6 +15,7 @@ const LocationDialog = ({mapLocations, open, location, handleClose }) => {
         latitude: mapLocations.coordinate.latitude,
         longitude: mapLocations.coordinate.longitude
       });
+    const { addLocation } = useLocations();
 
 
     useEffect(() => {
@@ -58,6 +60,7 @@ const LocationDialog = ({mapLocations, open, location, handleClose }) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         await submitLocation(token, locationData);
+        addLocation(locationData);
         await handleClose();
     }
 
