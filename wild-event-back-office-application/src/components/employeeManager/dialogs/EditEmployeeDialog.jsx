@@ -84,7 +84,7 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
                             {...formik.getFieldProps('roleIds')}
                             onBlur={formik.handleBlur}
                         >
-                            {allRoles.map((role) => (
+                            {allRoles?.map((role) => (
                                 <MenuItem key={role.id} value={role.id}>
                                     {role.name}
                                 </MenuItem>
@@ -100,7 +100,7 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
                             {...formik.getFieldProps('locationIds')}
                             onBlur={formik.handleBlur}
                         >
-                            {allLocations.map((location) => (
+                            {allLocations?.map((location) => (
                                 <MenuItem key={location.id} value={location.id}>
                                     {location.title}
                                 </MenuItem>

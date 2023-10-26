@@ -26,7 +26,7 @@ const RoleFilter = ({ allRoles, onRoleSelect }) => {
                 <MenuItem key="none" onClick={() => handleRoleSelect("None")}>
                     None
                 </MenuItem>
-                {allRoles.map((role) => (
+                {allRoles?.map((role) => (
                     <MenuItem key={role.id} onClick={() => handleRoleSelect(role.name)}>
                         {role.name}
                     </MenuItem>

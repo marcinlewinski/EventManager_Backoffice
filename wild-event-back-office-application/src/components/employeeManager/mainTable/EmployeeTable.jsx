@@ -21,13 +21,12 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { Button } from '@mui/material';
 import { useUser } from '../../../services/useUser';
-import { useLocations } from '../../../services/LocationsProvider'; 
 import { mapRoleIdsToNames, mapLocationIdsToTitles } from "./UserMappers";
-import CircularProgress from '@mui/material/CircularProgress';
+import { useRoles } from '../../../services/RolesProvider';
 
 const EmployeeTable = () => {
     const [users, setUsers] = useState([]);
-    const [allRoles, setAllRoles] = useState([]);
+    const [allLocations, setAllLocations] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [selectedLocation, setSelectedLocation] = useState("");
@@ -36,23 +35,19 @@ const EmployeeTable = () => {
     const [dialogState, setDialogState] = useState({ add: false, edit: false, confirm: false });
     const [pickedUser, setPickedUser] = useState(null);
     const [snackbarInfo, setSnackbarInfo] = useState({ open: false, message: '', severity: 'success' });
-    const [isLoading, setIsLoading] = useState(true);
     const { token } = useUser();
-    const { locations } = useLocations();
+    const { roles } = useRoles();
 
-    console.log(locations)
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [fetchedUsers, roles] = await Promise.all([
+                const [fetchedUsers, locations] = await Promise.all([
                     getAllActiveUsers(token),
-                    getAllRoles(token),
                     getAllLocations(token)
                 ]);
 
                 setUsers(fetchedUsers);
-                setAllRoles(roles);
-                setIsLoading(false);
+                setAllLocations(locations);
             } catch (error) {
                 console.error("There is an error during fetch data:", error);
             }
@@ -90,12 +85,12 @@ const EmployeeTable = () => {
             return;
         }
         if (newUser) {
-            const roles = mapRoleIdsToNames(newUser.roleIds, allRoles);
-            const locations = mapLocationIdsToTitles(newUser.locationIds, locations);
+            const mappedRoles = mapRoleIdsToNames(newUser.roleIds, roles);
+            const locations = mapLocationIdsToTitles(newUser.locationIds, allLocations);
 
             setUsers(prevUsers => [...prevUsers, {
                 ...newUser,
-                roles,
+                mappedRoles,
                 locations
             }]);
 
@@ -111,14 +106,14 @@ const EmployeeTable = () => {
         }
 
         if (updatedUser) {
-            const roles = mapRoleIdsToNames(updatedUser.roleIds, allRoles);
-            const locations = mapLocationIdsToTitles(updatedUser.locationIds, locations);
+            const mappedRoles = mapRoleIdsToNames(updatedUser.roleIds, roles);
+            const locations = mapLocationIdsToTitles(updatedUser.locationIds, allLocations);
 
             setUsers(prevUsers => prevUsers.map(user => {
                 if (user.id === updatedUser.id) {
                     return {
                         ...updatedUser,
-                        roles,
+                        mappedRoles,
                         locations
                     };
                 }
@@ -151,108 +146,108 @@ const EmployeeTable = () => {
 
     return (
         <div>
-            {isLoading ? (
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                    <CircularProgress />
-                </div>
-            ) : (
-                <>
-                    <SearchBar setSearchTerm={setSearchTerm} />
-                    <TableContainer component={Paper}>
-                        <Table aria-label="simple table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell sx={{ fontWeight: 'bold', fontSize: '1.1rem' }}>Employee</TableCell>
-                                    <TableCell align="center" sx={{ fontWeight: 'bold', fontSize: '1.1rem' }}>Email</TableCell>
-                                    <TableCell align="center" sx={{ fontWeight: 'bold', fontSize: '1.1rem' }}>Phone</TableCell>
-                                    <TableCell align="center">
-                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                            <span style={{ marginRight: '8px', fontWeight: 'bold', fontSize: '1.1rem' }}>Location</span>
-                                            <LocationFilter allLocations={locations} onLocationSelect={setSelectedLocation} />
-                                        </div>
-                                    </TableCell>
-                                    <TableCell align="center">
-                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                            <span style={{ marginRight: '8px', fontWeight: 'bold', fontSize: '1.1rem' }}>Role</span>
-                                            <RoleFilter allRoles={allRoles} onRoleSelect={setSelectedRole} />
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {(rowsPerPage > 0
-                                    ? users.filter(user => {
-                                        return user.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                                            (selectedRole === "" || user.roles.includes(selectedRole)) &&
-                                            (selectedLocation === "" || user.locations.includes(selectedLocation));
-                                    }).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                    : users.filter(user => {
-                                        return user.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                                            (selectedRole === "" || user.roles.includes(selectedRole)) &&
-                                            (selectedLocation === "" || user.locations.includes(selectedLocation));
-                                    })
-                                ).map((user) => (
-                                    <TableRow key={user.id}>
-                                        <TableCell component="th" scope="row">
-                                            {user.name}
-                                        </TableCell>
-                                        <TableCell align="center">{user.email}</TableCell>
-                                        <TableCell align="center">{user.phone}</TableCell>
-                                        <TableCell align="center">
-                                            {Array.isArray(user.locations) ? user.locations.join(', ') : user.locations}
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            {Array.isArray(user.roles) ? user.roles.join(', ') : user.roles}
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            <UserActionsMenu
-                                                onEdit={() => {
-                                                    handleEditUser(user.id);
-                                                }}
-                                                onDeactivate={() => {
-                                                    setPickedUser(user);
-                                                    toggleDialog('confirm', true);
-                                                }}
-                                            />
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                            <TableFooter>
-                                <TableRow>
-                                    <TablePagination
-                                        rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                                        colSpan={7}
-                                        count={users.length}
-                                        rowsPerPage={rowsPerPage}
-                                        page={page}
-                                        SelectProps={{
-                                            inputProps: { 'aria-label': 'rows per page' },
-                                            native: true,
+            <SearchBar setSearchTerm={setSearchTerm} />
+            <TableContainer component={Paper}>
+                <Table aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell sx={{ fontWeight: 'bold', fontSize: '1.1rem' }}>Employee</TableCell>
+                            <TableCell align="center" sx={{ fontWeight: 'bold', fontSize: '1.1rem' }}>Email</TableCell>
+                            <TableCell align="center" sx={{ fontWeight: 'bold', fontSize: '1.1rem' }}>Phone</TableCell>
+                            <TableCell align="center">
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}>
+                                    <span style={{ marginRight: '8px', fontWeight: 'bold', fontSize: '1.1rem' }}>Location</span>
+                                    <LocationFilter style={{ fontWeight: 'bold', fontSize: '1.1rem' }} allLocations={allLocations} onLocationSelect={setSelectedLocation} />
+                                </div>
+                            </TableCell>
+                            <TableCell align="center">
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}>
+                                    <span style={{ marginRight: '8px', fontWeight: 'bold', fontSize: '1.1rem' }}>Role</span>
+                                    <RoleFilter style={{ fontWeight: 'bold', fontSize: '1.1rem' }} allRoles={roles} onRoleSelect={setSelectedRole} />
+                                </div>
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {(rowsPerPage > 0
+                            ? users.filter(user => {
+                                return user.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+                                    (selectedRole === "" || user.roles.includes(selectedRole)) &&
+                                    (selectedLocation === "" || user.locations.includes(selectedLocation));
+                            }).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            : users.filter(user => {
+                                return user.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+                                    (selectedRole === "" || user.roles.includes(selectedRole)) &&
+                                    (selectedLocation === "" || user.locations.includes(selectedLocation));
+                            })
+                        ).map((user) => (
+                            <TableRow key={user.id}>
+                                <TableCell component="th" scope="row">
+                                    {user.name}
+                                </TableCell>
+                                <TableCell align="center">{user.email}</TableCell>
+                                <TableCell align="center">{user.phone}</TableCell>
+                                <TableCell align="center">
+                                    {Array.isArray(user.locations) ? user.locations.join(', ') : user.locations}
+                                </TableCell>
+                                <TableCell align="center">
+                                    {Array.isArray(user.roles) ? user.roles.join(', ') : user.roles}
+                                </TableCell>
+                                <TableCell align="center">
+                                    <UserActionsMenu
+                                        onEdit={() => {
+                                            handleEditUser(user.id);
                                         }}
-                                        onPageChange={(event, newPage) => setPage(newPage)}
-                                        onRowsPerPageChange={(event) => {
-                                            setRowsPerPage(parseInt(event.target.value, 10));
-                                            setPage(0);
+                                        onDeactivate={() => {
+                                            setPickedUser(user);
+                                            toggleDialog('confirm', true);
                                         }}
                                     />
-                                </TableRow>
-                            </TableFooter>
-                        </Table>
-                    </TableContainer>
-                    <Button variant="contained" color="primary" onClick={() => toggleDialog('add', true)}>
-                        Add New Employee
-                    </Button>
-                    <AddEmployeeDialog open={dialogState.add} handleClose={handleCloseAdd} allRoles={allRoles} allLocations={locations} />
-                    <ConfirmationDialog open={dialogState.confirm} handleClose={() => toggleDialog('confirm', false)} handleConfirm={handleDeactivateUser} />
-                    <EditEmployeeDialog open={dialogState.edit} handleClose={handleCloseEdit} allRoles={allRoles} allLocations={locations} userToEdit={pickedUser} />
-                    <Snackbar open={snackbarInfo.open} autoHideDuration={3000} onClose={handleCloseSnackbar}>
-                        <MuiAlert onClose={handleCloseSnackbar} severity={snackbarInfo.severity} elevation={6} variant="filled">
-                            {snackbarInfo.message}
-                        </MuiAlert>
-                    </Snackbar>
-                </>
-            )}
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                    <TableFooter>
+                        <TableRow>
+                            <TablePagination
+                                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                colSpan={7}
+                                count={users.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                SelectProps={{
+                                    inputProps: { 'aria-label': 'rows per page' },
+                                    native: true,
+                                }}
+                                onPageChange={(event, newPage) => setPage(newPage)}
+                                onRowsPerPageChange={(event) => {
+                                    setRowsPerPage(parseInt(event.target.value, 10));
+                                    setPage(0);
+                                }}
+                            />
+                        </TableRow>
+                    </TableFooter>
+                </Table>
+            </TableContainer>
+            <Button variant="contained" color="primary" onClick={() => toggleDialog('add', true)}>
+                Add New Employee
+            </Button>
+            <AddEmployeeDialog open={dialogState.add} handleClose={handleCloseAdd} allRoles={roles} allLocations={allLocations} />
+            <ConfirmationDialog open={dialogState.confirm} handleClose={() => toggleDialog('confirm', false)} handleConfirm={handleDeactivateUser} />
+            <EditEmployeeDialog open={dialogState.edit} handleClose={handleCloseEdit} allRoles={roles} allLocations={allLocations} userToEdit={pickedUser} />
+            <Snackbar open={snackbarInfo.open} autoHideDuration={3000} onClose={handleCloseSnackbar}>
+                <MuiAlert onClose={handleCloseSnackbar} severity={snackbarInfo.severity} elevation={6} variant="filled">
+                    {snackbarInfo.message}
+                </MuiAlert>
+            </Snackbar>
         </div>
     );
 }

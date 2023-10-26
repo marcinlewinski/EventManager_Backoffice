@@ -26,7 +26,7 @@ const LocationFilter = ({ allLocations, onLocationSelect }) => {
                 <MenuItem key="none" onClick={() => handleLocationSelect("None")}>
                     None
                 </MenuItem>
-                {allLocations.map((location) => (
+                {allLocations?.map((location) => (
                     <MenuItem key={location.id} onClick={() => handleLocationSelect(location.title)}>
                         {location.title}
                     </MenuItem>

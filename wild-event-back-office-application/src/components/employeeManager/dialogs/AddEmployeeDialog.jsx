@@ -86,7 +86,7 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
             >
-              {allRoles.map((role) => (
+              {allRoles?.map((role) => (
                 <MenuItem key={role.id} value={role.id}>
                   {role.name}
                 </MenuItem>
@@ -103,7 +103,7 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             >
-              {allLocations.map((location) => (
+              {allLocations?.map((location) => (
                 <MenuItem key={location.id} value={location.id}>
                   {location.title}
                 </MenuItem>
