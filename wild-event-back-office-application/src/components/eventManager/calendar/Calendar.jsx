@@ -18,7 +18,7 @@ import Snackbar from "@mui/material/Snackbar"
 import MuiAlert from "@mui/material/Alert"
 import { useUser } from "../../../services/useUser"
 import { getAllMyEvents } from "../../../services/MyEventService"
-import { useRoles } from "../../../services/RolesProvieder"; 
+import { useRoles } from "../../../services/RolesProvider"; 
 
 
   

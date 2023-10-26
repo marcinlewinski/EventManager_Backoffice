@@ -12,7 +12,7 @@ import {
 } from "./pages/index";
 import { UserProvider } from "./services/useUser";
 import { DarkModeProvider } from "./components/darkMode/DarkModeProvider";
-import { RolesProvider } from "./services/RolesProvieder";
+import { RolesProvider } from "./services/RolesProvider";
 const router = createBrowserRouter([
   {
     path: "/",
