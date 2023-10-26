@@ -14,6 +14,8 @@ import { UserProvider } from "./services/useUser";
 import { DarkModeProvider } from "./components/darkMode/DarkModeProvider";
 import { RolesProvider } from "./services/RolesProvider";
 import { LocationsProvider } from "./services/LocationsProvider";
+import { EmployeesProvider } from "./services/EmployeeProvider";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -22,7 +24,9 @@ const router = createBrowserRouter([
         <UserProvider>
           <RolesProvider value={{ roles: [] }}>
             <LocationsProvider value={{ locations: [] }}>
-             <Outlet />
+              <EmployeesProvider value={{ employees: [] }}>
+               <Outlet />
+              </EmployeesProvider>
             </LocationsProvider>
           </RolesProvider>
         </UserProvider>
