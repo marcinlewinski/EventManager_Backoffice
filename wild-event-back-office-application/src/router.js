@@ -13,6 +13,7 @@ import {
 import { UserProvider } from "./services/useUser";
 import { DarkModeProvider } from "./components/darkMode/DarkModeProvider";
 import { RolesProvider } from "./services/RolesProvider";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -20,9 +21,10 @@ const router = createBrowserRouter([
       <DarkModeProvider>
         <UserProvider>
           <RolesProvider value={{ roles: [] }}>
-            <Outlet />
+            <LocalizationProvider value={{ locations: [] }}>
+             <Outlet />
+            </LocalizationProvider>
           </RolesProvider>
-
         </UserProvider>
       </DarkModeProvider>
     ),

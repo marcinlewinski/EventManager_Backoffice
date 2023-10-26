@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useUser } from './useUser';
-import { getAllRoles } from './Roles'
+import { getAllRoles } from './RolesService'
 
 
 const RolesContext = createContext();
@@ -19,8 +19,8 @@ export const RolesProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchRoles = async () => {
-      const response  = await getAllRoles(token);
-        setRoles(response);
+      const response = await getAllRoles(token);
+      setRoles(response);
     };
 
     fetchRoles();
