@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { getAllActiveUsers, getAllLocations, deactivateUser } from '../../../services/EmployeeManagement';
-import { getAllRoles } from '../../../services/RolesService';
+import React, { useState } from 'react';
 import AddEmployeeDialog from '../dialogs/AddEmployeeDialog';
 import EditEmployeeDialog from '../dialogs/EditEmployeeDialog';
 import UserActionsMenu from '../menu/UserActionsMenu';
@@ -25,6 +23,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { mapRoleIdsToNames, mapLocationIdsToTitles } from "./UserMappers";
 import { useRoles } from '../../../services/RolesProvider';
 import { useLocations } from '../../../services/LocationsProvider';
+import { useEmployees } from '../../../services/EmployeeProvider';
 
 
 const EmployeeTable = () => {
@@ -37,39 +36,15 @@ const EmployeeTable = () => {
     const [dialogState, setDialogState] = useState({ add: false, edit: false, confirm: false });
     const [pickedUser, setPickedUser] = useState(null);
     const [snackbarInfo, setSnackbarInfo] = useState({ open: false, message: '', severity: 'success' });
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const { token } = useUser();
     const { roles } = useRoles();
     const { locations } = useLocations();
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [fetchedUsers] = await Promise.all([
-                    getAllActiveUsers(token),
-                    getAllLocations(token)
-                ]);
-
-                setIsLoading(false);
-                setUsers(fetchedUsers);
-            } catch (error) {
-                console.error("There is an error during fetch data:", error);
-            }
-        };
-
-        fetchData();
-    }, [token]);
+    const { employees, deactivateEmployee } = useEmployees();
 
     const handleDeactivateUser = async () => {
-        try {
-            await deactivateUser(pickedUser.id, token);
-            setUsers(prevUsers => prevUsers.filter(user => user.id !== pickedUser.id));
-            setSnackbarInfo({
-                open: true, message: 'User has been deactivated!', severity: 'success'
-            });
-        } catch (error) {
-            console.error("Could not deactivate user:", error);
-        }
+        deactivateEmployee(pickedUser.id)
+        setSnackbarInfo({ open: true, message: 'User has been deactivated!', severity: 'success' });
         toggleDialog('confirm', false);
     };
 
@@ -188,12 +163,12 @@ const EmployeeTable = () => {
                             </TableHead>
                             <TableBody>
                                 {(rowsPerPage > 0
-                                    ? users.filter(user => {
+                                    ? employees.filter(user => {
                                         return user.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
                                             (selectedRole === "" || user.roles.includes(selectedRole)) &&
                                             (selectedLocation === "" || user.locations.includes(selectedLocation));
                                     }).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                    : users.filter(user => {
+                                    : employees.filter(user => {
                                         return user.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
                                             (selectedRole === "" || user.roles.includes(selectedRole)) &&
                                             (selectedLocation === "" || user.locations.includes(selectedLocation));
@@ -230,7 +205,7 @@ const EmployeeTable = () => {
                                     <TablePagination
                                         rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
                                         colSpan={7}
-                                        count={users.length}
+                                        count={employees.length}
                                         rowsPerPage={rowsPerPage}
                                         page={page}
                                         SelectProps={{

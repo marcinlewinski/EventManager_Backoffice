@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useUser } from './useUser';
-import { getAllActiveUsers } from './EmployeeManagement';
+import { getAllActiveUsers, deactivateUser } from './EmployeeManagement';
 
 
 const EmployeesContext = createContext();
@@ -26,8 +26,19 @@ export const EmployeesProvider = ({ children }) => {
     fetchEmployees();
   }, [token]);
 
+  const deactivateEmployee = async (employeeId) => {
+    try {
+      await deactivateUser(employeeId, token);
+      const updatedEmployees = employees.filter(employee => employee.id !== employeeId);
+      setEmployees(updatedEmployees);
+    } catch (error) {
+      console.error("Could not deactivate user:", error);
+    }
+  };
+  
+
   return (
-    <EmployeesContext.Provider value={{ employees }}>
+    <EmployeesContext.Provider value={{ employees, deactivateEmployee }}>
       {children}
     </EmployeesContext.Provider>
   );
