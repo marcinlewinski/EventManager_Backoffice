@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, FormControl, InputLabel, Select, MenuItem, FormHelperText, TextField, Typography } from '@mui/material';
 import { registerUser } from '../../../services/EmployeeManagement';
 import { useUser } from '../../../services/useUser';
 import dialogValidationSchema from './validationSchema';
+import CircularProgress from '@mui/material/CircularProgress';
+
 
 const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
   const { user, token } = useUser();
+  const [isLoading, setIsLoading] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -18,9 +21,10 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
     },
     validationSchema: dialogValidationSchema,
     validateOnChange: true,
-    validateOnBlur: true, 
+    validateOnBlur: true,
     onSubmit: async (values, { resetForm }) => {
       try {
+        setIsLoading(!isLoading);
         await registerUser(values);
         console.log("User registered");
         console.log("User context:", { user, token });
@@ -31,7 +35,9 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
       }
     }
   });
-
+  useEffect(() => {
+    setIsLoading(false);
+  }, [open])
   return (
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle>
@@ -115,8 +121,19 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
             <Button onClick={() => { handleClose(true, null); formik.resetForm(); }} color="primary">
               Cancel
             </Button>
-            <Button type="submit" color="primary">
-              Add
+            <Button disabled={isLoading} type="submit" color="primary">
+              {user && isLoading ? (
+                <CircularProgress
+                  sx={{
+                    color: (theme) => (theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8'),
+                    position: 'absolute',
+                  }}
+                  size={20}
+                  thickness={4}
+                />
+              ) : (
+                "Add"
+              )}
             </Button>
           </DialogActions>
         </form>

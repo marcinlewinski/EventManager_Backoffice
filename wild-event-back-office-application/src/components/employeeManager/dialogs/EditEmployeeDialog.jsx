@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, FormControl, InputLabel, Select, MenuItem, TextField, FormHelperText } from '@mui/material';
 import { useUser } from '../../../services/useUser';
@@ -7,6 +7,7 @@ import dialogValidationSchema from './validationSchema';
 
 const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToEdit }) => {
     const { token } = useUser();
+    const [isLoading, setIsLoading] = useState(false);
 
     const formik = useFormik({
         initialValues: {
@@ -17,9 +18,10 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
             locationIds: [],
         },
         validationSchema: dialogValidationSchema,
-        validateOnChange: true,  
-        validateOnBlur: true,    
+        validateOnChange: true,
+        validateOnBlur: true,
         onSubmit: async (values) => {
+            setIsLoading(!isLoading);
             await updateUser(userToEdit.id, values, token);
             handleClose(false, values);
         },
@@ -35,8 +37,8 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
             );
             formik.setValues({
                 ...userToEdit,
-                roleIds,  
-                locationIds,  
+                roleIds,
+                locationIds,
             });
         }
     }, [userToEdit]);
@@ -112,7 +114,7 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
                         <Button onClick={() => handleClose(true, null)} color="primary">
                             Cancel
                         </Button>
-                        <Button type="submit" color="primary">
+                        <Button disabled={isLoading} type="submit" color="primary">
                             Edit
                         </Button>
                     </DialogActions>

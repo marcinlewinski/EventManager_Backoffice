@@ -15,12 +15,12 @@ import { generateResetLink } from "../../services/LoginService"
 
 const validationSchema = Yup.object({
 	email: Yup.string().email("Invalid email format").required("Required"),
-})
+});
 
 const ResetPasswordRequestByEmail = () => {
-	const [snackbarOpen, setSnackbarOpen] = useState(false)
-	const navigate = useNavigate()
-
+	const [snackbarOpen, setSnackbarOpen] = useState(false);
+	const navigate = useNavigate();
+	const [isDisabled, setIsDisabled] = useState(false);
 	const formik = useFormik({
 		initialValues: {
 			email: "",
@@ -28,19 +28,20 @@ const ResetPasswordRequestByEmail = () => {
 		validationSchema,
 		onSubmit: async values => {
 			try {
-				const responseMessage = await generateResetLink(values.email)
-				setSnackbarOpen(true)
+				setIsDisabled(!isDisabled);
+				const responseMessage = await generateResetLink(values.email);
+				setSnackbarOpen(true);
 				setTimeout(() => {
-					navigate("/")
+					navigate("/");
 				}, 3000)
 			} catch (error) {
-				console.error(error)
+				console.error(error);
 			}
 		},
 	})
 
 	const handleCloseSnackbar = () => {
-		setSnackbarOpen(false)
+		setSnackbarOpen(false);
 	}
 
 	return (
@@ -73,6 +74,7 @@ const ResetPasswordRequestByEmail = () => {
 				helperText={formik.touched.email && formik.errors.email}
 			/>
 			<Button
+				disabled={isDisabled}
 				type='submit'
 				fullWidth
 				variant='contained'
