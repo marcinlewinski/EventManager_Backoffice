@@ -7,7 +7,7 @@ import { submitLocation } from '../../../services/LocationService';
 import MapForm from '../map/MapForm';
 import { useUser } from "../../../services/useUser";
 
-const LocationDialog = ({mapLocations, open, location, handleClose }) => {
+const LocationDialog = ({mapLocations, open, location, handleClose, closeModal }) => {
     const { token } = useUser();
     const [locationData, setLocationData] = useState({})
     const [coordinate, setCoordinate] = useState({
@@ -115,7 +115,7 @@ const LocationDialog = ({mapLocations, open, location, handleClose }) => {
             </DialogContent>
             
             <DialogActions>
-                    <Button onClick={() => handleClose()} color="primary">
+                    <Button onClick={() => closeModal()} color="primary">
                         Cancel
                     </Button>
                     <Button onClick={handleSubmit} color="primary">

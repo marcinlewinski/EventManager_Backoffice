@@ -19,7 +19,7 @@ export const MapConfig = () => {
         setIsLoading(true)
         fetchData();
     };
-
+    
     const fetchData = async () => {
         try {
             const map = await getMap(token);

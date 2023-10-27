@@ -6,7 +6,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Button } from '@mui/material';
 
-const LocationDeleteDialog = ({ open, handleClose, handleConfirm }) => {
+const LocationDeleteDialog = ({ open, handleClose, handleConfirm, closeModal }) => {
     return (
         <Dialog open={open} onClose={handleClose}>
             <DialogTitle>{"Delete location"}</DialogTitle>
@@ -16,7 +16,7 @@ const LocationDeleteDialog = ({ open, handleClose, handleConfirm }) => {
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose} color="primary">
+                <Button onClick={closeModal} color="primary">
                     No
                 </Button>
                 <Button
