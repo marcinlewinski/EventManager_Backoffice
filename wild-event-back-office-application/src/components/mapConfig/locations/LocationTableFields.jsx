@@ -1,5 +1,5 @@
 import React from "react";
-import { Table,Button, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { Table, Button, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import LocationActionsMenu from './LocationActionsMenu';
 
 export const LocationTableFields = ({ mapLocations, setUpdateDialogOpen, setUpdating, handleOpenDeleteDialog }) => {

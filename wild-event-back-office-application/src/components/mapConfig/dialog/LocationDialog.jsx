@@ -31,6 +31,8 @@ const LocationDialog = ({ mapLocations, open, location, handleClose, closeModal 
         validationSchema: locationBasicSchema,
         onSubmit: async (values) => {
             await submitLocation(token, values);
+            //add to context 
+            //update temp state or read from context insted of fetching every time
             await handleClose();
             formik.resetForm()
         },

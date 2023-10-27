@@ -17,6 +17,7 @@ export const MapConfig = () => {
 
     const update = () => {
         setIsLoading(true)
+        //update global state here 
         fetchData();
     };
     

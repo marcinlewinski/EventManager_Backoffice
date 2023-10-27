@@ -46,12 +46,13 @@ const LoginForm = () => {
     validationSchema,
     onSubmit: async (values) => {
       try {
-        setDisableBtn(!disableBtn)
+        setDisableBtn(true)
         const response = await loginUser(values.email, values.password);
         sessionStorage.setItem('token', response.token);
         login(response, response.token);
         navigate('/main');
       } catch (error) {
+        setDisableBtn(false)
         console.error('Error while logging in:', error);
         setLoginError('Invalid email or password');
       }
