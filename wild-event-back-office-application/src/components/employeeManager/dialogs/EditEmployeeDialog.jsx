@@ -4,9 +4,10 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, FormControl,
 import { useUser } from '../../../services/useUser';
 import { updateUser } from '../../../services/EmployeeManagement';
 import dialogValidationSchema from './validationSchema';
+import { useEmployees } from '../../../services/EmployeesProvider';
 
 const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToEdit }) => {
-    const { token } = useUser();
+    const { updateEmployee } = useEmployees();
 
     const formik = useFormik({
         initialValues: {
@@ -20,7 +21,7 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
         validateOnChange: true,  
         validateOnBlur: true,    
         onSubmit: async (values) => {
-            await updateUser(userToEdit.id, values, token);
+            updateEmployee(userToEdit.id, values);
             handleClose(false, values);
         },
     });

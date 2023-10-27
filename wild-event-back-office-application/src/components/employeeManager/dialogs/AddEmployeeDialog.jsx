@@ -19,13 +19,9 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
     validateOnChange: true,
     validateOnBlur: true,
     onSubmit: async (values, { resetForm }) => {
-      try {
         addEmployee(values);
         handleClose(false, values);
         resetForm();
-      } catch (error) {
-        console.error("Error during registration:", error);
-      }
     }
   });
 

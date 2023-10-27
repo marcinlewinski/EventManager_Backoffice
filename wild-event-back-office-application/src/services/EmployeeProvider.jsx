@@ -34,7 +34,19 @@ export const EmployeesProvider = ({ children }) => {
       console.error("Error during registration:", error);
     }
   };
-  
+
+  const updateEmployee = async (employeeId, updatedData) => {
+    try {
+      const updatedEmployee = await updateUser(employeeId, updatedData, token);
+      setEmployees(prevEmployees => 
+        prevEmployees.map(employee => 
+          employee.id === employeeId ? updatedEmployee : employee
+        )
+      );
+    } catch (error) {
+      console.error("Error updating user:", error);
+    }
+  };
 
   const deactivateEmployee = async (employeeId) => {
     try {
@@ -48,7 +60,7 @@ export const EmployeesProvider = ({ children }) => {
   
 
   return (
-    <EmployeesContext.Provider value={{ employees, deactivateEmployee, addEmployee }}>
+    <EmployeesContext.Provider value={{ employees, deactivateEmployee, addEmployee, updateEmployee }}>
       {children}
     </EmployeesContext.Provider>
   );
