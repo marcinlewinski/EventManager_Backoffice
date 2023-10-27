@@ -2,7 +2,7 @@ import React from 'react';
 import { useFormik } from 'formik';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, FormControl, InputLabel, Select, MenuItem, FormHelperText, TextField, Typography } from '@mui/material';
 import dialogValidationSchema from './validationSchema';
-import { useEmployees } from '../../../services/EmployeesProvider';
+import { useEmployees } from '../../../services/EmployeeProvider';
 
 const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
   const { addEmployee } = useEmployees();

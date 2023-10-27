@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useUser } from './useUser';
-import { getAllActiveUsers, deactivateUser } from './EmployeeManagement';
+import { getAllActiveUsers, deactivateUser, registerUser, updateUser } from './EmployeeManagement';
 
 
 const EmployeesContext = createContext();
