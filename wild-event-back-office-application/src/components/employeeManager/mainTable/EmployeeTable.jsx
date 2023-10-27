@@ -27,7 +27,6 @@ import { useEmployees } from '../../../services/EmployeeProvider';
 
 
 const EmployeeTable = () => {
-    const [users, setUsers] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [selectedLocation, setSelectedLocation] = useState("");
@@ -50,7 +49,7 @@ const EmployeeTable = () => {
 
     const handleEditUser = async (userId) => {
         try {
-            const user = users.find(u => u.id === userId);
+            const employee = employees.find(u => u.id === userId);
             setPickedUser(user);
             toggleDialog('edit', true);
         } catch (error) {

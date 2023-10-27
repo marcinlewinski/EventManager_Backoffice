@@ -26,6 +26,16 @@ export const EmployeesProvider = ({ children }) => {
     fetchEmployees();
   }, [token]);
 
+  const addEmployee = async (newEmployeeData) => {
+    try {
+      await registerUser(newEmployeeData);
+      setEmployees(prevEmployees => [...prevEmployees, newEmployeeData]);
+    } catch (error) {
+      console.error("Error during registration:", error);
+    }
+  };
+  
+
   const deactivateEmployee = async (employeeId) => {
     try {
       await deactivateUser(employeeId, token);
@@ -38,7 +48,7 @@ export const EmployeesProvider = ({ children }) => {
   
 
   return (
-    <EmployeesContext.Provider value={{ employees, deactivateEmployee }}>
+    <EmployeesContext.Provider value={{ employees, deactivateEmployee, addEmployee }}>
       {children}
     </EmployeesContext.Provider>
   );

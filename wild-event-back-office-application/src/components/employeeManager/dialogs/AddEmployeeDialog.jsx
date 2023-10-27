@@ -1,12 +1,11 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, FormControl, InputLabel, Select, MenuItem, FormHelperText, TextField, Typography } from '@mui/material';
-import { registerUser } from '../../../services/EmployeeManagement';
-import { useUser } from '../../../services/useUser';
 import dialogValidationSchema from './validationSchema';
+import { useEmployees } from '../../../services/EmployeesProvider';
 
 const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
-  const { user, token } = useUser();
+  const { addEmployee } = useEmployees();
 
   const formik = useFormik({
     initialValues: {
@@ -21,9 +20,7 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
     validateOnBlur: true,
     onSubmit: async (values, { resetForm }) => {
       try {
-        await registerUser(values);
-        console.log("User registered");
-        console.log("User context:", { user, token });
+        addEmployee(values);
         handleClose(false, values);
         resetForm();
       } catch (error) {
