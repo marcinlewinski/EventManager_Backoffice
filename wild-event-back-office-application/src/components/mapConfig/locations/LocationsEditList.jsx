@@ -1,19 +1,13 @@
-import React, { useEffect, useState, useRef } from "react";
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
+import React, { useState } from "react";
 import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import LocationActionsMenu from './LocationActionsMenu';
-import { Box, Button } from "@mui/material";
+import { Box, Paper } from "@mui/material";
 import LocationDialog from "../dialog/LocationDialog"
 import LocationDeleteDialog from "../dialog/LocationDeleteDialog";
 import MuiAlert from '@mui/material/Alert';
 import { deleteLocation } from "../../../services/LocationService";
 import Snackbar from '@mui/material/Snackbar';
 import { useUser } from "../../../services/useUser";
+import { LocationTableFields } from "./LocationTableFields";
 
 const LocationsEditList = ({ mapLocations, setLocations }) => {
   const { token } = useUser();
@@ -73,34 +67,13 @@ const LocationsEditList = ({ mapLocations, setLocations }) => {
   return <Box>
 
     <TableContainer component={Paper}>
-      <Table aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell align="center" sx={{ fontWeight: 'bold', fontSize: '1.1rem' }}>No</TableCell>
-            <TableCell align="center" sx={{ fontWeight: 'bold', fontSize: '1.1rem' }}>Title</TableCell>
-            <TableCell align="center" sx={{ fontWeight: 'bold', fontSize: '1.1rem' }}>
-              <Button variant="outlined" color="primary" size="large"
-                style={{ borderRadius: '50%', height: '60px', fontSize: '32px', lineHeight: '64px' }}
-                onClick={() => setUpdateDialogOpen(true)}>+</Button>
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {mapLocations.locations.map((location, index) => (
-            <TableRow key={location.id}>
-              <TableCell component="th" scope="row" >{index + 1}</TableCell>
-              <TableCell align="center">{location.title}</TableCell>
-              <TableCell align="center">
-                <LocationActionsMenu
-                  onEdit={() => setUpdating(location)}
-                  onDeactivate={() => handleOpenDeleteDialog(location.id)}
-                />
-              </TableCell>
-
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <LocationTableFields
+        mapLocations={mapLocations}
+        setUpdateDialogOpen={setUpdateDialogOpen}
+        setUpdating={setUpdating}
+        handleOpenDeleteDialog={handleOpenDeleteDialog}
+      >
+      </LocationTableFields>
     </TableContainer>
     <LocationDialog
       mapLocations={mapLocations}
@@ -120,7 +93,7 @@ const LocationsEditList = ({ mapLocations, setLocations }) => {
         {snackbarInfo.message}
       </MuiAlert>
     </Snackbar>
-  </Box>
+  </Box >
 
     ;
 };

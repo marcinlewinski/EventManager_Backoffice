@@ -79,7 +79,6 @@ const LocationDialog = ({ mapLocations, open, location, handleClose, closeModal 
             </DialogContent>
            <LocationDialogActions formik={formik} closeModal={closeModal} location={location}>
            </LocationDialogActions>
-
         </Dialog>
     );
 };
