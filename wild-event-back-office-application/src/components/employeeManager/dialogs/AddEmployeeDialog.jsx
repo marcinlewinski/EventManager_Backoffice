@@ -23,14 +23,16 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
     validateOnBlur: true,
     onSubmit: async (values, { resetForm }) => {
         setIsLoading(!isLoading);
-        addEmployee(values);
+        await addEmployee(values);
         handleClose(false, values);
         resetForm();
     }
   });
+
   useEffect(() => {
     setIsLoading(false);
   }, [open])
+
   return (
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle>
@@ -117,7 +119,7 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
               Cancel
             </Button>
             <Button disabled={isLoading} type="submit" color="primary">
-              {user && isLoading ? (
+              {isLoading ? (
                 <CircularProgress
                   sx={{
                     color: (theme) => (theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8'),

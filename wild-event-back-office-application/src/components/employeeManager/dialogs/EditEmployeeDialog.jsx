@@ -21,7 +21,8 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
         validateOnBlur: true,
         onSubmit: async (values) => {
             setIsLoading(!isLoading);
-            updateEmployee(userToEdit.id, values);
+            console.log(values)
+            await updateEmployee(userToEdit.id, values);
             handleClose(false, values);
         },
     });

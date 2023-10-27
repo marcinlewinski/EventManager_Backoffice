@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useUser } from './useUser';
 import { getAllActiveUsers, deactivateUser, registerUser, updateUser } from './EmployeeManagement';
+import { useLocations } from './LocationsProvider';
+import { useRoles } from './RolesProvider';
 
 
 const EmployeesContext = createContext();
@@ -16,11 +18,14 @@ export const useEmployees = () => {
 export const EmployeesProvider = ({ children }) => {
   const [employees, setEmployees] = useState([]);
   const { token } = useUser();
+  const { roles } = useRoles();
+  const { locations } = useLocations();
 
   useEffect(() => {
     const fetchEmployees = async () => {
       const response = await getAllActiveUsers(token);
       setEmployees(response);
+      console.log(response)
     };
 
     fetchEmployees();
@@ -30,6 +35,7 @@ export const EmployeesProvider = ({ children }) => {
     try {
       await registerUser(newEmployeeData);
       setEmployees(prevEmployees => [...prevEmployees, newEmployeeData]);
+      console.log(employees)
     } catch (error) {
       console.error("Error during registration:", error);
     }
@@ -37,9 +43,22 @@ export const EmployeesProvider = ({ children }) => {
 
   const updateEmployee = async (employeeId, updatedData) => {
     try {
-      const updatedEmployee = await updateUser(employeeId, updatedData, token);
-      setEmployees(prevEmployees => 
-        prevEmployees.map(employee => 
+      console.log("Before updateUser:", updatedData);
+    const updatedEmployee = await updateUser(employeeId, updatedData, token);
+    
+      updatedEmployee.roles = updatedData.roleIds.map(roleId => {
+        const role = roles.find(r => r.id === roleId);
+        return role ? role.title : '';
+      });
+  
+      updatedEmployee.locations = updatedData.locationIds.map(locationId => {
+        const location = locations.find(l => l.id === locationId);
+        return location ? location.title : '';
+      });
+  
+      console.log("After updateUser:", updatedEmployee);
+      setEmployees(prevEmployees =>
+        prevEmployees.map(employee =>
           employee.id === employeeId ? updatedEmployee : employee
         )
       );
