@@ -17,9 +17,10 @@ export const MapConfig = () => {
 
     const update = () => {
         setIsLoading(true)
+        //update global state here 
         fetchData();
     };
-
+    
     const fetchData = async () => {
         try {
             const map = await getMap(token);

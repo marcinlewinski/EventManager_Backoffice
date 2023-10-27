@@ -292,7 +292,6 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
             message: `Event has been ${existingEvent ? "updated" : "added"}`,
             severity: "success",
         });
-
         calendarApi.addEvent(dtoObj)
     }
 

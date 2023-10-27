@@ -4,7 +4,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useUser } from '../../services/useUser';
 import { loginUser } from '../../services/LoginService';
-import ResetPasswordRequestByEmail from '../resetPasswordForm/ResetPasswordRequestByEmail'; 
+import ResetPasswordRequestByEmail from '../resetPasswordForm/ResetPasswordRequestByEmail';
 import {
   Avatar,
   Button,
@@ -35,7 +35,8 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const { login } = useUser();
   const [loginError, setLoginError] = useState(null);
-  const [isDialogOpen, setDialogOpen] = useState(false); 
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [disableBtn, setDisableBtn] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -45,19 +46,21 @@ const LoginForm = () => {
     validationSchema,
     onSubmit: async (values) => {
       try {
+        setDisableBtn(true)
         const response = await loginUser(values.email, values.password);
         sessionStorage.setItem('token', response.token);
         login(response, response.token);
         navigate('/main');
       } catch (error) {
+        setDisableBtn(false)
         console.error('Error while logging in:', error);
         setLoginError('Invalid email or password');
       }
     },
   });
 
-  const openDialog = () => setDialogOpen(true); 
-  const closeDialog = () => setDialogOpen(false); 
+  const openDialog = () => setDialogOpen(true);
+  const closeDialog = () => setDialogOpen(false);
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -104,7 +107,7 @@ const LoginForm = () => {
                 error={formik.touched.password && Boolean(formik.errors.password)}
                 helperText={formik.touched.password && formik.errors.password}
               />
-              <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+              <Button type="submit" disabled={disableBtn} fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
                 Sign In
               </Button>
               <Grid container>
