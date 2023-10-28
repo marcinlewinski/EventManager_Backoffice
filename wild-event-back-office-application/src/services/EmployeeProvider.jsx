@@ -44,7 +44,6 @@ export const EmployeesProvider = ({ children }) => {
   const updateEmployee = async (employeeId, updatedData) => {
     try {
       const updatedEmployee = await updateUser(employeeId, updatedData, token);
-      console.log(updatedEmployee)
     
       setEmployees(prevEmployees =>
         prevEmployees.map(employee =>
