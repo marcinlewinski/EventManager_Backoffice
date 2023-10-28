@@ -25,7 +25,6 @@ const LocationsEditList = ({ mapLocations, setLocations }) => {
     setLocationDeleteId(id)
     setDeleteDialogOpen(true)
   };
-
   const setUpdating = (location) => {
     setLocationUpdate(location)
     setUpdateDialogOpen(true)

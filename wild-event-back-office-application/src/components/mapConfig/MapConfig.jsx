@@ -5,22 +5,24 @@ import Map from './map/Map'
 import LocationsEditList from "./locations/LocationsEditList";
 import { useUser } from "../../services/useUser";
 import CircularProgress from '@mui/material/CircularProgress';
+import { useMap } from "../../services/MapProvider";
 
 export const MapConfig = () => {
     const [mapLocations, setMapLocations] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const { token } = useUser();
-
+    const { map } = useMap();
     useEffect(() => {
         fetchData();
     }, []);
 
     const update = () => {
         setIsLoading(true)
+        //updateDb
         //update global state here 
         fetchData();
     };
-    
+console.log(map)
     const fetchData = async () => {
         try {
             const map = await getMap(token);
