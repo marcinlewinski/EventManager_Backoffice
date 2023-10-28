@@ -36,7 +36,6 @@ const EmployeeTable = () => {
     const { locations } = useLocations();
     const { employees, deactivateEmployee } = useEmployees();
 
-    console.log(employees)
 
     const handleDeactivateUser = () => {
         deactivateEmployee(pickedUser.id)

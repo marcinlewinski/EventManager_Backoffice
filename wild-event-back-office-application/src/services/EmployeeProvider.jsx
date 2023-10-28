@@ -34,8 +34,9 @@ export const EmployeesProvider = ({ children }) => {
 
   const addEmployee = async (newEmployeeData) => {
     try {
-      await registerUser(newEmployeeData);
-      setEmployees(prevEmployees => [...prevEmployees, newEmployeeData]);
+      const newEmployee = await registerUser(newEmployeeData);
+      console.log(newEmployee)
+      setEmployees(prevEmployees => [...prevEmployees, newEmployee]);
     } catch (error) {
       console.error("Error during registration:", error);
     }
@@ -43,13 +44,11 @@ export const EmployeesProvider = ({ children }) => {
 
   const updateEmployee = async (employeeId, updatedData) => {
     try {
-      await updateUser(employeeId, updatedData, token);
-
-      const { roleIds, locationIds, ...restOfUpdatedEmployee } = updatedData;
-  
+      const updatedEmployee = await updateUser(employeeId, updatedData, token);
+    
       setEmployees(prevEmployees =>
         prevEmployees.map(employee =>
-          employee.id === employeeId ? { ...restOfUpdatedEmployee } : employee
+          employee.id === employeeId ? updatedEmployee : employee
         )
       );
     } catch (error) {
