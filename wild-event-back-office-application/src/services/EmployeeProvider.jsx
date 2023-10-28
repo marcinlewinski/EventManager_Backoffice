@@ -34,8 +34,9 @@ export const EmployeesProvider = ({ children }) => {
 
   const addEmployee = async (newEmployeeData) => {
     try {
-      await registerUser(newEmployeeData);
-      setEmployees(prevEmployees => [...prevEmployees, newEmployeeData]);
+      const newEmployee = await registerUser(newEmployeeData);
+      console.log(newEmployee)
+      setEmployees(prevEmployees => [...prevEmployees, newEmployee]);
     } catch (error) {
       console.error("Error during registration:", error);
     }
