@@ -43,13 +43,12 @@ export const EmployeesProvider = ({ children }) => {
 
   const updateEmployee = async (employeeId, updatedData) => {
     try {
-      await updateUser(employeeId, updatedData, token);
-
-      const { roleIds, locationIds, ...restOfUpdatedEmployee } = updatedData;
-  
+      const updatedEmployee = await updateUser(employeeId, updatedData, token);
+      console.log(updatedEmployee)
+    
       setEmployees(prevEmployees =>
         prevEmployees.map(employee =>
-          employee.id === employeeId ? { ...restOfUpdatedEmployee } : employee
+          employee.id === employeeId ? updatedEmployee : employee
         )
       );
     } catch (error) {
