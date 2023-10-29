@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useUser } from './useUser';
-import {getMap} from "./MapService"
+import { getMap } from "./MapService"
 
 const MapContext = createContext();
 
@@ -17,12 +17,20 @@ export const MapProvider = ({ children }) => {
     const { token } = useUser();
 
     useEffect(() => {
-        const fetchMap = async () => {
-            const response = await getMap(token);
-            setMap(response);
-        };
+        if (token) {
+            const fetchMap = async () => {
+                try {
+                    const response = await getMap(token);
+                    setMap(response);
+                } catch (error) {
+                    console.error('Failed to fetch map:', error);
+                }
+            };
 
-        fetchMap();
+            fetchMap();
+        } else {
+            setMap({});
+        }
     }, [token]);
 
     return (

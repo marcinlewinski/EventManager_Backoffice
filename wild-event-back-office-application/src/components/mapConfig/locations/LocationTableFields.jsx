@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Table, Button, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import LocationActionsMenu from './LocationActionsMenu';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export const LocationTableFields = ({ mapLocations, setUpdateDialogOpen, setUpdating, handleOpenDeleteDialog }) => {
 
@@ -19,20 +20,34 @@ export const LocationTableFields = ({ mapLocations, setUpdateDialogOpen, setUpda
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {mapLocations.locations.map((location, index) => (
-                        <TableRow key={location.id}>
-                            <TableCell component="th" scope="row" >{index + 1}</TableCell>
-                            <TableCell align="center">{location.title}</TableCell>
-                            <TableCell align="center">
-                                <LocationActionsMenu
-                                    onEdit={() => setUpdating(location)}
-                                    onDeactivate={() => handleOpenDeleteDialog(location.id)}
-                                />
+                    {!mapLocations || !mapLocations.locations ? (
+                        <TableRow>
+                            <TableCell colSpan={3} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                                <CircularProgress />
                             </TableCell>
-
                         </TableRow>
-                    ))}
+                    ) : (
+                        mapLocations.locations.length > 0 ? (
+                            mapLocations.locations.map((location, index) => (
+                                <TableRow key={location.id}>
+                                    <TableCell component="th" scope="row">{index + 1}</TableCell>
+                                    <TableCell align="center">{location.title}</TableCell>
+                                    <TableCell align="center">
+                                        <LocationActionsMenu
+                                            onEdit={() => setUpdating(location)}
+                                            onDeactivate={() => handleOpenDeleteDialog(location.id)}
+                                        />
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={3}>No data available</TableCell>
+                            </TableRow>
+                        )
+                    )}
                 </TableBody>
+
             </Table>
         </>
     )

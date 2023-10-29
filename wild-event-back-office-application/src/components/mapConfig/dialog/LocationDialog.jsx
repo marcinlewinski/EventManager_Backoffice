@@ -15,8 +15,8 @@ import { LocationDialogActions } from './LocationDialogActions';
 const LocationDialog = ({ mapLocations, open, location, handleClose, closeModal }) => {
     const { token } = useUser();
     const [coordinate, setCoordinate] = useState({
-        latitude: mapLocations.coordinate.latitude,
-        longitude: mapLocations.coordinate.longitude
+        latitude: mapLocations.coordinate ? mapLocations.coordinate.latitude : 0.0,
+        longitude: mapLocations.coordinate ? mapLocations.coordinate.longitude : 0.0
     });
 
     const formik = useFormik({

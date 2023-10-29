@@ -16,9 +16,11 @@ const Map = ({mapLocations}) => {
   const mapContainerRef = useRef(null);
   mapboxgl.accessToken = `${process.env.REACT_APP_API_KEY}`;
    
-  
+  console.log(mapData)
+  console.log(mapLocations)
+
   useEffect(() => {
-    if (mapData) {
+    if (mapLocations) {
       const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/streets-v9',
@@ -44,7 +46,7 @@ const Map = ({mapLocations}) => {
       })
     });
     return () => map.remove();
-}}, [mapData]);
+}}, [mapLocations]);
 
   return <div>
           <Button variant="contained" onClick={() => setConfirmDialogOpen(true)}>Save current map setting</Button>

@@ -24,7 +24,7 @@ const router = createBrowserRouter([
       <DarkModeProvider>
         <UserProvider>
           <RolesProvider value={{ roles: [] }}>
-            <MapProvider value={{ roles: [] }}>
+            <MapProvider value={{ map: [] }}>
               <LocationsProvider value={{ locations: [] }}>
                 <EmployeesProvider value={{ employees: [] }}>
                   <Outlet />
