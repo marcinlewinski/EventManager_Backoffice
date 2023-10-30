@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useUser } from './useUser';
-import { getAllRoles } from './RolesService'
+import { useUser } from './LoggedUserProvider';
+import { getAllRoles } from '../api/RolesService'
 
 
 const RolesContext = createContext();

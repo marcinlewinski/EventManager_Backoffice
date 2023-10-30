@@ -2,7 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useMediaQuery, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, Drawer, Box, Toolbar, List } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import itemList from "./DashboardElements";
-import { useUser } from "../../services/useUser";
+import { useUser } from "../../services/providers/LoggedUserProvider";
 
 
 export const DashboardComponent = () => {

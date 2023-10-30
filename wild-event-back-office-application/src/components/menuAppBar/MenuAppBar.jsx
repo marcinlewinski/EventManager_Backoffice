@@ -13,7 +13,7 @@ import FormGroup from '@mui/material/FormGroup';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import itemList from '../dashboard/DashboardElements';
-import { useUser } from "../../services/useUser";
+import { useUser } from "../../services/providers/LoggedUserProvider";
 
 export const MenuAppBar = () => {
   const [auth, setAuth] = useState(true);

@@ -4,9 +4,9 @@ import { Box, Paper } from "@mui/material";
 import LocationDialog from "../dialog/LocationDialog"
 import LocationDeleteDialog from "../dialog/LocationDeleteDialog";
 import MuiAlert from '@mui/material/Alert';
-import { deleteLocation } from "../../../services/LocationService";
+import { deleteLocation } from "../../../services/api/LocationService";
 import Snackbar from '@mui/material/Snackbar';
-import { useUser } from "../../../services/useUser";
+import { useUser } from "../../../services/providers/LoggedUserProvider";
 import { LocationTableFields } from "./LocationTableFields";
 
 const LocationsEditList = ({ updateLocationInMap, deleteLocationFromMap, addLocationIntoMap, mapLocations, setLocations }) => {

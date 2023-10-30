@@ -1,6 +1,6 @@
 import React from "react"
 import { Paper, Typography } from "@mui/material"
-import { useUser } from "../../services/useUser"
+import { useUser } from "../../services/providers/LoggedUserProvider"
 
 export const WelcomeWindow = ({ userId }) => {
 	const { user } = useUser(); 

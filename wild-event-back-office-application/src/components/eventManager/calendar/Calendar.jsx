@@ -9,17 +9,18 @@ import {
     getAllEvents,
     deleteEvent,
     updateDateEvent,
-} from "../../../services/EventService"
+} from "../../../services/api/EventService"
 import dayjs from "dayjs"
 import EventForm from "../newEventForm/EventForm"
-import { getLocations } from "../../../services/LocationService"
-import { getUsers } from "../../../services/UserService"
+import { getLocations } from "../../../services/api/LocationService"
+import { getUsers } from "../../../services/api/UserService"
 import Snackbar from "@mui/material/Snackbar"
 import MuiAlert from "@mui/material/Alert"
-import { useUser } from "../../../services/useUser"
-import { getAllMyEvents } from "../../../services/MyEventService"
-import { useRoles } from "../../../services/RolesProvider";
+import { useUser } from "../../../services/providers/LoggedUserProvider"
+import { getAllMyEvents } from "../../../services/api/MyEventService"
+import { useRoles } from "../../../services/providers/RolesProvider";
 import CircularProgress from '@mui/material/CircularProgress';
+import Tooltip from '@mui/material/Tooltip';
 
 
 
@@ -62,7 +63,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
             const data = isMyCalendar
                 ? await getAllMyEvents(token)
                 : await getAllEvents(token);
-                console.log(data)
+            console.log(data)
             setEvents(
                 data.map(eventDataFromDB => {
                     const startDate = new Date(eventDataFromDB.startsAt);
@@ -304,6 +305,30 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         }))
     }
 
+    const renderEventContent = (eventInfo) => {
+        const organizers = eventInfo.event.extendedProps.organizers;
+        const organizersStr = Array.isArray(organizers) ? organizers.join(', ') : 'N/A';
+
+        return (
+            <Tooltip title={
+                <>
+                    <h4>{eventInfo.event.title}</h4>
+                    <p>Start: {eventInfo.event.start ? eventInfo.event.start.toLocaleString() : 'N/A'}</p>
+                    <p>End: {eventInfo.event.end ? eventInfo.event.end.toLocaleString() : 'N/A'}</p>
+                    <p>Description: {eventInfo.event.extendedProps.description}</p>
+                    <p>Location: {eventInfo.event.extendedProps.location}</p>
+                    <p>Organizers: {organizersStr}</p>
+                </>
+            }>
+                <div>
+                    {eventInfo.timeText}
+                    <br />
+                    {eventInfo.event.title}
+                </div>
+            </Tooltip>
+        );
+    }
+
     const plugins = isMobileView
         ? [timeGridPlugin, interactionPlugin, listPlugin]
         : [dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]
@@ -350,11 +375,12 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
                             validRange={{
                                 start: new Date(),
                             }}
+                            eventContent={renderEventContent}
                         />
                     </Box>
                 </Container>
             )}
-            {events !== null && !isMyCalendar && Object.keys(pickedEvent).length > 0  &&(
+            {events !== null && !isMyCalendar && Object.keys(pickedEvent).length > 0 && (
                 <EventForm
                     open={open}
                     isTimeGridWeek={isTimeGridWeek}

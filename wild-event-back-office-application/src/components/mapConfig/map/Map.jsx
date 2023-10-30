@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import { createRoot } from 'react-dom/client';
 import mapboxgl from 'mapbox-gl';
-import { saveMap } from "../../../services/MapService";
+import { saveMap } from "../../../services/api/MapService";
 import { Button } from "@mui/material";
 import Marker from "./Marker"
 import './Map.css'
 import MapDialog from "../dialog/MapDialog";
-import { useUser } from "../../../services/useUser";
+import { useUser } from "../../../services/providers/LoggedUserProvider";
 
 const Map = ({ mapLocations }) => {
   const { token } = useUser();

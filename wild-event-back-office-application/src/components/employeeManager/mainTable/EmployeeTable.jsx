@@ -18,10 +18,10 @@ import TablePagination from '@mui/material/TablePagination';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { Button } from '@mui/material';
-import { useRoles } from '../../../services/RolesProvider';
-import { useLocations } from '../../../services/LocationsProvider';
-import { useEmployees } from '../../../services/EmployeeProvider';
-
+import { useRoles } from '../../../services/providers/RolesProvider';
+import { useLocations } from '../../../services/providers/LocationsProvider';
+import { useEmployees } from '../../../services/providers/EmployeeProvider';
+import Skeleton from '@mui/material/Skeleton';
 
 const EmployeeTable = () => {
     const [page, setPage] = useState(0);
@@ -35,11 +35,11 @@ const EmployeeTable = () => {
     const { roles } = useRoles();
     const { locations } = useLocations();
     const { employees, deactivateEmployee } = useEmployees();
-
+    const isLoading = !roles || !locations || !employees;
 
     const handleDeactivateUser = () => {
         deactivateEmployee(pickedUser.id)
-        setSnackbarInfo({ open: true, message: 'User has been deactivated!', severity: 'success' });
+        setSnackbarInfo({ open: true, message: 'Employee has been deactivated!', severity: 'success' });
         toggleDialog('confirm', false);
     };
 
@@ -55,7 +55,7 @@ const EmployeeTable = () => {
             return;
         }
         if (newUser) {
-            setSnackbarInfo({ open: true, message: 'User has been added!', severity: 'success' });
+            setSnackbarInfo({ open: true, message: 'Employee has been added! Ask him to check his email to end registration process.', severity: 'success' });
         }
         toggleDialog('add', false);
     };
@@ -67,7 +67,7 @@ const EmployeeTable = () => {
         }
 
         if (updatedUser) {
-            setSnackbarInfo({ open: true, message: 'User has been edited!', severity: 'info' });
+            setSnackbarInfo({ open: true, message: 'Employee has been edited!', severity: 'info' });
         }
 
         toggleDialog('edit', false);
@@ -124,43 +124,68 @@ const EmployeeTable = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {(rowsPerPage > 0
-                            ? employees.filter(user => {
-                                return user.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                                    (selectedRole === "" || user.roles.includes(selectedRole)) &&
-                                    (selectedLocation === "" || user.locations.includes(selectedLocation));
-                            }).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            : employees.filter(user => {
-                                return user.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                                    (selectedRole === "" || user.roles.includes(selectedRole)) &&
-                                    (selectedLocation === "" || user.locations.includes(selectedLocation));
-                            })
-                        ).map((user) => (
-                            <TableRow key={user.id}>
-                                <TableCell component="th" scope="row">
-                                    {user.name}
-                                </TableCell>
-                                <TableCell align="center">{user.email}</TableCell>
-                                <TableCell align="center">{user.phone}</TableCell>
-                                <TableCell align="center">
-                                    {Array.isArray(user.locations) ? user.locations.join(', ') : user.locations}
-                                </TableCell>
-                                <TableCell align="center">
-                                    {Array.isArray(user.roles) ? user.roles.join(', ') : user.roles}
-                                </TableCell>
-                                <TableCell align="center">
-                                    <UserActionsMenu
-                                        onEdit={() => {
-                                            handleEditUser(user.id);
-                                        }}
-                                        onDeactivate={() => {
-                                            setPickedUser(user);
-                                            toggleDialog('confirm', true);
-                                        }}
-                                    />
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                        {isLoading ? (
+                            Array.from(new Array(rowsPerPage)).map((_, index) => (
+                                <TableRow key={index}>
+                                    <TableCell component="th" scope="row">
+                                        <Skeleton variant="text" />
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Skeleton variant="text" />
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Skeleton variant="text" />
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Skeleton variant="text" />
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Skeleton variant="text" />
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Skeleton variant="text" />
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        ) : (
+                            (rowsPerPage > 0
+                                ? employees.filter(user => {
+                                    return user.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+                                        (selectedRole === "" || user.roles.includes(selectedRole)) &&
+                                        (selectedLocation === "" || user.locations.includes(selectedLocation));
+                                }).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                : employees.filter(user => {
+                                    return user.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+                                        (selectedRole === "" || user.roles.includes(selectedRole)) &&
+                                        (selectedLocation === "" || user.locations.includes(selectedLocation));
+                                })
+                            ).map((user) => (
+                                <TableRow key={user.id}>
+                                    <TableCell component="th" scope="row">
+                                        {user.name}
+                                    </TableCell>
+                                    <TableCell align="center">{user.email}</TableCell>
+                                    <TableCell align="center">{user.phone}</TableCell>
+                                    <TableCell align="center">
+                                        {Array.isArray(user.locations) ? user.locations.join(', ') : user.locations}
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        {Array.isArray(user.roles) ? user.roles.join(', ') : user.roles}
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <UserActionsMenu
+                                            onEdit={() => {
+                                                handleEditUser(user.id);
+                                            }}
+                                            onDeactivate={() => {
+                                                setPickedUser(user);
+                                                toggleDialog('confirm', true);
+                                            }}
+                                        />
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        )}
                     </TableBody>
                     <TableFooter>
                         <TableRow>
@@ -197,6 +222,7 @@ const EmployeeTable = () => {
             </Snackbar>
         </div>
     );
+
 }
 
 export default EmployeeTable;

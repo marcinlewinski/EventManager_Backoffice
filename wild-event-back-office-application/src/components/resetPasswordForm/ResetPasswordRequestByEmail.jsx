@@ -11,7 +11,7 @@ import Alert from "@mui/material/Alert"
 import { useFormik } from "formik"
 import * as Yup from "yup"
 import { useNavigate } from "react-router-dom"
-import { generateResetLink } from "../../services/LoginService"
+import { generateResetLink } from "../../services/api/LoginService"
 
 const validationSchema = Yup.object({
 	email: Yup.string().email("Invalid email format").required("Required"),
