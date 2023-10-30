@@ -48,7 +48,6 @@ export const MapProvider = ({ children }) => {
         }));
     };
     const updateLocationInMap = (updatedLocation) => {
-        console.log(map )
         setMap(prevMap => {
             const updatedLocations = prevMap.locations.map(location => {
                 if (location.id === updatedLocation.id) {

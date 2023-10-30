@@ -17,7 +17,6 @@ const Map = ({ mapLocations }) => {
   mapboxgl.accessToken = `${process.env.REACT_APP_API_KEY}`;
 
 
-
   useEffect(() => {
     if (mapLocations) {
       const map = new mapboxgl.Map({
@@ -45,7 +44,7 @@ const Map = ({ mapLocations }) => {
         })
       });
       return () => map.remove();
-  
+
     }
   }, [mapLocations]);
 

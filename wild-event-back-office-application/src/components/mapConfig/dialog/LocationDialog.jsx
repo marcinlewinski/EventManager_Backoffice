@@ -30,8 +30,6 @@ const LocationDialog = ({updateLocationInMap, addLocationIntoMap, mapLocations, 
         validationSchema: locationBasicSchema,
         onSubmit: async (values) => {
             const response = await submitLocation(token, values);
-            console.log(response)
-            console.log(values)
             values.id ? updateLocationInMap(response) : addLocationIntoMap(response);
 
             //add to context 
@@ -77,7 +75,7 @@ const LocationDialog = ({updateLocationInMap, addLocationIntoMap, mapLocations, 
                     </Grid>
                     <Grid item xs={6}>
                         <Box sx={{ width: '290px', height: '400px' }}>
-                            <MapForm mapLocations={mapLocations} location={location} coordinate={coordinate} setCoordinate={(e) => setCoordinate(e)}></MapForm>
+                            <MapForm key={mapLocations.id} mapLocations={mapLocations} location={location} coordinate={coordinate} setCoordinate={(e) => setCoordinate(e)}></MapForm>
                         </Box>
                     </Grid>
                 </Grid>

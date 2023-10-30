@@ -9,13 +9,15 @@ import Skeleton from '@mui/material/Skeleton';
 
 export const MapConfig = () => {
     const { map, addLocationIntoMap, deleteLocationFromMap, updateLocationInMap } = useMap();
-
+    const [mapKey, setMapKey] = useState(1); 
 
 
     const update = () => {
         //updateDb
         //update global state here 
         // fetchData();
+        setMapKey(prevKey => prevKey + 1); 
+
     };
 
 
@@ -42,7 +44,7 @@ export const MapConfig = () => {
                         <Grid item xs={6}>
                             <Box sx={{ width: '390px', height: '844px', marginTop: '0px' }}>
                                 {map && Object.keys(map).length > 0 ? (
-                                    <Map mapLocations={map} />
+                                    <Map key={mapKey} mapLocations={map} />
                                 ) : (
                                     <Skeleton variant="rectangular" width="80%" height="75%" />
                                 )}
