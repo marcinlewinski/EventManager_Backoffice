@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { Box, Grid } from "@mui/material"
-import { getMap, saveMap } from "../../services/MapService";
+import { getMap, saveMap } from "../../services/api/MapService";
 import Map from './map/Map'
 import LocationsEditList from "./locations/LocationsEditList";
 import CircularProgress from '@mui/material/CircularProgress';

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useUser } from './LoggedUserProvider';
-import { getLocations } from '../LocationService'
+import { getLocations } from '../api/LocationService'
 
 
 const LocationsContext = createContext();

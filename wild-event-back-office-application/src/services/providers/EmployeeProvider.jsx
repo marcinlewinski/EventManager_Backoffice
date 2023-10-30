@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useUser } from './LoggedUserProvider';
-import { getAllActiveUsers, deactivateUser, registerUser, updateUser } from '../EmployeeManagement';
+import { getAllActiveUsers, deactivateUser, registerUser, updateUser } from '../api/EmployeeManagement';
 import { useLocations } from './LocationsProvider';
 import { useRoles } from './RolesProvider';
 

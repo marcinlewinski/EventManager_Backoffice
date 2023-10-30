@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Grid, Box, DialogContent } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
-import { submitLocation } from '../../../services/LocationService';
+import { submitLocation } from '../../../services/api/LocationService';
 import MapForm from '../map/MapForm';
 import { useUser } from "../../../services/providers/LoggedUserProvider";
 import { useFormik, } from 'formik';
