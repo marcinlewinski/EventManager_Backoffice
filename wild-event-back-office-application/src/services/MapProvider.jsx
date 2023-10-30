@@ -22,6 +22,7 @@ export const MapProvider = ({ children }) => {
                 try {
                     const response = await getMap(token);
                     setMap(response);
+                 
                 } catch (error) {
                     console.error('Failed to fetch map:', error);
                 }
@@ -31,10 +32,24 @@ export const MapProvider = ({ children }) => {
         } else {
             setMap({});
         }
+   
+
     }, [token]);
+    const addLocationIntoMap = (location) => {
+        setMap(prevMap => ({
+            ...prevMap,
+            locations: [...prevMap.locations, location]
+        }));
+    };
+    const deleteLocationFromMap = (locationId) => {
+        setMap(prevMap => ({
+            ...prevMap,
+            locations: prevMap.locations.filter(location => location.id !== locationId)
+        }));
+    };
 
     return (
-        <MapContext.Provider value={{ map: map }}>
+        <MapContext.Provider value={{ map: map, addLocationIntoMap: addLocationIntoMap, deleteLocationFromMap: deleteLocationFromMap }}>
             {children}
         </MapContext.Provider>
     );

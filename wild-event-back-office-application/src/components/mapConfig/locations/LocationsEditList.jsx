@@ -9,7 +9,7 @@ import Snackbar from '@mui/material/Snackbar';
 import { useUser } from "../../../services/useUser";
 import { LocationTableFields } from "./LocationTableFields";
 
-const LocationsEditList = ({ mapLocations, setLocations }) => {
+const LocationsEditList = ({ deleteLocationFromMap, addLocationIntoMap, mapLocations, setLocations }) => {
   const { token } = useUser();
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -31,6 +31,7 @@ const LocationsEditList = ({ mapLocations, setLocations }) => {
   };
 
   const finishUpdating = () => {
+    
     closeModal();
     setLocations();
   };
@@ -46,6 +47,7 @@ const LocationsEditList = ({ mapLocations, setLocations }) => {
   };
 
   const deleteLocationById = async () => {
+    deleteLocationFromMap(locationDeleteId);
     try {
       await deleteLocation(token, locationDeleteId)
       setSnackbarInfo({
@@ -53,6 +55,7 @@ const LocationsEditList = ({ mapLocations, setLocations }) => {
         message: 'Location has been deleted!',
         severity: 'success'
       });
+    
     } catch (error) {
       console.error("Could not delete location:", error)
     }
@@ -75,6 +78,7 @@ const LocationsEditList = ({ mapLocations, setLocations }) => {
       </LocationTableFields>
     </TableContainer>
     <LocationDialog
+      addLocationIntoMap={addLocationIntoMap}
       mapLocations={mapLocations}
       open={updateDialogOpen}
       location={locationUpdate}

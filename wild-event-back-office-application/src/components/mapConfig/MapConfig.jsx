@@ -8,10 +8,9 @@ import { useMap } from "../../services/MapProvider";
 import Skeleton from '@mui/material/Skeleton';
 
 export const MapConfig = () => {
-    const { map } = useMap();
-   
+    const { map, addLocationIntoMap, deleteLocationFromMap } = useMap();
 
- 
+
 
     const update = () => {
         //updateDb
@@ -23,7 +22,7 @@ export const MapConfig = () => {
     return (
         <Box sx={{ mt: '240px', ml: '0px' }}>
             <Box>
-                { !map ? (
+                {!map ? (
                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                         <CircularProgress />
                     </div>
@@ -31,7 +30,12 @@ export const MapConfig = () => {
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
                             <Box>
-                                <LocationsEditList mapLocations={map} setLocations={() => update()}></LocationsEditList>
+                                <LocationsEditList 
+                                deleteLocationFromMap={deleteLocationFromMap}
+                                addLocationIntoMap={addLocationIntoMap} 
+                                mapLocations={map} 
+                                setLocations={() => update()}>
+                                </LocationsEditList>
                             </Box>
                         </Grid>
                         <Grid item xs={6}>

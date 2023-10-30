@@ -31,7 +31,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
     })
     const { user, token } = useUser();
     const [userDB, setUserDB] = useState([]);
-    const [events, setEvents] = useState([]);
+    const [events, setEvents] = useState(null);
     const [locationDB, setLocationDB] = useState([]);
     const [open, setOpen] = useState(false);
     const [isTimeGridWeek, setIsTimeGridWeek] = useState({});
@@ -62,6 +62,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
             const data = isMyCalendar
                 ? await getAllMyEvents(token)
                 : await getAllEvents(token);
+                console.log(data)
             setEvents(
                 data.map(eventDataFromDB => {
                     const startDate = new Date(eventDataFromDB.startsAt);
@@ -125,6 +126,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         }
     }
     useEffect(() => {
+        setEvents(null);
         getEvents();
         getAllLocations();
         getAllUsers();
@@ -352,7 +354,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
                     </Box>
                 </Container>
             )}
-            {!isMyCalendar && (
+            {events !== null && !isMyCalendar && Object.keys(pickedEvent).length > 0  &&(
                 <EventForm
                     open={open}
                     isTimeGridWeek={isTimeGridWeek}

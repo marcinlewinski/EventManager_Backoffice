@@ -4,7 +4,7 @@ import LocationActionsMenu from './LocationActionsMenu';
 import CircularProgress from '@mui/material/CircularProgress';
 
 export const LocationTableFields = ({ mapLocations, setUpdateDialogOpen, setUpdating, handleOpenDeleteDialog }) => {
-
+const disabledBtn = Object.keys(mapLocations).length > 0 ? false : true
     return (
         <>
             <Table aria-label="simple table">
@@ -13,7 +13,7 @@ export const LocationTableFields = ({ mapLocations, setUpdateDialogOpen, setUpda
                         <TableCell align="center" sx={{ fontWeight: 'bold', fontSize: '1.1rem' }}>No</TableCell>
                         <TableCell align="center" sx={{ fontWeight: 'bold', fontSize: '1.1rem' }}>Title</TableCell>
                         <TableCell align="center" sx={{ fontWeight: 'bold', fontSize: '1.1rem' }}>
-                            <Button variant="outlined" color="primary" size="large"
+                            <Button disabled={disabledBtn} variant="outlined" color="primary" size="large"
                                 style={{ borderRadius: '50%', height: '60px', fontSize: '32px', lineHeight: '64px' }}
                                 onClick={() => setUpdateDialogOpen(true)}>+</Button>
                         </TableCell>
