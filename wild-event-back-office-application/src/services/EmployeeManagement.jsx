@@ -62,13 +62,20 @@ const updateUser = async (userId, userDTO, token) => {
         body: JSON.stringify(userDTO),
       }
     );
+
     if (!response.ok) {
       throw new Error("There is an issue with updating user!");
     }
+
+    const updatedUser = await response.json();
+    return updatedUser;
+
   } catch (error) {
     console.error("Cannot update user:", error);
+    throw error;
   }
 };
+
 
 const deactivateUser = async (userId, token) => {
   try {

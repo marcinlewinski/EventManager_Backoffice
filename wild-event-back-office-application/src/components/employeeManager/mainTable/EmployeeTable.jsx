@@ -36,19 +36,20 @@ const EmployeeTable = () => {
     const { locations } = useLocations();
     const { employees, deactivateEmployee } = useEmployees();
 
-    const handleDeactivateUser = async () => {
+
+    const handleDeactivateUser = () => {
         deactivateEmployee(pickedUser.id)
         setSnackbarInfo({ open: true, message: 'User has been deactivated!', severity: 'success' });
         toggleDialog('confirm', false);
     };
 
-    const handleEditUser = async (userId) => {
+    const handleEditUser = (userId) => {
         const employee = employees.find(u => u.id === userId);
         setPickedUser(employee);
         toggleDialog('edit', true);
     }
 
-    const handleCloseAdd = async (wasCancelled, newUser) => {
+    const handleCloseAdd = (wasCancelled, newUser) => {
         if (wasCancelled) {
             toggleDialog('add', false);
             return;
@@ -59,7 +60,7 @@ const EmployeeTable = () => {
         toggleDialog('add', false);
     };
 
-    const handleCloseEdit = async (wasCancelled, updatedUser) => {
+    const handleCloseEdit = (wasCancelled, updatedUser) => {
         if (wasCancelled) {
             toggleDialog('edit', false);
             return;

@@ -22,19 +22,20 @@ export const EmployeesProvider = ({ children }) => {
   const { locations } = useLocations();
 
   useEffect(() => {
-    const fetchEmployees = async () => {
-      const response = await getAllActiveUsers(token);
-      setEmployees(response);
-      console.log(response)
-    };
-
-    fetchEmployees();
+    if (token) {  
+      const fetchEmployees = async () => {
+        const response = await getAllActiveUsers(token);
+        setEmployees(response);
+      };
+  
+      fetchEmployees();
+    }
   }, [token]);
 
   const addEmployee = async (newEmployeeData) => {
     try {
-      await registerUser(newEmployeeData);
-      setEmployees(prevEmployees => [...prevEmployees, newEmployeeData]);
+      const newEmployee = await registerUser(newEmployeeData);
+      setEmployees(prevEmployees => [...prevEmployees, newEmployee]);
     } catch (error) {
       console.error("Error during registration:", error);
     }
@@ -42,20 +43,8 @@ export const EmployeesProvider = ({ children }) => {
 
   const updateEmployee = async (employeeId, updatedData) => {
     try {
-      console.log("Before updateUser:", updatedData);
-    const updatedEmployee = await updateUser(employeeId, updatedData, token);
+      const updatedEmployee = await updateUser(employeeId, updatedData, token);
     
-      updatedEmployee.roles = updatedData.roleIds.map(roleId => {
-        const role = roles.find(r => r.id === roleId);
-        return role ? role.title : '';
-      });
-  
-      updatedEmployee.locations = updatedData.locationIds.map(locationId => {
-        const location = locations.find(l => l.id === locationId);
-        return location ? location.title : '';
-      });
-  
-      console.log("After updateUser:", updatedEmployee);
       setEmployees(prevEmployees =>
         prevEmployees.map(employee =>
           employee.id === employeeId ? updatedEmployee : employee
@@ -65,6 +54,8 @@ export const EmployeesProvider = ({ children }) => {
       console.error("Error updating user:", error);
     }
   };
+  
+  
 
   const deactivateEmployee = async (employeeId) => {
     try {
