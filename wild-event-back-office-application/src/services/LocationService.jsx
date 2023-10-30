@@ -29,6 +29,7 @@ const submitLocation = async (token, location) => {
             if (!response.ok) {
                 throw new Error("Problem occurred while updating the location!");
             }
+            return await response.json();
         } catch (error) {
             console.error("Location could not be updated: ", error);
         }

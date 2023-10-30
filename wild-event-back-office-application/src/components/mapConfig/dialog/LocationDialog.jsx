@@ -11,7 +11,7 @@ import { LocationDialogFields } from './LocationDialogFields';
 import { LocationDialogActions } from './LocationDialogActions';
 
 
-const LocationDialog = ({ addLocationIntoMap, mapLocations, open, location, handleClose, closeModal }) => {
+const LocationDialog = ({updateLocationInMap, addLocationIntoMap, mapLocations, open, location, handleClose, closeModal }) => {
     const { token } = useUser();
     const [coordinate, setCoordinate] = useState({
         latitude: mapLocations.coordinate ? mapLocations.coordinate.latitude : 0.0,
@@ -32,7 +32,8 @@ const LocationDialog = ({ addLocationIntoMap, mapLocations, open, location, hand
             const response = await submitLocation(token, values);
             console.log(response)
             console.log(values)
-            addLocationIntoMap(response)
+            values.id ? updateLocationInMap(response) : addLocationIntoMap(response);
+
             //add to context 
             //update temp state or read from context insted of fetching every time
             await handleClose();

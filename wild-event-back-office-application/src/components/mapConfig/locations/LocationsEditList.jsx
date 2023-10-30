@@ -9,7 +9,7 @@ import Snackbar from '@mui/material/Snackbar';
 import { useUser } from "../../../services/useUser";
 import { LocationTableFields } from "./LocationTableFields";
 
-const LocationsEditList = ({ deleteLocationFromMap, addLocationIntoMap, mapLocations, setLocations }) => {
+const LocationsEditList = ({updateLocationInMap, deleteLocationFromMap, addLocationIntoMap, mapLocations, setLocations }) => {
   const { token } = useUser();
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -77,7 +77,8 @@ const LocationsEditList = ({ deleteLocationFromMap, addLocationIntoMap, mapLocat
       >
       </LocationTableFields>
     </TableContainer>
-    <LocationDialog
+    <LocationDialog 
+    updateLocationInMap={updateLocationInMap}
       addLocationIntoMap={addLocationIntoMap}
       mapLocations={mapLocations}
       open={updateDialogOpen}

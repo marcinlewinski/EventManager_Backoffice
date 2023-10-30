@@ -8,7 +8,7 @@ import { useMap } from "../../services/MapProvider";
 import Skeleton from '@mui/material/Skeleton';
 
 export const MapConfig = () => {
-    const { map, addLocationIntoMap, deleteLocationFromMap } = useMap();
+    const { map, addLocationIntoMap, deleteLocationFromMap, updateLocationInMap } = useMap();
 
 
 
@@ -30,11 +30,12 @@ export const MapConfig = () => {
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
                             <Box>
-                                <LocationsEditList 
-                                deleteLocationFromMap={deleteLocationFromMap}
-                                addLocationIntoMap={addLocationIntoMap} 
-                                mapLocations={map} 
-                                setLocations={() => update()}>
+                                <LocationsEditList
+                                    updateLocationInMap={updateLocationInMap}
+                                    deleteLocationFromMap={deleteLocationFromMap}
+                                    addLocationIntoMap={addLocationIntoMap}
+                                    mapLocations={map}
+                                    setLocations={() => update()}>
                                 </LocationsEditList>
                             </Box>
                         </Grid>
