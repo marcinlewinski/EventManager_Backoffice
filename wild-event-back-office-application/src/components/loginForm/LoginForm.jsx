@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useUser } from '../../services/useUser';
-import { loginUser } from '../../services/LoginService';
+import { useUser } from '../../services/providers/LoggedUserProvider';
+import { loginUser } from '../../services/api/LoginService';
 import ResetPasswordRequestByEmail from '../resetPasswordForm/ResetPasswordRequestByEmail';
 import {
   Avatar,

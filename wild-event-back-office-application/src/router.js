@@ -10,12 +10,12 @@ import {
   EmployeePage,
   MapPage,
 } from "./pages/index";
-import { UserProvider } from "./services/useUser";
+import { UserProvider } from "./services/providers/LoggedUserProvider";
 import { DarkModeProvider } from "./components/darkMode/DarkModeProvider";
-import { RolesProvider } from "./services/RolesProvider";
-import { LocationsProvider } from "./services/LocationsProvider";
-import { EmployeesProvider } from "./services/EmployeeProvider";
-import { MapProvider } from "./services/MapProvider";
+import { RolesProvider } from "./services/providers/RolesProvider";
+import { LocationsProvider } from "./services/providers/LocationsProvider";
+import { EmployeesProvider } from "./services/providers/EmployeeProvider";
+import { MapProvider } from "./services/providers/MapProvider";
 
 const router = createBrowserRouter([
   {

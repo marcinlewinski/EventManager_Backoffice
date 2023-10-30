@@ -8,7 +8,7 @@ import {
 } from "@mui/material"
 import Brightness4Icon from "@mui/icons-material/Brightness4"
 import { useDarkMode } from "../../components/darkMode/DarkModeProvider"
-import { useUser } from "../../services/useUser"
+import { useUser } from "../../services/providers/LoggedUserProvider"
 
 export const HeaderComponent = () => {
 	const { darkMode, toggleDarkMode } = useDarkMode()

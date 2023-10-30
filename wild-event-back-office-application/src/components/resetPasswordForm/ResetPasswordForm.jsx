@@ -9,7 +9,7 @@ import {
 	Snackbar,
 	Alert,
 } from "@mui/material"
-import { resetPassword } from "../../services/EmployeeManagement"
+import { resetPassword } from "../../services/api/EmployeeManagement"
 import { useParams, useNavigate } from "react-router-dom"
 
 const ResetPasswordForm = () => {

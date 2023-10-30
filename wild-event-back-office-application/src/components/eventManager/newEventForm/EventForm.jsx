@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent } from '@mui/material';
 import dayjs from 'dayjs';
-import { addEvent, updateEvent } from '../../../services/EventService';
+import { addEvent, updateEvent } from '../../../services/api/EventService';
 import basicSchema from '../validationSchema/EventFormSchema';
 import { useFormik, } from 'formik';
-import { useUser } from '../../../services/useUser';
+import { useUser } from '../../../services/providers/LoggedUserProvider';
 import { EventFormFields } from './EventFormFields';
 import { EventFormActions } from './EventFormActions';
 

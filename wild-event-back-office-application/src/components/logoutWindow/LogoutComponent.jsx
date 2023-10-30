@@ -1,7 +1,7 @@
 import React from "react"
 import { useNavigate } from "react-router-dom"
 import { Box, Paper, Typography, Button } from "@mui/material"
-import { useUser } from "../../services/useUser"
+import { useUser } from "../../services/providers/LoggedUserProvider"
 
 export const LogoutComponent = () => {
 	const { logout } = useUser()
