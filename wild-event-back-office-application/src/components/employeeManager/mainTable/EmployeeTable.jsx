@@ -18,9 +18,9 @@ import TablePagination from '@mui/material/TablePagination';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { Button } from '@mui/material';
-import { useRoles } from '../../../services/RolesProvider';
-import { useLocations } from '../../../services/LocationsProvider';
-import { useEmployees } from '../../../services/EmployeeProvider';
+import { useRoles } from '../../../services/providers/RolesProvider';
+import { useLocations } from '../../../services/providers/LocationsProvider';
+import { useEmployees } from '../../../services/providers/EmployeeProvider';
 import Skeleton from '@mui/material/Skeleton';
 
 const EmployeeTable = () => {

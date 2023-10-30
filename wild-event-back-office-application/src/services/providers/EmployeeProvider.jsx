@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useUser } from './useUser';
-import { getAllActiveUsers, deactivateUser, registerUser, updateUser } from './EmployeeManagement';
+import { useUser } from './LoggedUserProvider';
+import { getAllActiveUsers, deactivateUser, registerUser, updateUser } from '../EmployeeManagement';
 import { useLocations } from './LocationsProvider';
 import { useRoles } from './RolesProvider';
 
@@ -22,12 +22,12 @@ export const EmployeesProvider = ({ children }) => {
   const { locations } = useLocations();
 
   useEffect(() => {
-    if (token) {  
+    if (token) {
       const fetchEmployees = async () => {
         const response = await getAllActiveUsers(token);
         setEmployees(response);
       };
-  
+
       fetchEmployees();
     }
   }, [token]);
@@ -44,7 +44,7 @@ export const EmployeesProvider = ({ children }) => {
   const updateEmployee = async (employeeId, updatedData) => {
     try {
       const updatedEmployee = await updateUser(employeeId, updatedData, token);
-    
+
       setEmployees(prevEmployees =>
         prevEmployees.map(employee =>
           employee.id === employeeId ? updatedEmployee : employee
@@ -54,8 +54,8 @@ export const EmployeesProvider = ({ children }) => {
       console.error("Error updating user:", error);
     }
   };
-  
-  
+
+
 
   const deactivateEmployee = async (employeeId) => {
     try {
@@ -66,7 +66,7 @@ export const EmployeesProvider = ({ children }) => {
       console.error("Could not deactivate user:", error);
     }
   };
-  
+
 
   return (
     <EmployeesContext.Provider value={{ employees, deactivateEmployee, addEmployee, updateEmployee }}>

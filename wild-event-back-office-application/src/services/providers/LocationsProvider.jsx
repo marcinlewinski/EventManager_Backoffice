@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useUser } from './useUser';
-import { getLocations } from './LocationService'
+import { useUser } from './LoggedUserProvider';
+import { getLocations } from '../LocationService'
 
 
 const LocationsContext = createContext();
@@ -19,8 +19,8 @@ export const LocationsProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchLocations = async () => {
-      const response  = await getLocations(token);
-        setLocations(response);
+      const response = await getLocations(token);
+      setLocations(response);
     };
 
     fetchLocations();
@@ -28,14 +28,14 @@ export const LocationsProvider = ({ children }) => {
 
   const addLocation = (newLocation) => {
     setLocations(prevLocations => [...prevLocations, newLocation]);
-  };  
+  };
 
   const removeLocation = (locationId) => {
     setLocations(prevLocations => prevLocations.filter(location => location.id !== locationId));
   };
 
   return (
-    <LocationsContext.Provider value={{ locations, addLocation, removeLocation}}>
+    <LocationsContext.Provider value={{ locations, addLocation, removeLocation }}>
       {children}
     </LocationsContext.Provider>
   );

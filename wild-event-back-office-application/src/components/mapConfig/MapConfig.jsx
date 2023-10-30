@@ -4,19 +4,19 @@ import { getMap, saveMap } from "../../services/MapService";
 import Map from './map/Map'
 import LocationsEditList from "./locations/LocationsEditList";
 import CircularProgress from '@mui/material/CircularProgress';
-import { useMap } from "../../services/MapProvider";
+import { useMap } from "../../services/providers/MapProvider";
 import Skeleton from '@mui/material/Skeleton';
 
 export const MapConfig = () => {
     const { map, addLocationIntoMap, deleteLocationFromMap, updateLocationInMap } = useMap();
-    const [mapKey, setMapKey] = useState(1); 
+    const [mapKey, setMapKey] = useState(1);
 
 
     const update = () => {
         //updateDb
         //update global state here 
         // fetchData();
-        setMapKey(prevKey => prevKey + 1); 
+        setMapKey(prevKey => prevKey + 1);
 
     };
 

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useUser } from './useUser';
-import { getMap } from "./MapService"
+import { useUser } from './LoggedUserProvider';
+import { getMap } from "../MapService"
 
 const MapContext = createContext();
 

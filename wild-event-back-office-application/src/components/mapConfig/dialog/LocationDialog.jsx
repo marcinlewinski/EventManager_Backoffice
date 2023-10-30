@@ -4,14 +4,14 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import { submitLocation } from '../../../services/LocationService';
 import MapForm from '../map/MapForm';
-import { useUser } from "../../../services/useUser";
+import { useUser } from "../../../services/providers/LoggedUserProvider";
 import { useFormik, } from 'formik';
 import locationBasicSchema from '../validationSchema/locationBasicSchema';
 import { LocationDialogFields } from './LocationDialogFields';
 import { LocationDialogActions } from './LocationDialogActions';
 
 
-const LocationDialog = ({updateLocationInMap, addLocationIntoMap, mapLocations, open, location, handleClose, closeModal }) => {
+const LocationDialog = ({ updateLocationInMap, addLocationIntoMap, mapLocations, open, location, handleClose, closeModal }) => {
     const { token } = useUser();
     const [coordinate, setCoordinate] = useState({
         latitude: mapLocations.coordinate ? mapLocations.coordinate.latitude : 0.0,

@@ -6,7 +6,7 @@ import { Button } from "@mui/material";
 import Marker from "./Marker"
 import './Map.css'
 import MapDialog from "../dialog/MapDialog";
-import { useUser } from "../../../services/useUser";
+import { useUser } from "../../../services/providers/LoggedUserProvider";
 
 const Map = ({ mapLocations }) => {
   const { token } = useUser();

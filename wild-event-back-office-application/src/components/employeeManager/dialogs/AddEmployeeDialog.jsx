@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, FormControl, InputLabel, Select, MenuItem, FormHelperText, TextField, Typography } from '@mui/material';
 import dialogValidationSchema from './validationSchema';
-import { useEmployees } from '../../../services/EmployeeProvider';
+import { useEmployees } from '../../../services/providers/EmployeeProvider';
 import CircularProgress from '@mui/material/CircularProgress';
 
 
@@ -22,10 +22,10 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
     validateOnChange: true,
     validateOnBlur: true,
     onSubmit: async (values, { resetForm }) => {
-        setIsLoading(!isLoading);
-        await addEmployee(values);
-        handleClose(false, values);
-        resetForm();
+      setIsLoading(!isLoading);
+      await addEmployee(values);
+      handleClose(false, values);
+      resetForm();
     }
   });
 

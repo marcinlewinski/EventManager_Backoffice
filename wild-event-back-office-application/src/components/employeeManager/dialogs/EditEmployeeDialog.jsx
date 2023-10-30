@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, FormControl, InputLabel, Select, MenuItem, TextField, FormHelperText } from '@mui/material';
 import dialogValidationSchema from './validationSchema';
-import { useEmployees } from '../../../services/EmployeeProvider';
+import { useEmployees } from '../../../services/providers/EmployeeProvider';
 
 const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToEdit }) => {
     const { updateEmployee } = useEmployees();
