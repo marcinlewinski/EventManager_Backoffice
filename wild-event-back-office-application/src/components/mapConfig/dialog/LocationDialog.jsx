@@ -11,12 +11,11 @@ import { LocationDialogFields } from './LocationDialogFields';
 import { LocationDialogActions } from './LocationDialogActions';
 
 
-
-const LocationDialog = ({ mapLocations, open, location, handleClose, closeModal }) => {
+const LocationDialog = ({updateLocationInMap, addLocationIntoMap, mapLocations, open, location, handleClose, closeModal }) => {
     const { token } = useUser();
     const [coordinate, setCoordinate] = useState({
-        latitude: mapLocations.coordinate.latitude,
-        longitude: mapLocations.coordinate.longitude
+        latitude: mapLocations.coordinate ? mapLocations.coordinate.latitude : 0.0,
+        longitude: mapLocations.coordinate ? mapLocations.coordinate.longitude : 0.0
     });
 
     const formik = useFormik({
@@ -30,7 +29,9 @@ const LocationDialog = ({ mapLocations, open, location, handleClose, closeModal 
         },
         validationSchema: locationBasicSchema,
         onSubmit: async (values) => {
-            await submitLocation(token, values);
+            const response = await submitLocation(token, values);
+            values.id ? updateLocationInMap(response) : addLocationIntoMap(response);
+
             //add to context 
             //update temp state or read from context insted of fetching every time
             await handleClose();
@@ -69,18 +70,18 @@ const LocationDialog = ({ mapLocations, open, location, handleClose, closeModal 
             <DialogContent>
                 <Grid container spacing={2}>
                     <Grid item xs={6}>
-                       <LocationDialogFields formik={formik}>
-                       </LocationDialogFields>
+                        <LocationDialogFields formik={formik}>
+                        </LocationDialogFields>
                     </Grid>
                     <Grid item xs={6}>
                         <Box sx={{ width: '290px', height: '400px' }}>
-                            <MapForm mapLocations={mapLocations} location={location} coordinate={coordinate} setCoordinate={(e) => setCoordinate(e)}></MapForm>
+                            <MapForm key={mapLocations.id} mapLocations={mapLocations} location={location} coordinate={coordinate} setCoordinate={(e) => setCoordinate(e)}></MapForm>
                         </Box>
                     </Grid>
                 </Grid>
             </DialogContent>
-           <LocationDialogActions formik={formik} closeModal={closeModal} location={location}>
-           </LocationDialogActions>
+            <LocationDialogActions formik={formik} closeModal={closeModal} location={location}>
+            </LocationDialogActions>
         </Dialog>
     );
 };
