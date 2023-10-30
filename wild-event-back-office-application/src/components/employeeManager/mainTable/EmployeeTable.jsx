@@ -39,7 +39,7 @@ const EmployeeTable = () => {
 
     const handleDeactivateUser = () => {
         deactivateEmployee(pickedUser.id)
-        setSnackbarInfo({ open: true, message: 'User has been deactivated!', severity: 'success' });
+        setSnackbarInfo({ open: true, message: 'Employee has been deactivated!', severity: 'success' });
         toggleDialog('confirm', false);
     };
 
@@ -55,7 +55,7 @@ const EmployeeTable = () => {
             return;
         }
         if (newUser) {
-            setSnackbarInfo({ open: true, message: 'User has been added!', severity: 'success' });
+            setSnackbarInfo({ open: true, message: 'Employee has been added! Ask him to check his email to end registration process.', severity: 'success' });
         }
         toggleDialog('add', false);
     };
@@ -67,7 +67,7 @@ const EmployeeTable = () => {
         }
 
         if (updatedUser) {
-            setSnackbarInfo({ open: true, message: 'User has been edited!', severity: 'info' });
+            setSnackbarInfo({ open: true, message: 'Employee has been edited!', severity: 'info' });
         }
 
         toggleDialog('edit', false);
