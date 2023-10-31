@@ -30,8 +30,8 @@ export const EventFormFields = ({
 
     return (
         <>
-            <form onSubmit={formik.handleSubmit}>
-                <FormGroup>
+          
+                <FormGroup onSubmit={formik.handleSubmit}>
                     <FormControl margin="normal">
                         <TextField
                             label="Event title"
@@ -158,7 +158,7 @@ export const EventFormFields = ({
                         />
                     </FormControl>
                 </FormGroup>
-            </form>
+          
         </>
     )
 }

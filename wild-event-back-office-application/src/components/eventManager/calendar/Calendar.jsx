@@ -4,7 +4,7 @@ import dayGridPlugin from "@fullcalendar/daygrid"
 import timeGridPlugin from "@fullcalendar/timegrid"
 import listPlugin from "@fullcalendar/list"
 import interactionPlugin from "@fullcalendar/interaction"
-import { Box, Container } from "@mui/material"
+import { Box, Container, Typography } from "@mui/material"
 import {
     getAllEvents,
     deleteEvent,
@@ -312,19 +312,18 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         return (
             <Tooltip title={
                 <>
-                    <h4>{eventInfo.event.title}</h4>
-                    <p>Start: {eventInfo.event.start ? eventInfo.event.start.toLocaleString() : 'N/A'}</p>
-                    <p>End: {eventInfo.event.end ? eventInfo.event.end.toLocaleString() : 'N/A'}</p>
-                    <p>Description: {eventInfo.event.extendedProps.description}</p>
-                    <p>Location: {eventInfo.event.extendedProps.location}</p>
-                    <p>Organizers: {organizersStr}</p>
+                    <Typography variant="body2">{eventInfo.event.title}</Typography>
+                    <Typography variant="body3">Start: {eventInfo.event.start ? eventInfo.event.start.toLocaleString() : 'N/A'}</Typography>
+                    <Typography variant="body3">End: {eventInfo.event.end ? eventInfo.event.end.toLocaleString() : 'N/A'}</Typography>
+                    <Typography variant="body3">Description: {eventInfo.event.extendedProps.description}</Typography>
+                    <Typography variant="body3">Location: {eventInfo.event.extendedProps.location}</Typography>
+                    <Typography variant="body3">Organizers: {organizersStr}</Typography>
                 </>
             }>
-                <div>
-                    {eventInfo.timeText}
-                    <br />
-                    {eventInfo.event.title}
-                </div>
+                <Box sx={{ '& > *:not(:last-child)': { marginBottom: '8px' } }}>
+                    <Typography variant="body3">{eventInfo.timeText}</Typography>
+                    <Typography variant="body3">{eventInfo.event.title}</Typography>
+                </Box>
             </Tooltip>
         );
     }
@@ -350,9 +349,9 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
     return (
         <>
             {isLoading ? (
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                     <CircularProgress />
-                </div>
+                </Box>
             ) : (
                 <Container maxWidth="lg" sx={{ mt: { xs: 2, sm: 3, md: 10 } }}>
                     <Box>
