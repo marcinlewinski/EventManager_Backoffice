@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useContext } from "react"
+import { useState, useEffect, useRef } from "react"
 import FullCallendar from "@fullcalendar/react"
 import dayGridPlugin from "@fullcalendar/daygrid"
 import timeGridPlugin from "@fullcalendar/timegrid"
@@ -12,8 +12,6 @@ import {
 } from "../../../services/api/EventService"
 import dayjs from "dayjs"
 import EventForm from "../newEventForm/EventForm"
-import { getLocations } from "../../../services/api/LocationService"
-import { getUsers } from "../../../services/api/UserService"
 import Snackbar from "@mui/material/Snackbar"
 import MuiAlert from "@mui/material/Alert"
 import { useUser } from "../../../services/providers/LoggedUserProvider"
@@ -21,6 +19,8 @@ import { getAllMyEvents } from "../../../services/api/MyEventService"
 import { useRoles } from "../../../services/providers/RolesProvider";
 import CircularProgress from '@mui/material/CircularProgress';
 import Tooltip from '@mui/material/Tooltip';
+import { useLocations } from '../../../services/providers/LocationsProvider';
+import { useEmployees } from '../../../services/providers/EmployeeProvider';
 
 
 
@@ -31,9 +31,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         severity: "success",
     })
     const { user, token } = useUser();
-    const [userDB, setUserDB] = useState([]);
     const [events, setEvents] = useState(null);
-    const [locationDB, setLocationDB] = useState([]);
     const [open, setOpen] = useState(false);
     const [isTimeGridWeek, setIsTimeGridWeek] = useState({});
     const [isUpdateEvent, setIsUpdateEvent] = useState(false);
@@ -46,7 +44,10 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
     });
     const [isLoading, setIsLoading] = useState(true);
     const { roles } = useRoles();
+    const { locations } = useLocations();
+    const { employees } = useEmployees();
     const calendarRef = useRef(null);
+
 
     const isAdmin = () => {
         const allPossibleRoles = roles?.map(role => role.name);
@@ -63,7 +64,6 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
             const data = isMyCalendar
                 ? await getAllMyEvents(token)
                 : await getAllEvents(token);
-            console.log(data)
             setEvents(
                 data.map(eventDataFromDB => {
                     const startDate = new Date(eventDataFromDB.startsAt);
@@ -92,45 +92,15 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         }
     }
 
-    function isDatesDifferenceOneDay(date1, date2) {
+    const isDatesDifferenceOneDay = (date1, date2) => {
         const oneDayMilliseconds = 24 * 60 * 60 * 1000;
         const differenceMilliseconds = Math.abs(date1 - date2);
         return differenceMilliseconds === oneDayMilliseconds;
     }
 
-    const getAllLocations = async () => {
-        try {
-            const data = await getLocations(token)
-            setLocationDB(
-                data.map(locationDataFromDB => ({
-                    id: locationDataFromDB.id,
-                    title: locationDataFromDB.title,
-                }))
-            )
-        } catch (error) {
-            console.error("Error fetching locations", error)
-            setLocationDB([])
-        }
-    }
-    const getAllUsers = async () => {
-        try {
-            const data = await getUsers(token);
-            setUserDB(
-                data.map(userData => ({
-                    id: userData.id,
-                    name: userData.name,
-                }))
-            );
-        } catch (error) {
-            console.error("Error fetching users", error);
-            setUserDB([]);
-        }
-    }
     useEffect(() => {
         setEvents(null);
         getEvents();
-        getAllLocations();
-        getAllUsers();
     }, []);
 
     const handleDateClick = selected => {
@@ -177,11 +147,11 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
             description: event.description,
             organizers: isUUID(event.organizers)
                 ? event.organizers.map(organizerId => {
-                    const user = userDB.find(user => user.id === organizerId)
+                    const user = employees.find(user => user.id === organizerId)
                     return user ? user.name : null
                 })
                 : event.organizers,
-            location: locationDB.find(
+            location: locations.find(
                 location =>
                     location.title === event.location || location.id === event.location
             ),
@@ -320,7 +290,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
                     <Typography variant="body3">Organizers: {organizersStr}</Typography>
                 </>
             }>
-                <Box sx={{ '& > *:not(:last-child)': { marginBottom: '8px' } }}>
+                <Box sx={{ '& > *:not(:last-child)': { marginBottom: 'auto' } }}>
                     <Typography variant="body3">{eventInfo.timeText}</Typography>
                     <Typography variant="body3">{eventInfo.event.title}</Typography>
                 </Box>
@@ -383,8 +353,8 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
                 <EventForm
                     open={open}
                     isTimeGridWeek={isTimeGridWeek}
-                    userDB={userDB}
-                    locationDB={locationDB}
+                    userDB={employees}
+                    locationDB={locations}
                     handleEvent={handleEvent}
                     handleDeleteEvent={handleDeleteEvent}
                     handleModalClose={handleModalClose}

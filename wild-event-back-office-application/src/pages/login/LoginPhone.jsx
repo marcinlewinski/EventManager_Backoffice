@@ -5,7 +5,6 @@ import { PhoneLayout } from "../layout/PhoneLayout"
 export const LoginPhone = () => {
 	return (
 		<PhoneLayout>
-
 			<MenuAppBar />
 			<LoginForm isMobileView={true}/>
 		</PhoneLayout>
