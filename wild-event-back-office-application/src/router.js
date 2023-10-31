@@ -16,6 +16,7 @@ import { RolesProvider } from "./services/providers/RolesProvider";
 import { LocationsProvider } from "./services/providers/LocationsProvider";
 import { EmployeesProvider } from "./services/providers/EmployeeProvider";
 import { MapProvider } from "./services/providers/MapProvider";
+import { ChatPage } from "./pages/chatPage/ChatPage";
 
 const router = createBrowserRouter([
   {
@@ -70,6 +71,11 @@ const router = createBrowserRouter([
       {
         path: "/reset-password/:token",
         element: <ResetPasswordForm />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "/chat",
+        element: <ChatPage />,
         errorElement: <ErrorPage />,
       },
       {
