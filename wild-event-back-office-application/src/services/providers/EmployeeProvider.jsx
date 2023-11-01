@@ -1,8 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useUser } from './LoggedUserProvider';
 import { getAllActiveUsers, deactivateUser, registerUser, updateUser } from '../api/EmployeeManagement';
-import { useLocations } from './LocationsProvider';
-import { useRoles } from './RolesProvider';
+
 
 
 const EmployeesContext = createContext();
@@ -18,8 +17,7 @@ export const useEmployees = () => {
 export const EmployeesProvider = ({ children }) => {
   const [employees, setEmployees] = useState([]);
   const { token } = useUser();
-  const { roles } = useRoles();
-  const { locations } = useLocations();
+
 
   useEffect(() => {
     if (token) {

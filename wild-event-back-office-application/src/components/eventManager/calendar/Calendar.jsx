@@ -21,6 +21,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Tooltip from '@mui/material/Tooltip';
 import { useLocations } from '../../../services/providers/LocationsProvider';
 import { useEmployees } from '../../../services/providers/EmployeeProvider';
+import { useEvents } from "../../../services/providers/EventsManagementProvider"
 
 
 
@@ -31,7 +32,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         severity: "success",
     })
     const { user, token } = useUser();
-    const [events, setEvents] = useState(null);
+    const [eventsData, setEventsData] = useState(null);
     const [open, setOpen] = useState(false);
     const [isTimeGridWeek, setIsTimeGridWeek] = useState({});
     const [isUpdateEvent, setIsUpdateEvent] = useState(false);
@@ -47,7 +48,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
     const { locations } = useLocations();
     const { employees } = useEmployees();
     const calendarRef = useRef(null);
-
+    const {events} = useEvents()
 
     const isAdmin = () => {
         const allPossibleRoles = roles?.map(role => role.name);
@@ -64,7 +65,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
             const data = isMyCalendar
                 ? await getAllMyEvents(token)
                 : await getAllEvents(token);
-            setEvents(
+            setEventsData(
                 data.map(eventDataFromDB => {
                     const startDate = new Date(eventDataFromDB.startsAt);
                     const endDate = new Date(eventDataFromDB.endsAt);
@@ -88,7 +89,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
             setIsLoading(false);
         } catch (error) {
             console.error("Error fetching events", error)
-            setEvents([]);
+            setEventsData([]);
         }
     }
 
@@ -99,7 +100,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
     }
 
     useEffect(() => {
-        setEvents(null);
+        setEventsData(null);
         getEvents();
     }, []);
 
@@ -137,7 +138,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
     const handleEventClick = selected => {
         setOpen(true);
         setIsUpdateEvent(true);
-        const event = events.find(event => event.id === selected.event.id);
+        const event = eventsData.find(event => event.id === selected.event.id);
         setPickedEvent({
             id: selected.event.id,
             title: selected.event.title,
@@ -161,11 +162,11 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
 
     const handleDeleteEvent = async dto => {
         try {
-            const eventExistsInDatabase = events.some(event => event.id === dto.id);
+            const eventExistsInDatabase = eventsData.some(event => event.id === dto.id);
 
             if (eventExistsInDatabase) {
                 await deleteEvent(dto.id, token);
-                setEvents(prevEvents => prevEvents.filter(event => event.id !== dto.id));
+                setEventsData(prevEvents => prevEvents.filter(event => event.id !== dto.id));
                 dto.selected.event.remove();
                 handleModalClose();
                 setSnackbarInfo({
@@ -182,7 +183,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
     }
 
     const changeDate = (id, newStart, newEnd) => {
-        setEvents(prevEvents =>
+        setEventsData(prevEvents =>
             prevEvents.map(event =>
                 event.id === id ? { ...event, start: newStart, end: newEnd } : event
             )
@@ -224,7 +225,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
     const handleEvent = (eventData, id) => {
         let calendarApi = calendarRef.current.getApi();
 
-        const existingEvent = events.find(event => event.id === id);
+        const existingEvent = eventsData.find(event => event.id === id);
         const formattedStart = dayjs(eventData.dateRange.startsAt).format(
             "YYYY-MM-DDTHH:mm:ss"
         );
@@ -251,13 +252,13 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
 
         if (existingEvent) {
             calendarApi.getEventById(existingEvent.id)?.remove();
-            setEvents(prevEvents =>
+            setEventsData(prevEvents =>
                 prevEvents.map(event =>
                     event.id === id ? { ...event, ...dtoObj } : event
                 )
             );
         } else {
-            setEvents(prevEvents => [...prevEvents, dtoObj]);
+            setEventsData(prevEvents => [...prevEvents, dtoObj]);
         }
 
         setSnackbarInfo({
@@ -336,7 +337,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
                             selectable={!isMyCalendar && isAdmin()}
                             select={handleDateClick}
                             eventClick={handleEventClick}
-                            events={events}
+                            events={eventsData}
                             selectMirror={!isMyCalendar && isAdmin()}
                             dayMaxEvents={!isMyCalendar && isAdmin()}
                             eventDrop={handleDateUpdate}
@@ -349,7 +350,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
                     </Box>
                 </Container>
             )}
-            {events !== null && !isMyCalendar && Object.keys(pickedEvent).length > 0 && (
+            {eventsData !== null && !isMyCalendar && Object.keys(pickedEvent).length > 0 && (
                 <EventForm
                     open={open}
                     isTimeGridWeek={isTimeGridWeek}

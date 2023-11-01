@@ -16,6 +16,7 @@ import { RolesProvider } from "./services/providers/RolesProvider";
 import { LocationsProvider } from "./services/providers/LocationsProvider";
 import { EmployeesProvider } from "./services/providers/EmployeeProvider";
 import { MapProvider } from "./services/providers/MapProvider";
+import { EventsProvider } from "./services/providers/EventsManagementProvider";
 
 const router = createBrowserRouter([
   {
@@ -27,7 +28,9 @@ const router = createBrowserRouter([
             <MapProvider value={{ map: [] }}>
               <LocationsProvider value={{ locations: [] }}>
                 <EmployeesProvider value={{ employees: [] }}>
-                  <Outlet />
+                  <EventsProvider value={{ events: [] }}>
+                    <Outlet />
+                  </EventsProvider>
                 </EmployeesProvider>
               </LocationsProvider>
             </MapProvider>
