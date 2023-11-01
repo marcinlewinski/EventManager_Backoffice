@@ -17,20 +17,41 @@ export const EventsProvider = ({ children }) => {
     const [events, setEvents] = useState([]);
     const { token } = useUser();
 
-
     useEffect(() => {
         if (token) {
             const fetchEvents = async () => {
-                const response = await getAllEvents(token);
-                setEvents(response);
+                try {
+                    const response = await getAllEvents(token);
+                    setEvents(response);
+                } catch (error) {
+                    setEvents([]);
+                    console.error("Error fetching events: ", error);
+                }
             };
 
             fetchEvents();
         }
     }, [token]);
 
+    const addEvent = (newEvent) => {
+        setEvents(prevEvents => [...prevEvents, newEvent]);
+    };
+
+    const deleteEvent = (eventId) => {
+        setEvents(prevEvents => prevEvents.filter(event => event.id !== eventId));
+    };
+
+    const updateEvent = (updatedEventData) => {
+        setEvents(prevEvents => prevEvents.map(event => {
+            if (event.id === updatedEventData.id) {
+                return { ...event, ...updatedEventData };
+            }
+            return event;
+        }));
+    };
+
     return (
-        <EventsContext.Provider value={{ events: events }}>
+        <EventsContext.Provider value={{ events, addEvent, deleteEvent, updateEvent }}>
             {children}
         </EventsContext.Provider>
     );
