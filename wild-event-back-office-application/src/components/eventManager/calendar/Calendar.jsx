@@ -9,6 +9,7 @@ import {
     getAllEvents,
     deleteEvent,
     updateDateEvent,
+    updateEvent,
 } from "../../../services/api/EventService"
 import dayjs from "dayjs"
 import EventForm from "../newEventForm/EventForm"
@@ -48,7 +49,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
     const { locations } = useLocations();
     const { employees } = useEmployees();
     const calendarRef = useRef(null);
-    const {events} = useEvents()
+    const { events, deleteEventFromContext, updateEventContext, addEventIntoContext } = useEvents()
 
     const isAdmin = () => {
         const allPossibleRoles = roles?.map(role => role.name);
@@ -64,7 +65,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         try {
             const data = isMyCalendar
                 ? await getAllMyEvents(token)
-                : await getAllEvents(token);
+                : events;
             setEventsData(
                 data.map(eventDataFromDB => {
                     const startDate = new Date(eventDataFromDB.startsAt);
@@ -100,7 +101,8 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
     }
 
     useEffect(() => {
-        setEventsData(null);
+        setIsLoading(true);
+        setEventsData({});
         getEvents();
     }, []);
 
@@ -130,12 +132,12 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         });
     }
 
-    const isUUID = str => {
+    const isUUID = (str) => {
         const uuidRegex =
             /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
         return uuidRegex.test(str)
     }
-    const handleEventClick = selected => {
+    const handleEventClick = (selected) => {
         setOpen(true);
         setIsUpdateEvent(true);
         const event = eventsData.find(event => event.id === selected.event.id);
@@ -160,12 +162,13 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         });
     }
 
-    const handleDeleteEvent = async dto => {
+    const handleDeleteEvent = async (dto) => {
         try {
             const eventExistsInDatabase = eventsData.some(event => event.id === dto.id);
 
             if (eventExistsInDatabase) {
                 await deleteEvent(dto.id, token);
+                deleteEventFromContext(dto.id);
                 setEventsData(prevEvents => prevEvents.filter(event => event.id !== dto.id));
                 dto.selected.event.remove();
                 handleModalClose();
@@ -190,12 +193,22 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         );
     }
 
-    const handleDateUpdate = info => {
+    const getContextUpdateObj = (obj) => {
+        const contextObj = events.find(el => el.id === obj.id);
+        if (contextObj) {
+            return {
+                ...contextObj,
+                startsAt: obj.dateRange.startsAt,
+                endsAt: obj.dateRange.endsAt,
+            };
+        }
+    }
+
+    const handleDateUpdate = (info) => {
         const id = info.event._def.publicId;
         const newStart = dayjs(info.event.startStr);
         let newEnd = dayjs(info.event.endStr);
         const formattedStart = newStart.format("YYYY-MM-DDTHH:mm:ss");
-
         if (!newEnd.isValid()) {
             const defaultEndEvent = newStart.add(1, "hour");
             newEnd = defaultEndEvent;
@@ -208,7 +221,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
             },
         };
 
-        if (info.event.allDay) {
+        if (info.event.allDay && info.event.end === null) {
             changeDate(id, info.event.startStr, null);
 
             dto.dateRange.startsAt = formattedStart;
@@ -220,10 +233,29 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
             dto.dateRange.endsAt = formattedEnd;
             changeDate(id, dto.dateRange.startsAt, dto.dateRange.endsAt);
         }
+        const contextObj = getContextUpdateObj(dto);
         updateDateEvent(dto, token);
+        updateEventContext(contextObj);
+    }
+
+    const getContextEventForm = (eventData, idValue) => {
+        const foundLocation = locations.find(el => el.id === eventData.locationId);
+        const locationTitle = foundLocation ? foundLocation.title : 'N/A';
+        return {
+            id: idValue,
+            title: eventData.title,
+            description: eventData.description,
+            startsAt: eventData.dateRange.startsAt,
+            endsAt: eventData.dateRange.endsAt,
+            location: locationTitle,
+            organizers: eventData.organizers,
+            openToPublic: eventData.openToPublic,
+        }
+
     }
     const handleEvent = (eventData, id) => {
         let calendarApi = calendarRef.current.getApi();
+        const eventVal = getContextEventForm(eventData, id);
 
         const existingEvent = eventsData.find(event => event.id === id);
         const formattedStart = dayjs(eventData.dateRange.startsAt).format(
@@ -257,8 +289,10 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
                     event.id === id ? { ...event, ...dtoObj } : event
                 )
             );
+            updateEventContext(eventVal);
         } else {
             setEventsData(prevEvents => [...prevEvents, dtoObj]);
+            addEventIntoContext(eventVal);
         }
 
         setSnackbarInfo({

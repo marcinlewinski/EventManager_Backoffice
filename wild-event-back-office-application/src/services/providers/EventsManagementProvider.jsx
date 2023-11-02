@@ -33,15 +33,15 @@ export const EventsProvider = ({ children }) => {
         }
     }, [token]);
 
-    const addEvent = (newEvent) => {
+    const addEventIntoContext = (newEvent) => {
         setEvents(prevEvents => [...prevEvents, newEvent]);
     };
 
-    const deleteEvent = (eventId) => {
+    const deleteEventFromContext = (eventId) => {
         setEvents(prevEvents => prevEvents.filter(event => event.id !== eventId));
     };
 
-    const updateEvent = (updatedEventData) => {
+    const updateEventContext = (updatedEventData) => {
         setEvents(prevEvents => prevEvents.map(event => {
             if (event.id === updatedEventData.id) {
                 return { ...event, ...updatedEventData };
@@ -51,7 +51,7 @@ export const EventsProvider = ({ children }) => {
     };
 
     return (
-        <EventsContext.Provider value={{ events, addEvent, deleteEvent, updateEvent }}>
+        <EventsContext.Provider value={{ events, addEventIntoContext: addEventIntoContext, deleteEventFromContext: deleteEventFromContext, updateEventContext: updateEventContext }}>
             {children}
         </EventsContext.Provider>
     );
