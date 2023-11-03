@@ -11,7 +11,7 @@ import { LocationDialogFields } from './LocationDialogFields';
 import { LocationDialogActions } from './LocationDialogActions';
 
 
-const LocationDialog = ({ updateLocationInMap, addLocationIntoMap, mapLocations, open, location, handleClose, closeModal }) => {
+const LocationDialog = ({ updateLocationInMap, addLocationIntoMap, mapLocations, open, location, handleClose, closeModal, addLocation, updateLocation }) => {
     const { token } = useUser();
     const [coordinate, setCoordinate] = useState({
         latitude: mapLocations.coordinate ? mapLocations.coordinate.latitude : 0.0,
@@ -31,9 +31,8 @@ const LocationDialog = ({ updateLocationInMap, addLocationIntoMap, mapLocations,
         onSubmit: async (values) => {
             const response = await submitLocation(token, values);
             values.id ? updateLocationInMap(response) : addLocationIntoMap(response);
+            values.id ? updateLocation(response) : addLocation(response);
 
-            //add to context 
-            //update temp state or read from context insted of fetching every time
             await handleClose();
             formik.resetForm()
         },
