@@ -1,6 +1,6 @@
 import React from "react";
 
-const Marker = ({ children, feature, index }) => {
+const Marker = ({ children, index }) => {
     return (
       <button className="marker">
         {index}

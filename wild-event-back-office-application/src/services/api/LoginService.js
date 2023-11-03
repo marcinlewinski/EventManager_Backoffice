@@ -8,7 +8,6 @@ export const loginUser = async(email, password) => {
     });
     
     if (response.ok) {
-        console.log(response)
         return await response.json();
       } else {
         const message = await response.text();

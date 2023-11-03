@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react"
 import { Box, Grid } from "@mui/material"
-import { getMap, saveMap } from "../../services/api/MapService";
 import Map from './map/Map'
 import LocationsEditList from "./locations/LocationsEditList";
 import CircularProgress from '@mui/material/CircularProgress';
@@ -11,13 +10,8 @@ export const MapConfig = () => {
     const { map, addLocationIntoMap, deleteLocationFromMap, updateLocationInMap } = useMap();
     const [mapKey, setMapKey] = useState(1);
 
-
     const update = () => {
-        //updateDb
-        //update global state here 
-        // fetchData();
         setMapKey(prevKey => prevKey + 1);
-
     };
 
 
