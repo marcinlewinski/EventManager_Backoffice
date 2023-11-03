@@ -17,6 +17,8 @@ const LocationDialog = ({ updateLocationInMap, addLocationIntoMap, mapLocations,
         latitude: mapLocations.coordinate ? mapLocations.coordinate.latitude : 0.0,
         longitude: mapLocations.coordinate ? mapLocations.coordinate.longitude : 0.0
     });
+    const [loading, setLoading] = useState(false);
+
 
     const formik = useFormik({
         initialValues: {
@@ -29,12 +31,18 @@ const LocationDialog = ({ updateLocationInMap, addLocationIntoMap, mapLocations,
         },
         validationSchema: locationBasicSchema,
         onSubmit: async (values) => {
-            const response = await submitLocation(token, values);
-            values.id ? updateLocationInMap(response) : addLocationIntoMap(response);
-            values.id ? updateLocation(response) : addLocation(response);
-
-            await handleClose();
-            formik.resetForm()
+            setLoading(true);
+            try {
+                const response = await submitLocation(token, values);
+                values.id ? updateLocationInMap(response) : addLocationIntoMap(response);
+                values.id ? updateLocation(response) : addLocation(response);
+                formik.resetForm();
+                handleClose();
+            } catch (error) {
+                console.error("Error submitting location:", error);
+            } finally {
+                setLoading(false);
+            }
         },
     });
 
@@ -79,7 +87,7 @@ const LocationDialog = ({ updateLocationInMap, addLocationIntoMap, mapLocations,
                     </Grid>
                 </Grid>
             </DialogContent>
-            <LocationDialogActions formik={formik} closeModal={closeModal} location={location}>
+            <LocationDialogActions loading={loading} formik={formik} closeModal={closeModal} location={location}>
             </LocationDialogActions>
         </Dialog>
     );

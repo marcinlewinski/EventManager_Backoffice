@@ -5,12 +5,7 @@ import timeGridPlugin from "@fullcalendar/timegrid"
 import listPlugin from "@fullcalendar/list"
 import interactionPlugin from "@fullcalendar/interaction"
 import { Box, Container, Typography } from "@mui/material"
-import {
-    getAllEvents,
-    deleteEvent,
-    updateDateEvent,
-    updateEvent,
-} from "../../../services/api/EventService"
+import { deleteEvent, updateDateEvent } from "../../../services/api/EventService"
 import dayjs from "dayjs"
 import EventForm from "../newEventForm/EventForm"
 import Snackbar from "@mui/material/Snackbar"
@@ -353,37 +348,37 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
 
     return (
         <>
-            {isLoading ? (
-                <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            {isLoading ?
+                (<Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                     <CircularProgress />
                 </Box>
-            ) : (
-                <Container maxWidth="lg" sx={{ mt: { xs: 2, sm: 3, md: 10 } }}>
-                    <Box>
-                        <FullCallendar
-                            ref={calendarRef}
-                            timeZone="local"
-                            height={window.innerWidth <= 600 ? '60vh' : '70vh'}
-                            plugins={plugins}
-                            headerToolbar={headerToolbar}
-                            initialView={initialViewMode}
-                            editable={!isMyCalendar && isAdmin()}
-                            selectable={!isMyCalendar && isAdmin()}
-                            select={handleDateClick}
-                            eventClick={handleEventClick}
-                            events={eventsData}
-                            selectMirror={!isMyCalendar && isAdmin()}
-                            dayMaxEvents={!isMyCalendar && isAdmin()}
-                            eventDrop={handleDateUpdate}
-                            eventResize={handleDateUpdate}
-                            validRange={{
-                                start: new Date(),
-                            }}
-                            eventContent={renderEventContent}
-                        />
-                    </Box>
-                </Container>
-            )}
+                ) : (
+                    <Container maxWidth="lg" sx={{ mt: { xs: 2, sm: 3, md: 10 } }}>
+                        <Box>
+                            <FullCallendar
+                                ref={calendarRef}
+                                timeZone="local"
+                                height={window.innerWidth <= 600 ? '60vh' : '70vh'}
+                                plugins={plugins}
+                                headerToolbar={headerToolbar}
+                                initialView={initialViewMode}
+                                editable={!isMyCalendar && isAdmin()}
+                                selectable={!isMyCalendar && isAdmin()}
+                                select={handleDateClick}
+                                eventClick={handleEventClick}
+                                events={eventsData}
+                                selectMirror={!isMyCalendar && isAdmin()}
+                                dayMaxEvents={!isMyCalendar && isAdmin()}
+                                eventDrop={handleDateUpdate}
+                                eventResize={handleDateUpdate}
+                                validRange={{
+                                    start: new Date(),
+                                }}
+                                eventContent={renderEventContent}
+                            />
+                        </Box>
+                    </Container>
+                )}
             {eventsData !== null && !isMyCalendar && Object.keys(pickedEvent).length > 0 && (
                 <EventForm
                     open={open}

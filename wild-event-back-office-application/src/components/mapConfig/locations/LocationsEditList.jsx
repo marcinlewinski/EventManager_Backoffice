@@ -33,7 +33,6 @@ const LocationsEditList = ({ updateLocationInMap, deleteLocationFromMap, addLoca
   };
 
   const finishUpdating = () => {
-
     closeModal();
     setLocations();
   };
@@ -70,7 +69,6 @@ const LocationsEditList = ({ updateLocationInMap, deleteLocationFromMap, addLoca
     setLocationDeleteId(null)
   }
   return <Box>
-
     <TableContainer component={Paper}>
       <LocationTableFields
         mapLocations={mapLocations}
