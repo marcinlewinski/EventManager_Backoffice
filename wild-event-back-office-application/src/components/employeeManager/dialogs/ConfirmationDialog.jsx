@@ -16,7 +16,12 @@ const ConfirmationDialog = ({ open, handleClose, handleConfirm }) => {
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose} color="primary">
+                <Button
+                    onClick={handleClose}
+                    color="primary"
+                    variant="outlined"
+                    size='small'
+                >
                     No
                 </Button>
                 <Button
@@ -25,6 +30,8 @@ const ConfirmationDialog = ({ open, handleClose, handleConfirm }) => {
                         handleClose();
                     }}
                     color="primary"
+                    variant="outlined"
+                    size='small'
                 >
                     Yes
                 </Button>

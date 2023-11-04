@@ -3,6 +3,8 @@ import { useFormik } from 'formik';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, FormControl, InputLabel, Select, MenuItem, TextField, FormHelperText } from '@mui/material';
 import dialogValidationSchema from './validationSchema';
 import { useEmployees } from '../../../services/providers/EmployeeProvider';
+import SaveIcon from '@mui/icons-material/Save';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToEdit }) => {
     const { updateEmployee } = useEmployees();
@@ -112,12 +114,20 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
                         {formik.touched.locationIds && <FormHelperText>{formik.errors.locationIds}</FormHelperText>}
                     </FormControl>
                     <DialogActions>
-                        <Button onClick={() => handleClose(true, null)} color="primary">
+                        <Button onClick={() => handleClose(true, null)} variant="outlined" size='small' color="primary">
                             Cancel
                         </Button>
-                        <Button disabled={isLoading} type="submit" color="primary">
-                            Edit
-                        </Button>
+                        <LoadingButton
+                            size="small"
+                            color="secondary"
+                            onClick={formik.handleSubmit}
+                            loadingPosition="end"
+                            endIcon={<SaveIcon />}
+                            loading={isLoading}
+                            variant="contained"
+                        >
+                            <span>Save</span>
+                        </LoadingButton>
                     </DialogActions>
                 </form>
             </DialogContent>

@@ -1,12 +1,15 @@
 import React from 'react';
 import { DialogActions, Button } from '@mui/material';
-import { DeleteIcon, SaveIcon, SendIcon, LoadingButton } from '@mui/icons-material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SaveIcon from '@mui/icons-material/Save';
+import SendIcon from '@mui/icons-material/Send';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 export const EventFormActions = ({ pickedEvent, isUpdateEvent, formik, isLoading, closeModal, deleteEvent }) => {
     return (
         <>
             <DialogActions>
-                <Button variant="outlined" size='small'
+                <Button variant="outlined"  size='small' 
                     onClick={closeModal} color="primary">
                     Cancel
                 </Button>
@@ -16,7 +19,7 @@ export const EventFormActions = ({ pickedEvent, isUpdateEvent, formik, isLoading
                             size="small"
                             color="secondary"
                             onClick={formik.handleSubmit}
-                            loadingPosition="start"
+                            loadingPosition="end"
                             endIcon={<SaveIcon />}
                             loading={isLoading}
                             variant="contained"
@@ -25,7 +28,7 @@ export const EventFormActions = ({ pickedEvent, isUpdateEvent, formik, isLoading
                         </LoadingButton>
                         <LoadingButton
                             size="small"
-                            onClick={() => deleteEvent(pickedEvent)}
+                            onClick={() => deleteEvent(pickedEvent)} 
                             endIcon={<DeleteIcon />}
                             loading={isLoading}
                             loadingPosition="end"
