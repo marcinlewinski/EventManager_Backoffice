@@ -36,9 +36,6 @@ export const LocationDialogActions = ({loading, formik, closeModal, location }) 
                         <span>Send</span>
                     </LoadingButton>
                 )}
-                {/* <Button onClick={formik.handleSubmit} type="submit" color="primary">
-                    {location ? "Update" : "Create"}
-                </Button> */}
             </DialogActions>
         </>
     )

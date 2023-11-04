@@ -25,6 +25,7 @@ const EventForm = ({
     const ENDS_AT = 'endsAt';
     const { token } = useUser();
     const [isLoading, setIsLoading] = useState(false);
+    
 
     const formik = useFormik({
         initialValues: {
