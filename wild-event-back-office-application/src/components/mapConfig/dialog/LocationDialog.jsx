@@ -6,7 +6,7 @@ import { submitLocation } from '../../../services/api/LocationService';
 import MapForm from '../map/MapForm';
 import { useUser } from "../../../services/providers/LoggedUserProvider";
 import { useFormik, } from 'formik';
-import locationBasicSchema from '../validationSchema/locationBasicSchema';
+import LocationBasicSchema from '../validationSchema/LocationBasicSchema';
 import { LocationDialogFields } from './LocationDialogFields';
 import { LocationDialogActions } from './LocationDialogActions';
 
@@ -29,7 +29,7 @@ const LocationDialog = ({ updateLocationInMap, addLocationIntoMap, mapLocations,
             latitude: 0.0
 
         },
-        validationSchema: locationBasicSchema,
+        validationSchema: LocationBasicSchema,
         onSubmit: async (values) => {
             setLoading(true);
             try {

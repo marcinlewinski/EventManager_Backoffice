@@ -58,7 +58,6 @@ const MapForm = ({ mapLocations, location, coordinate, setCoordinate}) => {
       map.remove();
     };
   }, [isUpdating]);
-
   return (
     <div>
       <div className="map-form-container" ref={mapContainerRef} />

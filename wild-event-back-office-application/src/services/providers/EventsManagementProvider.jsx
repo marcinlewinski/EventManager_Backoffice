@@ -30,6 +30,8 @@ export const EventsProvider = ({ children }) => {
             };
 
             fetchEvents();
+        } else {
+            setEvents([]);
         }
     }, [token]);
 

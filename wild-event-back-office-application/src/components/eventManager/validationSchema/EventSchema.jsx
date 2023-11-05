@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-const basicSchema = yup.object().shape({
+const eventSchema = yup.object().shape({
     title: yup.string()
         .trim()
         .matches(/\S/, "You can't enter only spaces!")
@@ -16,4 +16,4 @@ const basicSchema = yup.object().shape({
     openToPublic: yup.boolean(),
 });
 
-export default basicSchema;
+export default eventSchema;
