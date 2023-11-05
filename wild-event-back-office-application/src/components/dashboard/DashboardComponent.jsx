@@ -24,7 +24,7 @@ export const DashboardComponent = () => {
   const { user } = useUser();
 
   const filteredItems = itemList.filter((item) =>
-    user.roles.map((role) => role.name).includes(item.requiredRole)
+    !item.requiredRole || user.roles.map((role) => role.name).includes(item.requiredRole)
   );
 
   return (
