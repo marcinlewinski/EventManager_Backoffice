@@ -1,7 +1,7 @@
 import * as yup from "yup";
 
 
-const locationBasicSchema = yup.object().shape({
+const LocationBasicSchema = yup.object().shape({
     title: yup.string()
         .trim()
         .matches(/\S/, "You can't enter only spaces!")
@@ -15,4 +15,4 @@ const locationBasicSchema = yup.object().shape({
 
 });
 
-export default locationBasicSchema;
+export default LocationBasicSchema;

@@ -11,7 +11,6 @@ const MapForm = ({ mapLocations, location, coordinate, setCoordinate}) => {
   mapboxgl.accessToken = `${process.env.REACT_APP_API_KEY}`;
 
   useEffect(() => {
-    console.log(mapLocations)
     if (location) {
         setCoordinate({
             latitude: location.coordinateDTO.latitude,
@@ -59,7 +58,6 @@ const MapForm = ({ mapLocations, location, coordinate, setCoordinate}) => {
       map.remove();
     };
   }, [isUpdating]);
-
   return (
     <div>
       <div className="map-form-container" ref={mapContainerRef} />

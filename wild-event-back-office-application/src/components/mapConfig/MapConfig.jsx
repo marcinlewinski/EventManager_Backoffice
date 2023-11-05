@@ -11,17 +11,17 @@ export const MapConfig = () => {
     const [mapKey, setMapKey] = useState(1);
 
     const update = () => {
+        console.log(mapKey)
         setMapKey(prevKey => prevKey + 1);
     };
-
 
     return (
         <Box sx={{ mt: '240px', ml: '0px' }}>
             <Box>
                 {!map ? (
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                    <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                         <CircularProgress />
-                    </div>
+                    </Box>
                 ) : (
                     <Grid container spacing={2}>
                         <Grid item xs={6}>

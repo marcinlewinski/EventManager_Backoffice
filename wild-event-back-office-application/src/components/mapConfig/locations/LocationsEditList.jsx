@@ -22,7 +22,6 @@ const LocationsEditList = ({ updateLocationInMap, deleteLocationFromMap, addLoca
     severity: 'success'
   });
   const { addLocation, removeLocation, updateLocation } = useLocations();
-
   const handleOpenDeleteDialog = (id) => {
     setLocationDeleteId(id)
     setDeleteDialogOpen(true)
@@ -33,11 +32,9 @@ const LocationsEditList = ({ updateLocationInMap, deleteLocationFromMap, addLoca
   };
 
   const finishUpdating = () => {
-
     closeModal();
     setLocations();
   };
-
   const handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -70,7 +67,6 @@ const LocationsEditList = ({ updateLocationInMap, deleteLocationFromMap, addLoca
     setLocationDeleteId(null)
   }
   return <Box>
-
     <TableContainer component={Paper}>
       <LocationTableFields
         mapLocations={mapLocations}

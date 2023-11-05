@@ -117,7 +117,7 @@ export const EventFormFields = ({
                             onBlur={formik.handleBlur}
                             error={!!formik.touched.locationId && !!formik.errors.locationId}
                         >
-                            {locationDB.map((location) => (
+                            {locationDB && locationDB.map((location) => (
                                 <MenuItem key={location.id} value={location.id}>
                                     {location.title}
                                 </MenuItem>

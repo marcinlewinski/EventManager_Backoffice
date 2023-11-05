@@ -23,22 +23,13 @@ export const MenuAppBar = () => {
   const { user } = useUser();
 
   const handleChange = (event) => {
-    // setAuth(event.target.checked);
+
     if (auth) {
-      navigate('/logout');  // Jeśli jesteś zalogowany, przeniesie Cię do strony wylogowania.
+      navigate('/logout');
     } else {
-      navigate('/');  // Jeśli nie jesteś zalogowany, przeniesie Cię do strony logowania.
+      navigate('/');
     }
-    setAuth(event.target.checked);  // Zaktualizuj stan auth na podstawie włącznika.
-  };
-  
-
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
+    setAuth(event.target.checked);
   };
 
   const handleItemClick = (item) => {
@@ -46,7 +37,7 @@ export const MenuAppBar = () => {
       ...prevOpenItems,
       [item.text]: !prevOpenItems[item.text],
     }));
-    handleClose();
+    setAnchorEl(null);
     navigate(item.path);
   };
 
@@ -71,7 +62,7 @@ export const MenuAppBar = () => {
             edge="start"
             color="inherit"
             aria-label="menu"
-            onClick={handleMenu}
+            onClick={(event) => setAnchorEl(event.currentTarget)}
             sx={{ mr: 2 }}
           >
             <MenuIcon />
@@ -80,14 +71,14 @@ export const MenuAppBar = () => {
             WildEvent manager
           </Typography>
           <Typography
-						variant='h6'
-						sx={{
-							flexGrow: 1,
-							textAlign: "center",
-							textTransform: "uppercase",
-						}}>
-						{user.name}
-					</Typography>
+            variant='h6'
+            sx={{
+              flexGrow: 1,
+              textAlign: "center",
+              textTransform: "uppercase",
+            }}>
+            {user.name}
+          </Typography>
           {auth && (
             <div>
               <IconButton
@@ -95,7 +86,7 @@ export const MenuAppBar = () => {
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
-                onClick={handleMenu}
+                onClick={(event) => setAnchorEl(event.currentTarget)}
                 color="inherit"
               >
                 <AccountCircle />
@@ -113,9 +104,9 @@ export const MenuAppBar = () => {
                   horizontal: 'right',
                 }}
                 open={Boolean(anchorEl)}
-                onClose={handleClose}
+                onClose={() => setAnchorEl(null)}
               >
-                {itemList.map(item =>(
+                {itemList.map(item => (
                   <MenuItem key={item.text} onClick={() => handleItemClick(item)}>
                     <Typography variant='"inherit'>{item.text}</Typography>
                   </MenuItem>

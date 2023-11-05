@@ -3,8 +3,8 @@ import { useFormik } from 'formik';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, FormControl, InputLabel, Select, MenuItem, FormHelperText, TextField, Typography } from '@mui/material';
 import dialogValidationSchema from './validationSchema';
 import { useEmployees } from '../../../services/providers/EmployeeProvider';
-import CircularProgress from '@mui/material/CircularProgress';
-
+import SendIcon from '@mui/icons-material/Send';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
   const { addEmployee } = useEmployees();
@@ -115,23 +115,19 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
             <FormHelperText>{formik.touched.locationIds && formik.errors.locationIds}</FormHelperText>
           </FormControl>
           <DialogActions>
-            <Button onClick={() => { handleClose(true, null); formik.resetForm(); }} color="primary">
+            <Button onClick={() => { handleClose(true, null); formik.resetForm(); }} variant="outlined" size='small' color="primary">
               Cancel
             </Button>
-            <Button disabled={isLoading} type="submit" color="primary">
-              {isLoading ? (
-                <CircularProgress
-                  sx={{
-                    color: (theme) => (theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8'),
-                    position: 'absolute',
-                  }}
-                  size={20}
-                  thickness={4}
-                />
-              ) : (
-                "Add"
-              )}
-            </Button>
+            <LoadingButton
+              size="small"
+              onClick={formik.handleSubmit}
+              endIcon={<SendIcon />}
+              loading={isLoading}
+              loadingPosition="end"
+              variant="contained"
+            >
+              <span>Submit</span>
+            </LoadingButton>
           </DialogActions>
         </form>
       </DialogContent>

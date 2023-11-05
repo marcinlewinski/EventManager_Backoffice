@@ -5,12 +5,7 @@ import timeGridPlugin from "@fullcalendar/timegrid"
 import listPlugin from "@fullcalendar/list"
 import interactionPlugin from "@fullcalendar/interaction"
 import { Box, Container, Typography } from "@mui/material"
-import {
-    getAllEvents,
-    deleteEvent,
-    updateDateEvent,
-    updateEvent,
-} from "../../../services/api/EventService"
+import { deleteEvent, updateDateEvent } from "../../../services/api/EventService"
 import dayjs from "dayjs"
 import EventForm from "../newEventForm/EventForm"
 import Snackbar from "@mui/material/Snackbar"
@@ -33,7 +28,6 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         severity: "success",
     })
     const { user, token } = useUser();
-    const [eventsData, setEventsData] = useState(null);
     const [open, setOpen] = useState(false);
     const [isTimeGridWeek, setIsTimeGridWeek] = useState({});
     const [isUpdateEvent, setIsUpdateEvent] = useState(false);
@@ -44,12 +38,13 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         end: "",
         locationId: {},
     });
-    const [isLoading, setIsLoading] = useState(true);
     const { roles } = useRoles();
     const { locations } = useLocations();
     const { employees } = useEmployees();
     const calendarRef = useRef(null);
     const { events, deleteEventFromContext, updateEventContext, addEventIntoContext } = useEvents()
+    const [isLoading, setIsLoading] = useState(true);
+    const [eventsData, setEventsData] = useState([]);
 
     const isAdmin = () => {
         const allPossibleRoles = roles?.map(role => role.name);
@@ -67,7 +62,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
                 ? await getAllMyEvents(token)
                 : events;
             setEventsData(
-                data.map(eventDataFromDB => {
+                data?.map(eventDataFromDB => {
                     const startDate = new Date(eventDataFromDB.startsAt);
                     const endDate = new Date(eventDataFromDB.endsAt);
                     const isSingleDay = isDatesDifferenceOneDay(startDate, endDate);
@@ -88,6 +83,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
                 })
             );
             setIsLoading(false);
+
         } catch (error) {
             console.error("Error fetching events", error)
             setEventsData([]);
@@ -102,9 +98,8 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
 
     useEffect(() => {
         setIsLoading(true);
-        setEventsData({});
         getEvents();
-    }, []);
+    }, [events]);
 
     const handleDateClick = selected => {
         setOpen(true);
@@ -138,28 +133,31 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         return uuidRegex.test(str)
     }
     const handleEventClick = (selected) => {
-        setOpen(true);
-        setIsUpdateEvent(true);
-        const event = eventsData.find(event => event.id === selected.event.id);
-        setPickedEvent({
-            id: selected.event.id,
-            title: selected.event.title,
-            start: selected.event.startStr,
-            end: selected.event.endStr,
-            selected: selected,
-            description: event.description,
-            organizers: isUUID(event.organizers)
-                ? event.organizers.map(organizerId => {
-                    const user = employees.find(user => user.id === organizerId)
-                    return user ? user.name : null
-                })
-                : event.organizers,
-            location: locations.find(
-                location =>
-                    location.title === event.location || location.id === event.location
-            ),
-            allDay: selected.event.allDay,
-        });
+        if (eventsData) {
+
+            setOpen(true);
+            setIsUpdateEvent(true);
+            const event = eventsData?.find(event => event.id === selected.event.id);
+            setPickedEvent({
+                id: selected.event.id,
+                title: selected.event.title,
+                start: selected.event.startStr,
+                end: selected.event.endStr,
+                selected: selected,
+                description: event.description,
+                organizers: isUUID(event.organizers)
+                    ? event.organizers.map(organizerId => {
+                        const user = employees?.find(user => user.id === organizerId)
+                        return user ? user.name : null
+                    })
+                    : event.organizers,
+                location: locations?.find(
+                    location =>
+                        location.title === event.location || location.id === event.location
+                ),
+                allDay: selected.event.allDay,
+            });
+        }
     }
 
     const handleDeleteEvent = async (dto) => {
@@ -194,7 +192,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
     }
 
     const getContextUpdateObj = (obj) => {
-        const contextObj = events.find(el => el.id === obj.id);
+        const contextObj = events?.find(el => el.id === obj.id);
         if (contextObj) {
             return {
                 ...contextObj,
@@ -239,7 +237,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
     }
 
     const getContextEventForm = (eventData, idValue) => {
-        const foundLocation = locations.find(el => el.id === eventData.locationId);
+        const foundLocation = locations?.find(el => el.id === eventData.locationId);
         const locationTitle = foundLocation ? foundLocation.title : 'N/A';
         return {
             id: idValue,
@@ -257,7 +255,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         let calendarApi = calendarRef.current.getApi();
         const eventVal = getContextEventForm(eventData, id);
 
-        const existingEvent = eventsData.find(event => event.id === id);
+        const existingEvent = eventsData?.find(event => event.id === id);
         const formattedStart = dayjs(eventData.dateRange.startsAt).format(
             "YYYY-MM-DDTHH:mm:ss"
         );
@@ -350,40 +348,40 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         }
 
     const initialViewMode = isMobileView ? "timeGridDay" : "dayGridMonth"
-
+   
     return (
         <>
-            {isLoading ? (
-                <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            {(isLoading || eventsData.length === 0) ?
+                (<Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                     <CircularProgress />
                 </Box>
-            ) : (
-                <Container maxWidth="lg" sx={{ mt: { xs: 2, sm: 3, md: 10 } }}>
-                    <Box>
-                        <FullCallendar
-                            ref={calendarRef}
-                            timeZone="local"
-                            height={window.innerWidth <= 600 ? '60vh' : '70vh'}
-                            plugins={plugins}
-                            headerToolbar={headerToolbar}
-                            initialView={initialViewMode}
-                            editable={!isMyCalendar && isAdmin()}
-                            selectable={!isMyCalendar && isAdmin()}
-                            select={handleDateClick}
-                            eventClick={handleEventClick}
-                            events={eventsData}
-                            selectMirror={!isMyCalendar && isAdmin()}
-                            dayMaxEvents={!isMyCalendar && isAdmin()}
-                            eventDrop={handleDateUpdate}
-                            eventResize={handleDateUpdate}
-                            validRange={{
-                                start: new Date(),
-                            }}
-                            eventContent={renderEventContent}
-                        />
-                    </Box>
-                </Container>
-            )}
+                ) : (
+                    <Container maxWidth="lg" sx={{ mt: { xs: 2, sm: 3, md: 10 } }}>
+                        <Box>
+                            <FullCallendar
+                                ref={calendarRef}
+                                timeZone="local"
+                                height={window.innerWidth <= 600 ? '60vh' : '70vh'}
+                                plugins={plugins}
+                                headerToolbar={headerToolbar}
+                                initialView={initialViewMode}
+                                editable={!isMyCalendar && isAdmin()}
+                                selectable={!isMyCalendar && isAdmin()}
+                                select={handleDateClick}
+                                eventClick={handleEventClick}
+                                events={eventsData}
+                                selectMirror={!isMyCalendar && isAdmin()}
+                                dayMaxEvents={!isMyCalendar && isAdmin()}
+                                eventDrop={handleDateUpdate}
+                                eventResize={handleDateUpdate}
+                                validRange={{
+                                    start: new Date(),
+                                }}
+                                eventContent={renderEventContent}
+                            />
+                        </Box>
+                    </Container>
+                )}
             {eventsData !== null && !isMyCalendar && Object.keys(pickedEvent).length > 0 && (
                 <EventForm
                     open={open}
