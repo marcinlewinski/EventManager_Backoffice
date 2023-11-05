@@ -30,8 +30,8 @@ export const EventFormFields = ({
 
     return (
         <>
-            <form onSubmit={formik.handleSubmit}>
-                <FormGroup>
+          
+                <FormGroup onSubmit={formik.handleSubmit}>
                     <FormControl margin="normal">
                         <TextField
                             label="Event title"
@@ -117,7 +117,7 @@ export const EventFormFields = ({
                             onBlur={formik.handleBlur}
                             error={!!formik.touched.locationId && !!formik.errors.locationId}
                         >
-                            {locationDB.map((location) => (
+                            {locationDB && locationDB.map((location) => (
                                 <MenuItem key={location.id} value={location.id}>
                                     {location.title}
                                 </MenuItem>
@@ -158,7 +158,7 @@ export const EventFormFields = ({
                         />
                     </FormControl>
                 </FormGroup>
-            </form>
+          
         </>
     )
 }

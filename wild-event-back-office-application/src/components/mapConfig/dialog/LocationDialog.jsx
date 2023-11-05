@@ -6,17 +6,19 @@ import { submitLocation } from '../../../services/api/LocationService';
 import MapForm from '../map/MapForm';
 import { useUser } from "../../../services/providers/LoggedUserProvider";
 import { useFormik, } from 'formik';
-import locationBasicSchema from '../validationSchema/locationBasicSchema';
+import LocationBasicSchema from '../validationSchema/LocationBasicSchema';
 import { LocationDialogFields } from './LocationDialogFields';
 import { LocationDialogActions } from './LocationDialogActions';
 
 
-const LocationDialog = ({ updateLocationInMap, addLocationIntoMap, mapLocations, open, location, handleClose, closeModal }) => {
+const LocationDialog = ({ updateLocationInMap, addLocationIntoMap, mapLocations, open, location, handleClose, closeModal, addLocation, updateLocation }) => {
     const { token } = useUser();
     const [coordinate, setCoordinate] = useState({
         latitude: mapLocations.coordinate ? mapLocations.coordinate.latitude : 0.0,
         longitude: mapLocations.coordinate ? mapLocations.coordinate.longitude : 0.0
     });
+    const [loading, setLoading] = useState(false);
+
 
     const formik = useFormik({
         initialValues: {
@@ -27,15 +29,20 @@ const LocationDialog = ({ updateLocationInMap, addLocationIntoMap, mapLocations,
             latitude: 0.0
 
         },
-        validationSchema: locationBasicSchema,
+        validationSchema: LocationBasicSchema,
         onSubmit: async (values) => {
-            const response = await submitLocation(token, values);
-            values.id ? updateLocationInMap(response) : addLocationIntoMap(response);
-
-            //add to context 
-            //update temp state or read from context insted of fetching every time
-            await handleClose();
-            formik.resetForm()
+            setLoading(true);
+            try {
+                const response = await submitLocation(token, values);
+                values.id ? updateLocationInMap(response) : addLocationIntoMap(response);
+                values.id ? updateLocation(response) : addLocation(response);
+                formik.resetForm();
+                handleClose();
+            } catch (error) {
+                console.error("Error submitting location:", error);
+            } finally {
+                setLoading(false);
+            }
         },
     });
 
@@ -80,7 +87,7 @@ const LocationDialog = ({ updateLocationInMap, addLocationIntoMap, mapLocations,
                     </Grid>
                 </Grid>
             </DialogContent>
-            <LocationDialogActions formik={formik} closeModal={closeModal} location={location}>
+            <LocationDialogActions loading={loading} formik={formik} closeModal={closeModal} location={location}>
             </LocationDialogActions>
         </Dialog>
     );

@@ -1,8 +1,8 @@
 import React from "react"
-import { FormGroup, FormControl, TextField} from '@mui/material';
+import { FormGroup, FormControl, TextField } from '@mui/material';
 
-export const LocationDialogFields = ({formik}) => {
-
+export const LocationDialogFields = ({ formik }) => {
+ 
     return (
         <>
             <form onSubmit={formik.handleSubmit}>
@@ -21,6 +21,7 @@ export const LocationDialogFields = ({formik}) => {
                     </FormControl>
                     <FormControl margin="normal">
                         <TextField
+                            id="standard-multiline-flexible"
                             label="Description"
                             variant="outlined"
                             multiline

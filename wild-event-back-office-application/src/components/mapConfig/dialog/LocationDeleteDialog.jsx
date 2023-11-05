@@ -16,7 +16,11 @@ const LocationDeleteDialog = ({ open, handleClose, handleConfirm, closeModal }) 
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={closeModal} color="primary">
+                <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={closeModal}
+                    color="primary">
                     No
                 </Button>
                 <Button
@@ -24,6 +28,8 @@ const LocationDeleteDialog = ({ open, handleClose, handleConfirm, closeModal }) 
                         handleConfirm();
                         handleClose();
                     }}
+                    variant="outlined"
+                    size="small"
                     color="primary"
                 >
                     Yes

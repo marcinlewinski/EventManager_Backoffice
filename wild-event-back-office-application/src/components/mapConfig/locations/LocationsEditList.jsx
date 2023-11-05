@@ -8,6 +8,7 @@ import { deleteLocation } from "../../../services/api/LocationService";
 import Snackbar from '@mui/material/Snackbar';
 import { useUser } from "../../../services/providers/LoggedUserProvider";
 import { LocationTableFields } from "./LocationTableFields";
+import { useLocations } from "../../../services/providers/LocationsProvider";
 
 const LocationsEditList = ({ updateLocationInMap, deleteLocationFromMap, addLocationIntoMap, mapLocations, setLocations }) => {
   const { token } = useUser();
@@ -20,7 +21,7 @@ const LocationsEditList = ({ updateLocationInMap, deleteLocationFromMap, addLoca
     message: '',
     severity: 'success'
   });
-
+  const { addLocation, removeLocation, updateLocation } = useLocations();
   const handleOpenDeleteDialog = (id) => {
     setLocationDeleteId(id)
     setDeleteDialogOpen(true)
@@ -31,11 +32,9 @@ const LocationsEditList = ({ updateLocationInMap, deleteLocationFromMap, addLoca
   };
 
   const finishUpdating = () => {
-
     closeModal();
     setLocations();
   };
-
   const handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -48,6 +47,7 @@ const LocationsEditList = ({ updateLocationInMap, deleteLocationFromMap, addLoca
 
   const deleteLocationById = async () => {
     deleteLocationFromMap(locationDeleteId);
+    removeLocation(locationDeleteId);
     try {
       await deleteLocation(token, locationDeleteId)
       setSnackbarInfo({
@@ -67,7 +67,6 @@ const LocationsEditList = ({ updateLocationInMap, deleteLocationFromMap, addLoca
     setLocationDeleteId(null)
   }
   return <Box>
-
     <TableContainer component={Paper}>
       <LocationTableFields
         mapLocations={mapLocations}
@@ -85,6 +84,8 @@ const LocationsEditList = ({ updateLocationInMap, deleteLocationFromMap, addLoca
       location={locationUpdate}
       handleClose={() => finishUpdating()}
       closeModal={closeModal}
+      addLocation={addLocation}
+      updateLocation={updateLocation}
     />
     <LocationDeleteDialog
       open={deleteDialogOpen}

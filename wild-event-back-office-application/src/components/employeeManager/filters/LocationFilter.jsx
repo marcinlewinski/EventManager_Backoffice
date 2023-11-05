@@ -3,6 +3,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import { Box } from '@mui/material';
 
 const LocationFilter = ({ allLocations, onLocationSelect }) => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -13,7 +14,7 @@ const LocationFilter = ({ allLocations, onLocationSelect }) => {
     };
 
     return (
-        <div>
+        <Box>
             <IconButton aria-label="filter" size="small" onClick={(event) => setAnchorEl(event.currentTarget)}>
                 <FilterListIcon fontSize="inherit" />
             </IconButton>
@@ -32,7 +33,7 @@ const LocationFilter = ({ allLocations, onLocationSelect }) => {
                     </MenuItem>
                 ))}
             </Menu>
-        </div>
+        </Box>
     );
 }
 

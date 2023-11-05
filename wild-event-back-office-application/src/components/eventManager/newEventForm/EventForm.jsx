@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent } from '@mui/material';
 import dayjs from 'dayjs';
 import { addEvent, updateEvent } from '../../../services/api/EventService';
-import basicSchema from '../validationSchema/EventFormSchema';
 import { useFormik, } from 'formik';
 import { useUser } from '../../../services/providers/LoggedUserProvider';
 import { EventFormFields } from './EventFormFields';
 import { EventFormActions } from './EventFormActions';
+import eventSchema from '../validationSchema/EventSchema';
 
 const EventForm = ({
     open,
@@ -26,10 +26,11 @@ const EventForm = ({
     const { token } = useUser();
     const [isLoading, setIsLoading] = useState(false);
 
+
     const formik = useFormik({
         initialValues: {
-            title: '',
-            description: '',
+            title: "",
+            description: "",
             dateRange: {
                 startsAt: dayjs('2023-09-20T08:00:00').format('YYYY-MM-DDTHH:mm:ss'),
                 endsAt: dayjs('2023-09-20T08:00:00').format('YYYY-MM-DDTHH:mm:ss'),
@@ -39,9 +40,10 @@ const EventForm = ({
             openToPublic: false,
 
         },
-        validationSchema: basicSchema,
+        validationSchema: eventSchema,
         onSubmit: async (values) => {
             setIsLoading(!isLoading);
+
             let id = null;
             isUpdateEvent
                 ? (id = await updateEvent(values, pickedEvent.id, token))

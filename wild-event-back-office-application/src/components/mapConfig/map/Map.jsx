@@ -16,7 +16,6 @@ const Map = ({ mapLocations }) => {
   const mapContainerRef = useRef(null);
   mapboxgl.accessToken = `${process.env.REACT_APP_API_KEY}`;
 
-
   useEffect(() => {
     if (mapLocations) {
       const map = new mapboxgl.Map({

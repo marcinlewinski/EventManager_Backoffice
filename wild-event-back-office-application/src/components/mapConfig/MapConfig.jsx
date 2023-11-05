@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react"
 import { Box, Grid } from "@mui/material"
-import { getMap, saveMap } from "../../services/api/MapService";
 import Map from './map/Map'
 import LocationsEditList from "./locations/LocationsEditList";
 import CircularProgress from '@mui/material/CircularProgress';
@@ -11,23 +10,18 @@ export const MapConfig = () => {
     const { map, addLocationIntoMap, deleteLocationFromMap, updateLocationInMap } = useMap();
     const [mapKey, setMapKey] = useState(1);
 
-
     const update = () => {
-        //updateDb
-        //update global state here 
-        // fetchData();
+        console.log(mapKey)
         setMapKey(prevKey => prevKey + 1);
-
     };
-
 
     return (
         <Box sx={{ mt: '240px', ml: '0px' }}>
             <Box>
                 {!map ? (
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                    <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                         <CircularProgress />
-                    </div>
+                    </Box>
                 ) : (
                     <Grid container spacing={2}>
                         <Grid item xs={6}>

@@ -18,6 +18,7 @@ export const LocationsProvider = ({ children }) => {
   const { token } = useUser();
 
   useEffect(() => {
+    
     const fetchLocations = async () => {
       const response = await getLocations(token);
       setLocations(response);
@@ -34,8 +35,17 @@ export const LocationsProvider = ({ children }) => {
     setLocations(prevLocations => prevLocations.filter(location => location.id !== locationId));
   };
 
+  const updateLocation = (updatedLocationData) => {
+    setLocations(prevLocation => prevLocation.map(location => {
+      if (location.id === updatedLocationData.id) {
+        return { ...location, ...updatedLocationData };
+      }
+      return location;
+    }));
+  };
+
   return (
-    <LocationsContext.Provider value={{ locations, addLocation, removeLocation }}>
+    <LocationsContext.Provider value={{ locations, addLocation, removeLocation, updateLocation }}>
       {children}
     </LocationsContext.Provider>
   );

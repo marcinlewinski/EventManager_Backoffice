@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { Box } from '@mui/material';
 
 const LocationActionsMenu = ({ onEdit, onDeactivate }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -15,7 +16,7 @@ const LocationActionsMenu = ({ onEdit, onDeactivate }) => {
   };
 
   return (
-    <div>
+    <Box>
       <MoreVertIcon onClick={handleMenuOpen} style={{ cursor: 'pointer' }} />
       <Menu
         anchorEl={anchorEl}
@@ -31,7 +32,7 @@ const LocationActionsMenu = ({ onEdit, onDeactivate }) => {
           onDeactivate();
         }}>Delete</MenuItem>
       </Menu>
-    </div>
+    </Box>
   );
 }
 

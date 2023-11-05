@@ -1,9 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useUser } from './LoggedUserProvider';
 import { getAllActiveUsers, deactivateUser, registerUser, updateUser } from '../api/EmployeeManagement';
-import { useLocations } from './LocationsProvider';
-import { useRoles } from './RolesProvider';
-
 
 const EmployeesContext = createContext();
 
@@ -18,8 +15,6 @@ export const useEmployees = () => {
 export const EmployeesProvider = ({ children }) => {
   const [employees, setEmployees] = useState([]);
   const { token } = useUser();
-  const { roles } = useRoles();
-  const { locations } = useLocations();
 
   useEffect(() => {
     if (token) {
@@ -55,8 +50,6 @@ export const EmployeesProvider = ({ children }) => {
     }
   };
 
-
-
   const deactivateEmployee = async (employeeId) => {
     try {
       await deactivateUser(employeeId, token);
@@ -66,7 +59,6 @@ export const EmployeesProvider = ({ children }) => {
       console.error("Could not deactivate user:", error);
     }
   };
-
 
   return (
     <EmployeesContext.Provider value={{ employees, deactivateEmployee, addEmployee, updateEmployee }}>
