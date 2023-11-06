@@ -6,7 +6,7 @@ const Chat = () => {
     <ChatEngine
         height="90vh"
         projectID="77e67795-c1bf-4c04-87e8-ab3029d70730"
-        userName="Marcin"
+        userName="admin"
         userSecret="WildEvent2023"
     />
 );

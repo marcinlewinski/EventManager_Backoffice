@@ -25,7 +25,8 @@ export const LocationDialogFields = ({ formik }) => {
                             label="Description"
                             variant="outlined"
                             multiline
-                            rows={4}
+                            minRows={3}
+                            maxRows={3}
                             name="description"
                             value={formik.values.description}
                             onChange={formik.handleChange}
