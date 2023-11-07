@@ -18,13 +18,16 @@ export const LocationsProvider = ({ children }) => {
   const { token } = useUser();
 
   useEffect(() => {
-    
-    const fetchLocations = async () => {
-      const response = await getLocations(token);
-      setLocations(response);
-    };
+    if (token) {
+      const fetchLocations = async () => {
+        const response = await getLocations(token);
+        setLocations(response);
+      };
 
-    fetchLocations();
+      fetchLocations();
+    } else {
+      setLocations([]);
+    }
   }, [token]);
 
   const addLocation = (newLocation) => {
