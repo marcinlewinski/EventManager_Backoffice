@@ -35,7 +35,7 @@ const EmployeeTable = () => {
     const { roles } = useRoles();
     const { locations } = useLocations();
     const { employees, deactivateEmployee } = useEmployees();
-    const isLoading = !roles || !locations || !employees;
+    const isLoading = !roles || !locations || !employees ;
 
     const handleDeactivateUser = () => {
         deactivateEmployee(pickedUser.id)
@@ -90,7 +90,6 @@ const EmployeeTable = () => {
         });
     };
 
-
     return (
         <div>
             <SearchBar setSearchTerm={setSearchTerm} />
@@ -124,7 +123,7 @@ const EmployeeTable = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {isLoading ? (
+                        {(isLoading || employees.length === 0)  ? (
                             Array.from(new Array(rowsPerPage)).map((_, index) => (
                                 <TableRow key={index}>
                                     <TableCell component="th" scope="row">

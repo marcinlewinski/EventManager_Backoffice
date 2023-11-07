@@ -18,12 +18,16 @@ export const RolesProvider = ({ children }) => {
   const { token } = useUser();
 
   useEffect(() => {
-    const fetchRoles = async () => {
-      const response = await getAllRoles(token);
-      setRoles(response);
-    };
+    if (token) {
+      const fetchRoles = async () => {
+        const response = await getAllRoles(token);
+        setRoles(response);
+      };
 
-    fetchRoles();
+      fetchRoles();
+    } else {
+      setRoles([]);
+    }
   }, [token]);
 
   return (
