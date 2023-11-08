@@ -348,10 +348,9 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         }
 
     const initialViewMode = isMobileView ? "timeGridDay" : "dayGridMonth"
-   
     return (
         <>
-            {(isLoading || eventsData.length === 0) ?
+            {(isLoading || !eventsData) ?
                 (<Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                     <CircularProgress />
                 </Box>
