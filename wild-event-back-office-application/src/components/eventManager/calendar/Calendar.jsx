@@ -18,8 +18,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { useLocations } from '../../../services/providers/LocationsProvider';
 import { useEmployees } from '../../../services/providers/EmployeeProvider';
 import { useEvents } from "../../../services/providers/EventsManagementProvider"
-
-
+import { useAdminStatus } from "../../utils/useAdminStatus"
 
 const Calendar = ({ isMyCalendar, isMobileView }) => {
     const [snackbarInfo, setSnackbarInfo] = useState({
@@ -45,16 +44,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
     const { events, deleteEventFromContext, updateEventContext, addEventIntoContext } = useEvents()
     const [isLoading, setIsLoading] = useState(true);
     const [eventsData, setEventsData] = useState([]);
-
-    const isAdmin = () => {
-        const allPossibleRoles = roles?.map(role => role.name);
-        const userRolesArr = user.roles?.map(role => role.name);
-
-        if (!roles || !userRolesArr) {
-            return false;
-        }
-        return userRolesArr.every(role => allPossibleRoles.includes(role));
-    }
+    const isAdmin = useAdminStatus();
 
     const getEvents = async () => {
         try {
@@ -364,13 +354,13 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
                                 plugins={plugins}
                                 headerToolbar={headerToolbar}
                                 initialView={initialViewMode}
-                                editable={!isMyCalendar && isAdmin()}
-                                selectable={!isMyCalendar && isAdmin()}
+                                editable={!isMyCalendar && isAdmin}
+                                selectable={!isMyCalendar && isAdmin}
                                 select={handleDateClick}
                                 eventClick={handleEventClick}
                                 events={eventsData}
-                                selectMirror={!isMyCalendar && isAdmin()}
-                                dayMaxEvents={!isMyCalendar && isAdmin()}
+                                selectMirror={!isMyCalendar && isAdmin}
+                                dayMaxEvents={!isMyCalendar && isAdmin}
                                 eventDrop={handleDateUpdate}
                                 eventResize={handleDateUpdate}
                                 validRange={{
