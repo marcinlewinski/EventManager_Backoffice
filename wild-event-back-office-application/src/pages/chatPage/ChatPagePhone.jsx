@@ -1,11 +1,11 @@
 import { PhoneLayout } from "../layout/PhoneLayout"
-import Chat from "../../components/chat/Chat"
+import SimpleChat from "../../components/chat/PubNubChat/simple-chat/simple-chat"
 
 export const ChatPagePhone = () => {
 	return (
 		<>
 			<PhoneLayout>
-				<Chat />
+				<SimpleChat />
 			</PhoneLayout>
 		</>
 	)
