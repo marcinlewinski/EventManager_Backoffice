@@ -18,6 +18,17 @@ import { EmployeesProvider } from "./services/providers/EmployeeProvider";
 import { MapProvider } from "./services/providers/MapProvider";
 import { ChatPage } from "./pages/chatPage/ChatPage";
 import { EventsProvider } from "./services/providers/EventsManagementProvider";
+import { PubNubProvider } from "pubnub-react";
+import PubNub from "pubnub";
+import { useUser } from "./services/providers/LoggedUserProvider";
+
+const currentUser = useUser();
+
+const pubnub = new PubNub({
+  publishKey: process.env.REACT_APP_PUB_KEY,
+  subscribeKey: process.env.REACT_APP_SUB_KEY,
+  uuid: currentUser.id, 
+});
 
 
 const router = createBrowserRouter([
@@ -31,7 +42,9 @@ const router = createBrowserRouter([
               <LocationsProvider value={{ locations: [] }}>
                 <EmployeesProvider value={{ employees: [] }}>
                   <EventsProvider value={{ events: [] }}>
-                    <Outlet />
+                    <PubNubProvider client={pubnub}>
+                      <Outlet />
+                    </PubNubProvider>
                   </EventsProvider>
                 </EmployeesProvider>
               </LocationsProvider>
