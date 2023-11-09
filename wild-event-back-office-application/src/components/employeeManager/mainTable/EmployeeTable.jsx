@@ -22,6 +22,8 @@ import { useRoles } from '../../../services/providers/RolesProvider';
 import { useLocations } from '../../../services/providers/LocationsProvider';
 import { useEmployees } from '../../../services/providers/EmployeeProvider';
 import Skeleton from '@mui/material/Skeleton';
+import { useUser } from "../../../services/providers/LoggedUserProvider"
+
 
 const EmployeeTable = () => {
     const [page, setPage] = useState(0);
@@ -35,7 +37,8 @@ const EmployeeTable = () => {
     const { roles } = useRoles();
     const { locations } = useLocations();
     const { employees, deactivateEmployee } = useEmployees();
-    const isLoading = !roles || !locations || !employees ;
+    const isLoading = !roles || !locations || !employees;
+    const { user } = useUser();
 
     const handleDeactivateUser = () => {
         deactivateEmployee(pickedUser.id)
@@ -123,7 +126,7 @@ const EmployeeTable = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {(isLoading || employees.length === 0)  ? (
+                        {(isLoading || employees.length === 0) ? (
                             Array.from(new Array(rowsPerPage)).map((_, index) => (
                                 <TableRow key={index}>
                                     <TableCell component="th" scope="row">
@@ -158,26 +161,27 @@ const EmployeeTable = () => {
                                         (selectedRole === "" || user.roles.includes(selectedRole)) &&
                                         (selectedLocation === "" || user.locations.includes(selectedLocation));
                                 })
-                            ).map((user) => (
-                                <TableRow key={user.id}>
+                            ).map((userElement) => (
+                                <TableRow key={userElement.id}>
                                     <TableCell component="th" scope="row">
-                                        {user.name}
+                                        {userElement.name}
                                     </TableCell>
-                                    <TableCell align="center">{user.email}</TableCell>
-                                    <TableCell align="center">{user.phone}</TableCell>
+                                    <TableCell align="center">{userElement.email}</TableCell>
+                                    <TableCell align="center">{userElement.phone}</TableCell>
                                     <TableCell align="center">
-                                        {Array.isArray(user.locations) ? user.locations.join(', ') : user.locations}
+                                        {Array.isArray(userElement.locations) ? userElement.locations.join(', ') : userElement.locations}
                                     </TableCell>
                                     <TableCell align="center">
-                                        {Array.isArray(user.roles) ? user.roles.join(', ') : user.roles}
+                                        {Array.isArray(userElement.roles) ? userElement.roles.join(', ') : userElement.roles}
                                     </TableCell>
                                     <TableCell align="center">
                                         <UserActionsMenu
                                             onEdit={() => {
-                                                handleEditUser(user.id);
+                                                handleEditUser(userElement.id);
                                             }}
+                                            onDisabled={userElement.id === user.id}
                                             onDeactivate={() => {
-                                                setPickedUser(user);
+                                                setPickedUser(userElement);
                                                 toggleDialog('confirm', true);
                                             }}
                                         />
