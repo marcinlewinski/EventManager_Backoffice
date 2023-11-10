@@ -1,12 +1,24 @@
-import { DesktopLayout } from "../layout/DesktopLayout"
-import Chat from "../../components/chat/Chat"
+import { DesktopLayout } from "../layout/DesktopLayout";
+import SimpleChat from "../../components/chat/SimpleChat";
+import { useUser } from "../../services/providers/LoggedUserProvider";
+import { PubNubProvider } from "pubnub-react";
+import PubNub from "pubnub";
 
 export const ChatPageDesktop = () => {
-	return (
-		<>
-			<DesktopLayout>
-				<Chat />
-			</DesktopLayout>
-		</>
-	)
-}
+    const currentUser = useUser();
+    console.log(currentUser)
+
+    const pubnub = new PubNub({
+        publishKey: process.env.REACT_APP_PUB_KEY,
+        subscribeKey: process.env.REACT_APP_SUB_KEY,
+        uuid: currentUser.user.id,
+    });
+
+    return (
+        <PubNubProvider client={pubnub}>
+            <DesktopLayout>
+                <SimpleChat />
+            </DesktopLayout>
+        </PubNubProvider>
+    );
+};
