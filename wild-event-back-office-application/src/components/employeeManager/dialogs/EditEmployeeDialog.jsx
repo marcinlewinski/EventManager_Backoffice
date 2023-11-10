@@ -22,13 +22,20 @@ const EditEmployeeDialog = ({ open, handleClose, allRoles, allLocations, userToE
         validateOnChange: true,
         validateOnBlur: true,
         onSubmit: async (values) => {
-            setIsLoading(!isLoading);
-            await updateEmployee(userToEdit.id, values);
-            handleClose(false, values);
+            setIsLoading(true);
+            try {
+                await updateEmployee(userToEdit.id, values);
+                handleClose(false, values);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setIsLoading(false);
+            }
         },
     });
 
     useEffect(() => {
+        setIsLoading(false);
         if (userToEdit) {
             const roleIds = userToEdit.roles.map(role =>
                 allRoles.find(r => r.name === role)?.id || ''
