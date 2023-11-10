@@ -12,7 +12,6 @@ import Snackbar from "@mui/material/Snackbar"
 import MuiAlert from "@mui/material/Alert"
 import { useUser } from "../../../services/providers/LoggedUserProvider"
 import { getAllMyEvents } from "../../../services/api/MyEventService"
-import { useRoles } from "../../../services/providers/RolesProvider";
 import CircularProgress from '@mui/material/CircularProgress';
 import Tooltip from '@mui/material/Tooltip';
 import { useLocations } from '../../../services/providers/LocationsProvider';
@@ -37,7 +36,6 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         end: "",
         locationId: {},
     });
-    const { roles } = useRoles();
     const { locations } = useLocations();
     const { employees } = useEmployees();
     const calendarRef = useRef(null);
@@ -72,11 +70,12 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
                     }
                 })
             );
-            setIsLoading(false);
 
         } catch (error) {
             console.error("Error fetching events", error)
             setEventsData([]);
+        } finally{
+            setIsLoading(false);
         }
     }
 
@@ -340,7 +339,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
     const initialViewMode = isMobileView ? "timeGridDay" : "dayGridMonth"
     return (
         <>
-            {(isLoading || !eventsData) ?
+            {(isLoading || eventsData.length === 0 ) ?
                 (<Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                     <CircularProgress />
                 </Box>
