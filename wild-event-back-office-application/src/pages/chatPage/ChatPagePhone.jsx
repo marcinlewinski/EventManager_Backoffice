@@ -1,5 +1,5 @@
 import { PhoneLayout } from "../layout/PhoneLayout"
-import SimpleChat from "../../components/chat/PubNubChat/simple-chat/simple-chat"
+import SimpleChat from "../../components/companyChat/simple-chat/simple-chat"
 
 export const ChatPagePhone = () => {
 	return (
