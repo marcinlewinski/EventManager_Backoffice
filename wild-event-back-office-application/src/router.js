@@ -18,6 +18,7 @@ import { EmployeesProvider } from "./services/providers/EmployeeProvider";
 import { MapProvider } from "./services/providers/MapProvider";
 import { ChatPage } from "./pages/chatPage/ChatPage";
 import { EventsProvider } from "./services/providers/EventsManagementProvider";
+import { PubNubUserProvider } from "./services/providers/pubnubAPI/PubNubUser";
 
 
 const router = createBrowserRouter([
@@ -31,7 +32,9 @@ const router = createBrowserRouter([
               <LocationsProvider value={{ locations: [] }}>
                 <EmployeesProvider value={{ employees: [] }}>
                   <EventsProvider value={{ events: [] }}>
-                    <Outlet />
+                    <PubNubUserProvider>
+                      <Outlet />
+                    </PubNubUserProvider>
                   </EventsProvider>
                 </EmployeesProvider>
               </LocationsProvider>

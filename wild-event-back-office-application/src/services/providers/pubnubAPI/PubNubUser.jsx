@@ -1,9 +1,9 @@
 import React, { createContext, useState } from 'react';
 import pubnub from 'pubnub';
 
-export const UserContext = createContext();
+export const PubNubUserContext = createContext();
 
-export const UserProvider = ({ children }) => {
+export const usePubNubUser = ({ children }) => {
     const [userData, setUserData] = useState({});
     const [allUsersData, setAllUsersData] = useState([]);
 
@@ -50,8 +50,8 @@ export const UserProvider = ({ children }) => {
     };
 
     return (
-        <UserContext.Provider value={{ userData, allUsersData, setUserMetadata, getUserMetadata, getAllUsersMetadata, removeUserMetadata }}>
+        <PubNubUserContext.Provider value={{ userData, allUsersData, setUserMetadata, getUserMetadata, getAllUsersMetadata, removeUserMetadata }}>
             {children}
-        </UserContext.Provider>
+        </PubNubUserContext.Provider>
     );
 };

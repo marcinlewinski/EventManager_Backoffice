@@ -3,11 +3,13 @@ import { useFormik } from 'formik';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, FormControl, InputLabel, Select, MenuItem, FormHelperText, TextField, Typography } from '@mui/material';
 import dialogValidationSchema from './validationSchema';
 import { useEmployees } from '../../../services/providers/EmployeeProvider';
+import { usePubNubUser } from '../../../services/providers/pubnubAPI/PubNubUser';
 import SendIcon from '@mui/icons-material/Send';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
   const { addEmployee } = useEmployees();
+  const { setUserMetadata } = usePubNubUser();
   const [isLoading, setIsLoading] = useState(false);
 
   const formik = useFormik({
@@ -24,6 +26,11 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
     onSubmit: async (values, { resetForm }) => {
       setIsLoading(!isLoading);
       await addEmployee(values);
+      await setUserMetadata
+        ({
+          name: values.name,
+          email: values.email
+        })
       handleClose(false, values);
       resetForm();
     }
