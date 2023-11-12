@@ -13,46 +13,58 @@ import {
 import EmojiPicker from 'emoji-picker-react';
 import "./simple-chat.scss";
 import { ReactComponent as PeopleGroup } from "./people-group.svg";
-
-import rawUsers from "./data/users.json";
-import rawMessages from "./data/messages-social.json";
-import socialChannels from "./data/channels-social.json";
-import directChannels from "./data/channels-direct.json";
-const users = rawUsers;
-const socialChannelList = socialChannels;
-const directChannelList = directChannels;
-const allChannelIds = [...socialChannelList, ...directChannelList].map(
-  (c) => c.id
-);
+import { usePubNubData } from "../../services/providers/pubnubAPI/PubNubDataProvider";
 
 function SimpleChat() {
   const pubnub = usePubNub();
+  const {
+    getAllUUIDMetadata,
+    currentUser,
+    allUsersData,
+    socialChannelList,
+    directChannelList,
+    channelMetadataState
+  } = usePubNubData();
+  const allChannelIds = channelMetadataState.map(channel => channel.id);
+  const [users, setUsers] = useState([]);
   const [theme, setTheme] = useState("light");
+  const [messages, setMessages] = useState({});
   const [showMembers, setShowMembers] = useState(false);
   const [showChannels, setShowChannels] = useState(true);
   const [welcomeMessages, setWelcomeMessages] = useState({});
   const [presenceData] = usePresence({ channels: allChannelIds });
-  const [currentChannel, setCurrentChannel] = useState(socialChannelList[0]);
+  const [currentChannel, setCurrentChannel] = useState(socialChannelList?.[0] ?? {});
+
+
 
   const presentUUIDs = presenceData[currentChannel.id]?.occupants?.map(
     (o) => o.uuid
   );
-  const presentUsers = users.filter((u) => presentUUIDs?.includes(u.id));
-  const currentUser = users.find((u) => u.id === pubnub.getUUID());
+  const presentUsers = allUsersData.filter((u) => presentUUIDs?.includes(u.id));
 
   useEffect(() => {
-    const messages = {};
-    [...rawMessages].forEach((message) => {
-      if (!messages.hasOwnProperty(message.channel))
-        messages[message.channel] = [];
-      if (message.uuid === "current_user" && currentUser?.id)
-        message.uuid = currentUser?.id;
-      messages[message.channel].push(message);
-    });
-    setWelcomeMessages(messages);
-  }, [currentUser]);
+    const channels = [currentChannel.id]; // Lista kanałów do subskrypcji
 
- 
+    const messageListener = {
+      message: (event) => {
+        // Dodawanie nowej wiadomości do stanu
+        setMessages((prevMessages) => ({
+          ...prevMessages,
+          [event.channel]: [...(prevMessages[event.channel] || []), event.message],
+        }));
+      },
+    };
+
+    pubnub.subscribe({ channels });
+    pubnub.addListener(messageListener);
+
+    return () => {
+      // Wypisanie się z subskrypcji
+      pubnub.unsubscribeAll();
+    };
+  }, [pubnub, currentChannel.id]);
+
+
   /** Rendered markup is a mixture of PubNub Chat Components (Chat, ChannelList, MessageList,
    * MessageInput, MemberList) and some elements to display additional information and to handle
    * custom behaviors (dark mode, showing/hiding panels, responsive design) */
@@ -62,9 +74,9 @@ function SimpleChat() {
       In this case it's done in the index.tsx file */}
       <Chat
         theme={theme}
-        users={users}
+        users={allUsersData}
         currentChannel={currentChannel.id}
-        channels={allChannelIds}
+        // channels={allChannelIds}
       >
         <div className={`channels ${showChannels && "shown"}`}>
           <div className="user">

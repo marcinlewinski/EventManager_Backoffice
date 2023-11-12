@@ -3,13 +3,13 @@ import { useFormik } from 'formik';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, FormControl, InputLabel, Select, MenuItem, FormHelperText, TextField, Typography } from '@mui/material';
 import dialogValidationSchema from './validationSchema';
 import { useEmployees } from '../../../services/providers/EmployeeProvider';
-import { usePubNubUser } from '../../../services/providers/pubnubAPI/PubNubUser';
+import { usePubNubData } from '../../../services/providers/pubnubAPI/PubNubDataProvider';
 import SendIcon from '@mui/icons-material/Send';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
   const { addEmployee } = useEmployees();
-  const { setUserMetadata } = usePubNubUser();
+  const { setUserMetadata } = usePubNubData();
   const [isLoading, setIsLoading] = useState(false);
 
   const formik = useFormik({
