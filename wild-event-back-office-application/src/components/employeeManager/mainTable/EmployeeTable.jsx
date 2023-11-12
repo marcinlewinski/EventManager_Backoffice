@@ -23,7 +23,7 @@ import { useLocations } from '../../../services/providers/LocationsProvider';
 import { useEmployees } from '../../../services/providers/EmployeeProvider';
 import Skeleton from '@mui/material/Skeleton';
 import { useUser } from "../../../services/providers/LoggedUserProvider"
-
+import { deactivateUser } from '../../../services/api/EmployeeManagement';
 
 const EmployeeTable = () => {
     const [page, setPage] = useState(0);
@@ -38,10 +38,11 @@ const EmployeeTable = () => {
     const { locations } = useLocations();
     const { employees, deactivateEmployee } = useEmployees();
     const isLoading = !roles || !locations || !employees;
-    const { user } = useUser();
+    const { user, token } = useUser();
 
     const handleDeactivateUser = async () => {
         try {
+            await deactivateUser(pickedUser, token);
             await deactivateEmployee(pickedUser.id)
         } catch (error) {
             console.error(error);
