@@ -40,10 +40,17 @@ const EmployeeTable = () => {
     const isLoading = !roles || !locations || !employees;
     const { user } = useUser();
 
-    const handleDeactivateUser = () => {
-        deactivateEmployee(pickedUser.id)
-        setSnackbarInfo({ open: true, message: 'Employee has been deactivated!', severity: 'success' });
-        toggleDialog('confirm', false);
+    const handleDeactivateUser = async () => {
+        try {
+            await deactivateEmployee(pickedUser.id)
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setSnackbarInfo({ open: true, message: 'Employee has been deactivated!', severity: 'success' });
+            toggleDialog('confirm', false);
+        }
+
+
     };
 
     const handleEditUser = (userId) => {
