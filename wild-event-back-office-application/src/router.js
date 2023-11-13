@@ -20,6 +20,7 @@ import { ChatPage } from "./pages/chatPage/ChatPage";
 import { EventsProvider } from "./services/providers/EventsManagementProvider";
 import { PubNubProvider } from "pubnub-react";
 import PubNub from "pubnub";
+import { PubNubDataProvider } from "./services/providers/pubnubAPI/PubNubDataProvider";
 
 const pubnub = new PubNub({
   publishKey: `${process.env.REACT_APP_PUBNUB_PUB_KEY}`,
@@ -62,7 +63,9 @@ const router = createBrowserRouter([
               <LocationsProvider value={{ locations: [] }}>
                 <EmployeesProvider value={{ employees: [] }}>
                   <EventsProvider value={{ events: [] }}>
-                    <Outlet />
+                    <PubNubDataProvider value={{ pubnub: pubnub }}>
+                     <Outlet />
+                    </PubNubDataProvider>
                   </EventsProvider>
                 </EmployeesProvider>
               </LocationsProvider>
