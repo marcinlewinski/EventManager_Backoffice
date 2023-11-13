@@ -21,7 +21,6 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
                 email: data.email
             },
         });
-        console.log(response.data)
 
         return response.data;
     } catch (error) {

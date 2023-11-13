@@ -13,7 +13,7 @@ import {
 import EmojiPicker from 'emoji-picker-react';
 import "./simple-chat.scss";
 import { ReactComponent as PeopleGroup } from "./people-group.svg";
-import { usePubNubData } from "../../services/providers/pubnubAPI/PubNubDataProvider";
+import { PubNubProvider } from "pubnub-react";
 
 function SimpleChat() {
   const pubnub = usePubNub();

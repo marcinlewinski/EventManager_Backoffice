@@ -22,9 +22,9 @@ import { PubNubProvider } from "pubnub-react";
 import PubNub from "pubnub";
 
 const pubnub = new PubNub({
-  publishKey: "pub-c-cf038bb4-7b99-49cc-a115-f646aaf93f99",
-  subscribeKey: "sub-c-74852b0d-5941-4aeb-bef3-62909b8a9576",
-  userId: currentUser.user.id,
+  publishKey: `${process.env.REACT_APP_PUBNUB_PUB_KEY}`,
+  subscribeKey: `${process.env.REACT_APP_PUBNUB_SUB_KEY}`,
+  userId: `${process.env.REACT_APP_PUBNUB_UUID}`,
 });
 
 pubnub.addListener({
