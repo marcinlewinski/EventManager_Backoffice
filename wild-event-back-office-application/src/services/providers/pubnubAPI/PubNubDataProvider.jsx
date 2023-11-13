@@ -21,12 +21,11 @@ export const PubNubDataProvider = ({ children }) => {
 
     const setUserMetadata = async (metadata) => {
         try {
+            console.log(metadata)
             const response = await pubnub.objects.setUUIDMetadata({
                 data: {
-                    name: metadata.name,
-                    email: metadata.email,
-                    custom: metadata.custom
-                }
+                    name: "John Doe",
+                },
             });
             setAllUsersData(prevUsers => [...prevUsers, response.data]);
         } catch (error) {

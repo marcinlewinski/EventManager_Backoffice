@@ -34,7 +34,9 @@ function SimpleChat() {
   const [welcomeMessages, setWelcomeMessages] = useState({});
   const [presenceData] = usePresence({ channels: allChannelIds });
   const [currentChannel, setCurrentChannel] = useState(socialChannelList?.[0] ?? {});
+  const [isCreateChatModalVisible, setIsCreateChatModalVisible] = useState(false);
 
+  console.log(allUsersData)
 
 
   const presentUUIDs = presenceData[currentChannel.id]?.occupants?.map(
@@ -42,27 +44,27 @@ function SimpleChat() {
   );
   const presentUsers = allUsersData.filter((u) => presentUUIDs?.includes(u.id));
 
-  useEffect(() => {
-    const channels = [currentChannel.id]; // Lista kanałów do subskrypcji
+  // useEffect(() => {
+  //   const channels = [currentChannel.id]; // Lista kanałów do subskrypcji
 
-    const messageListener = {
-      message: (event) => {
-        // Dodawanie nowej wiadomości do stanu
-        setMessages((prevMessages) => ({
-          ...prevMessages,
-          [event.channel]: [...(prevMessages[event.channel] || []), event.message],
-        }));
-      },
-    };
+  //   const messageListener = {
+  //     message: (event) => {
+  //       // Dodawanie nowej wiadomości do stanu
+  //       setMessages((prevMessages) => ({
+  //         ...prevMessages,
+  //         [event.channel]: [...(prevMessages[event.channel] || []), event.message],
+  //       }));
+  //     },
+  //   };
 
-    pubnub.subscribe({ channels });
-    pubnub.addListener(messageListener);
+  //   pubnub.subscribe({ channels });
+  //   pubnub.addListener(messageListener);
 
-    return () => {
-      // Wypisanie się z subskrypcji
-      pubnub.unsubscribeAll();
-    };
-  }, [pubnub, currentChannel.id]);
+  //   return () => {
+  //     // Wypisanie się z subskrypcji
+  //     pubnub.unsubscribeAll();
+  //   };
+  // }, [pubnub, currentChannel.id]);
 
 
   /** Rendered markup is a mixture of PubNub Chat Components (Chat, ChannelList, MessageList,
@@ -103,6 +105,8 @@ function SimpleChat() {
               channels={directChannelList}
               onChannelSwitched={(channel) => setCurrentChannel(channel)}
             />
+            <div>
+</div>
           </div>
           <div className="toggle">
             <span>Dark Mode</span>

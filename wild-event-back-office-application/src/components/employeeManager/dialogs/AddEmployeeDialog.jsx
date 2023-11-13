@@ -6,11 +6,28 @@ import { useEmployees } from '../../../services/providers/EmployeeProvider';
 import { usePubNubData } from '../../../services/providers/pubnubAPI/PubNubDataProvider';
 import SendIcon from '@mui/icons-material/Send';
 import LoadingButton from '@mui/lab/LoadingButton';
+import { usePubNub } from 'pubnub-react';
 
 const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
   const { addEmployee } = useEmployees();
-  const { setUserMetadata } = usePubNubData();
   const [isLoading, setIsLoading] = useState(false);
+  const pubnub = usePubNub();
+
+  const addEmployeeToChat = async (data) => {
+    try {
+        const response = await pubnub.objects.setUUIDMetadata({
+            data: {
+                name: data.name,
+                email: data.email
+            },
+        });
+        console.log(response.data)
+
+        return response.data;
+    } catch (error) {
+        console.error('Error setting user metadata:', error);
+    }
+};
 
   const formik = useFormik({
     initialValues: {
@@ -26,11 +43,7 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
     onSubmit: async (values, { resetForm }) => {
       setIsLoading(!isLoading);
       await addEmployee(values);
-      await setUserMetadata
-        ({
-          name: values.name,
-          email: values.email
-        })
+      await addEmployeeToChat(values);
       handleClose(false, values);
       resetForm();
     }
