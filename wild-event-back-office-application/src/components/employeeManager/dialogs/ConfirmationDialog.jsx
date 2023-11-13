@@ -5,8 +5,11 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Button } from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
+import DeleteIcon from '@mui/icons-material/Delete';
 
-const ConfirmationDialog = ({ open, handleClose, handleConfirm }) => {
+
+const ConfirmationDialog = ({ isLoading, open, handleClose, handleConfirm }) => {
     return (
         <Dialog open={open} onClose={handleClose}>
             <DialogTitle>{"Deactivate User"}</DialogTitle>
@@ -24,17 +27,19 @@ const ConfirmationDialog = ({ open, handleClose, handleConfirm }) => {
                 >
                     No
                 </Button>
-                <Button
+                <LoadingButton
+                    size="small"
                     onClick={() => {
                         handleConfirm();
-                        handleClose();
                     }}
-                    color="primary"
+                    endIcon={<DeleteIcon />}
+                    loading={isLoading}
+                    loadingPosition="end"
                     variant="outlined"
-                    size='small'
+                    color="error"
                 >
-                    Yes
-                </Button>
+                    <span>Yes</span>
+                </LoadingButton>
             </DialogActions>
         </Dialog>
     );
