@@ -18,7 +18,38 @@ import { EmployeesProvider } from "./services/providers/EmployeeProvider";
 import { MapProvider } from "./services/providers/MapProvider";
 import { ChatPage } from "./pages/chatPage/ChatPage";
 import { EventsProvider } from "./services/providers/EventsManagementProvider";
-import { PubNubDataProvider } from "./services/providers/pubnubAPI/PubNubDataProvider";
+import { PubNubProvider } from "pubnub-react";
+import PubNub from "pubnub";
+
+const pubnub = new PubNub({
+  publishKey: "pub-c-cf038bb4-7b99-49cc-a115-f646aaf93f99",
+  subscribeKey: "sub-c-74852b0d-5941-4aeb-bef3-62909b8a9576",
+  userId: currentUser.user.id,
+});
+
+pubnub.addListener({
+  message: function (m) {
+    // handle messages
+  },
+  presence: function (p) {
+    // handle presence
+  },
+  signal: function (s) {
+    // handle signals
+  },
+  objects: (objectEvent) => {
+    // handle objects
+  },
+  messageAction: function (ma) {
+    // handle message actions
+  },
+  file: function (event) {
+    // handle files
+  },
+  status: function (s) {
+    // handle status
+  },
+});
 
 const router = createBrowserRouter([
   {
@@ -31,9 +62,7 @@ const router = createBrowserRouter([
               <LocationsProvider value={{ locations: [] }}>
                 <EmployeesProvider value={{ employees: [] }}>
                   <EventsProvider value={{ events: [] }}>
-                    <PubNubDataProvider>
-                      <Outlet />
-                    </PubNubDataProvider>
+                    <Outlet />
                   </EventsProvider>
                 </EmployeesProvider>
               </LocationsProvider>
@@ -66,7 +95,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/staff-management",
-        element: <EmployeePage />,
+        element: (
+          <PubNubProvider client={pubnub}>
+            <EmployeePage />
+          </PubNubProvider>
+        ),
         errorElement: <ErrorPage />,
       },
       {
@@ -81,7 +114,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/chat",
-        element: <ChatPage />,
+        element: (
+          <PubNubProvider client={pubnub}>
+            <ChatPage />
+          </PubNubProvider>
+        ),
         errorElement: <ErrorPage />,
       },
       {
