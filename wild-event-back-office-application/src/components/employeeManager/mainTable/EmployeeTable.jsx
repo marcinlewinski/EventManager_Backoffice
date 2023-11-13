@@ -39,18 +39,21 @@ const EmployeeTable = () => {
     const { employees, deactivateEmployee } = useEmployees();
     const isLoading = !roles || !locations || !employees;
     const { user, token } = useUser();
+    const [isLoadingBTN, setIsLoadingBTN] = useState(false);
 
     const handleDeactivateUser = async () => {
         try {
-            await deactivateUser(pickedUser, token);
+            setIsLoadingBTN(true);
             await deactivateEmployee(pickedUser.id)
+            await deactivateUser(pickedUser.id, token);
+
         } catch (error) {
             console.error(error);
         } finally {
-            setSnackbarInfo({ open: true, message: 'Employee has been deactivated!', severity: 'success' });
             toggleDialog('confirm', false);
+            setIsLoadingBTN(false);
+            setSnackbarInfo({ open: true, message: 'Employee has been deactivated!', severity: 'success' });
         }
-
 
     };
 
@@ -224,7 +227,7 @@ const EmployeeTable = () => {
                 Add New Employee
             </Button>
             <AddEmployeeDialog open={dialogState.add} handleClose={handleCloseAdd} allRoles={roles} allLocations={locations} />
-            <ConfirmationDialog open={dialogState.confirm} handleClose={() => toggleDialog('confirm', false)} handleConfirm={handleDeactivateUser} />
+            <ConfirmationDialog isLoading={isLoadingBTN} open={dialogState.confirm} handleClose={() => toggleDialog('confirm', false)} handleConfirm={handleDeactivateUser} />
             <EditEmployeeDialog open={dialogState.edit} handleClose={handleCloseEdit} allRoles={roles} allLocations={locations} userToEdit={pickedUser} />
             <Snackbar open={snackbarInfo.open} autoHideDuration={3000} onClose={handleCloseSnackbar}>
                 <MuiAlert onClose={handleCloseSnackbar} severity={snackbarInfo.severity} elevation={6} variant="filled">
