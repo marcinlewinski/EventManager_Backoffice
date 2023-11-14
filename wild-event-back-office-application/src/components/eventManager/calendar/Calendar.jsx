@@ -25,7 +25,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         message: "",
         severity: "success",
     })
-    const { user, token } = useUser();
+    const { token } = useUser();
     const [open, setOpen] = useState(false);
     const [isTimeGridWeek, setIsTimeGridWeek] = useState({});
     const [isUpdateEvent, setIsUpdateEvent] = useState(false);
@@ -74,7 +74,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         } catch (error) {
             console.error("Error fetching events", error)
             setEventsData([]);
-        } finally{
+        } finally {
             setIsLoading(false);
         }
     }
@@ -228,6 +228,10 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
     const getContextEventForm = (eventData, idValue) => {
         const foundLocation = locations?.find(el => el.id === eventData.locationId);
         const locationTitle = foundLocation ? foundLocation.title : 'N/A';
+        const foundOrganizers = eventData.organizers.map(organizerId => {
+            const user = employees?.find(user => user.id === organizerId)
+            return user ? user.name : null
+        })
         return {
             id: idValue,
             title: eventData.title,
@@ -235,7 +239,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
             startsAt: eventData.dateRange.startsAt,
             endsAt: eventData.dateRange.endsAt,
             location: locationTitle,
-            organizers: eventData.organizers,
+            organizers: foundOrganizers,
             openToPublic: eventData.openToPublic,
         }
 
@@ -299,17 +303,17 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
 
     const renderEventContent = (eventInfo) => {
         const organizers = eventInfo.event.extendedProps.organizers;
-        const organizersStr = Array.isArray(organizers) ? organizers.join(', ') : 'N/A';
+        const organizersStr = Array.isArray(organizers) ? organizers.join(', ') : 'NO';
 
         return (
             <Tooltip title={
                 <>
                     <Typography variant="body2">{eventInfo.event.title}</Typography>
-                    <Typography variant="body3">Start: {eventInfo.event.start ? eventInfo.event.start.toLocaleString() : 'N/A'}</Typography>
-                    <Typography variant="body3">End: {eventInfo.event.end ? eventInfo.event.end.toLocaleString() : 'N/A'}</Typography>
-                    <Typography variant="body3">Description: {eventInfo.event.extendedProps.description}</Typography>
-                    <Typography variant="body3">Location: {eventInfo.event.extendedProps.location}</Typography>
-                    <Typography variant="body3">Organizers: {organizersStr}</Typography>
+                    <Typography variant="body3"> Start: {eventInfo.event.start ? eventInfo.event.start.toLocaleString() : 'N/A'}</Typography>
+                    <Typography variant="body3"> End: {eventInfo.event.end ? eventInfo.event.end.toLocaleString() : 'N/A'}</Typography>
+                    <Typography variant="body3"> Description: {eventInfo.event.extendedProps.description}</Typography>
+                    <Typography variant="body3"> Location: {eventInfo.event.extendedProps.location}</Typography>
+                    <Typography variant="body3"> Organizers: {organizersStr}</Typography>
                 </>
             }>
                 <Box sx={{ '& > *:not(:last-child)': { marginBottom: 'auto' } }}>
@@ -339,7 +343,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
     const initialViewMode = isMobileView ? "timeGridDay" : "dayGridMonth"
     return (
         <>
-            {(isLoading || eventsData.length === 0 ) ?
+            {(isLoading || eventsData.length === 0) ?
                 (<Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                     <CircularProgress />
                 </Box>
