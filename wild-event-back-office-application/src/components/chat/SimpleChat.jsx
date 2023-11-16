@@ -13,39 +13,72 @@ import {
 import EmojiPicker from 'emoji-picker-react';
 import "./simple-chat.scss";
 import { ReactComponent as PeopleGroup } from "./people-group.svg";
-import { usePubNubData } from "../../services/providers/pubnubAPI/PubNubDataProvider";
+import { Button } from "@mui/material";
+import { getAllUsersData } from "./pubNubService";
+import { useUser } from "../../services/providers/LoggedUserProvider";
+import CreateChatModal from "./CreateChatModal";
 
 
 function SimpleChat() {
   const pubnub = usePubNub();
-  const {
-    getAllUUIDMetadata,
-    currentUser,
-    allUsersData,
-    socialChannelList,
-    directChannelList,
-    channelMetadataState
-  } = usePubNubData();
-  const allChannelIds = channelMetadataState.map(channel => channel.id);
-  const [users, setUsers] = useState([]);
+  const [directChannelList, setDirectChannelList] = useState([]);
+  const [socialChannelList, setSocialChannelList] = useState([]);
+  const allChannelIds = socialChannelList.map(channel => channel.id);
+  const [users, setUsers] = useState();
   const [theme, setTheme] = useState("light");
-  const [messages, setMessages] = useState({});
   const [showMembers, setShowMembers] = useState(false);
   const [showChannels, setShowChannels] = useState(true);
   const [welcomeMessages, setWelcomeMessages] = useState({});
   const [presenceData] = usePresence({ channels: allChannelIds });
-  const [currentChannel, setCurrentChannel] = useState(socialChannelList?.[0] ?? {});
-
   
+  const [currentChannel, setCurrentChannel] = useState(directChannelList?.[0] ?? {});
+  const [createChatModalOpen, setCreateChatModalOpen] = useState(false);
+  const { user } = useUser();
+
+  useEffect(() => {
+    getAllUsersData(pubnub).then(allUsers => {
+      setUsers(allUsers);
+    });
+  }, [pubnub, getAllUsersData]);
+  const currentUser = users?.find((u) => u.id === user.id);
+
+  const presentUUIDs = presenceData[currentChannel.id]?.occupants?.map(
+    (o) => o.uuid
+  );
+  const presentUsers = presentUUIDs?.length ? users.filter((u) => presentUUIDs.includes(u.id)) : [];
+  
+  useEffect(() => {
+    const fetchChannels = async () => {
+      try {
+        // Fetching all channel metadata
+        const response = await pubnub.objects.getAllChannelMetadata();
+        const channels = response.data;
+  
+        // Separating channels into direct and social channels
+        const directChannels = channels.filter(channel => channel.id.startsWith("direct."));
+        const socialChannels = channels.filter(channel => !channel.id.startsWith("direct."));
+  
+        // Updating state
+        setDirectChannelList(directChannels);
+        setSocialChannelList(socialChannels);
+  
+      } catch (error) {
+        console.error('Error fetching channels:', error);
+      }
+    };
+  
+    fetchChannels();
+  }, [pubnub]);
+  
+
+
   return (
     <div className={`app-simple ${theme}`}>
-      {/* Be sure to wrap Chat component in PubNubProvider from pubnub-react package.
-      In this case it's done in the index.tsx file */}
       <Chat
         theme={theme}
         users={users}
         currentChannel={currentChannel.id}
-        // channels={allChannelIds}
+      // channels={allChannelIds}
       >
         <div className={`channels ${showChannels && "shown"}`}>
           <div className="user">
@@ -59,6 +92,17 @@ function SimpleChat() {
               </span>
             </h4>
           </div>
+          <Button variant="outlined" color="primary" onClick={() => setCreateChatModalOpen(true)}>
+            Create Chat
+          </Button>
+          {createChatModalOpen && (
+        <CreateChatModal 
+          users={users} 
+          currentUser={currentUser} 
+          setCurrentChannel={setCurrentChannel} 
+          hideModal={() => setCreateChatModalOpen(false)} 
+        />
+      )}
           <h4>Channels</h4>
           <div>
             <ChannelList
@@ -73,7 +117,7 @@ function SimpleChat() {
               onChannelSwitched={(channel) => setCurrentChannel(channel)}
             />
             <div>
-</div>
+            </div>
           </div>
           <div className="toggle">
             <span>Dark Mode</span>

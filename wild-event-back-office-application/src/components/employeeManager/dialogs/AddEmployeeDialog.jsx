@@ -13,15 +13,17 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
   const [isLoading, setIsLoading] = useState(false);
   const pubnub = usePubNub();
 
-  const addEmployeeToChat = async (data) => {
+  const addEmployeeToChat = async (data, uuid) => {
     try {
         const response = await pubnub.objects.setUUIDMetadata({
-            data: {
-                name: data.name,
-                email: data.email
-            },
+          uuid: uuid,          
+          data: {
+            name: data.name,
+            email: data.email,
+            status: 'active'
+          },
         });
-
+        console.log(response)
         return response.data;
     } catch (error) {
         console.error('Error setting user metadata:', error);
@@ -41,8 +43,9 @@ const AddEmployeeDialog = ({ open, handleClose, allRoles, allLocations }) => {
     validateOnBlur: true,
     onSubmit: async (values, { resetForm }) => {
       setIsLoading(!isLoading);
-      await addEmployee(values);
-      await addEmployeeToChat(values);
+      const newEmployee = await addEmployee(values);
+      console.log(newEmployee)
+      await addEmployeeToChat(values, newEmployee.id);
       handleClose(false, values);
       resetForm();
     }

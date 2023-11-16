@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { usePubNub } from "pubnub-react";
 import { MemberList, getNameInitials, getPredefinedColor } from "@pubnub/react-chat-components";
 
-export const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal }) => {
+const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal }) => {
   const pubnub = usePubNub();
   const [creatingChannel, setCreatingChannel] = useState(false);
   const [showGroups, setShowGroups] = useState(false);
@@ -17,6 +17,8 @@ export const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideMod
         : [...users, member];
     });
   };
+
+
 
   const createChat = async (user) => {
     if (creatingChannel) return;
@@ -54,6 +56,29 @@ export const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideMod
     setCreatingChannel(false);
     hideModal();
   };
+
+  const SelectableUserRenderer = ({ user, selectedUsers, handleCheck }) => {
+    const userSelected = selectedUsers.find((m) => m.id === user.id);
+    return (
+      <div key={user.id} className="pn-member" onClick={() => handleCheck(user)}>
+             <div className="pn-member__avatar" style={{ backgroundColor: getPredefinedColor(user.id) }}>
+          {user.profileUrl ? (
+            <img src={user.profileUrl} alt="User avatar" />
+          ) : (
+            getNameInitials(user.name || user.id)
+          )}
+        </div>
+        <div className="pn-member__main">
+          <p className="pn-member__name">{user.name}</p>
+          <p className="pn-member__title">{user.custom?.title}</p>
+        </div>
+        <div className={`check-icon ${userSelected && "checked"}`}>
+          {userSelected && <i className="material-icons-outlined">check</i>}
+        </div>
+      </div>
+    );
+  };
+  
 
   return (
     <div className="overlay">
@@ -118,24 +143,5 @@ export const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideMod
   );
 };
 
-const SelectableUserRenderer = ({ user, selectedUsers, handleCheck }) => {
-  const userSelected = selectedUsers.find((m) => m.id === user.id);
-  return (
-    <div key={user.id} className="pn-member" onClick={() => handleCheck(user)}>
-           <div className="pn-member__avatar" style={{ backgroundColor: getPredefinedColor(user.id) }}>
-        {user.profileUrl ? (
-          <img src={user.profileUrl} alt="User avatar" />
-        ) : (
-          getNameInitials(user.name || user.id)
-        )}
-      </div>
-      <div className="pn-member__main">
-        <p className="pn-member__name">{user.name}</p>
-        <p className="pn-member__title">{user.custom?.title}</p>
-      </div>
-      <div className={`check-icon ${userSelected && "checked"}`}>
-        {userSelected && <i className="material-icons-outlined">check</i>}
-      </div>
-    </div>
-  );
-};
+export default CreateChatModal;
+

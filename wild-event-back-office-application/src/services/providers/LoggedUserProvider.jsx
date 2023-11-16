@@ -16,7 +16,7 @@ export const UserProvider = ({ children }) => {
 
   const [user, setUser] = useState(initialUser);
   const [token, setToken] = useState(initialToken);
-
+  
   const login = (userData, userToken) => {
     setUser(userData);
     setToken(userToken);
@@ -31,7 +31,7 @@ export const UserProvider = ({ children }) => {
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('user');
   };
-
+ 
   return (
     <UserContext.Provider value={{ user, token, login, logout }}>
       {children}

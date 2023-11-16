@@ -7,8 +7,8 @@ import {
   LogoutPage,
   EventPage,
   MyEventPage,
-  EmployeePage,
   MapPage,
+  EmployeesAndChatPage
 } from "./pages/index";
 import { UserProvider } from "./services/providers/LoggedUserProvider";
 import { DarkModeProvider } from "./components/darkMode/DarkModeProvider";
@@ -16,41 +16,7 @@ import { RolesProvider } from "./services/providers/RolesProvider";
 import { LocationsProvider } from "./services/providers/LocationsProvider";
 import { EmployeesProvider } from "./services/providers/EmployeeProvider";
 import { MapProvider } from "./services/providers/MapProvider";
-import { ChatPage } from "./pages/chatPage/ChatPage";
 import { EventsProvider } from "./services/providers/EventsManagementProvider";
-import { PubNubProvider } from "pubnub-react";
-import PubNub from "pubnub";
-import { PubNubDataProvider } from "./services/providers/pubnubAPI/PubNubDataProvider";
-
-const pubnub = new PubNub({
-  publishKey: `${process.env.REACT_APP_PUBNUB_PUB_KEY}`,
-  subscribeKey: `${process.env.REACT_APP_PUBNUB_SUB_KEY}`,
-  userId: `${process.env.REACT_APP_PUBNUB_UUID}`,
-});
-
-pubnub.addListener({
-  message: function (m) {
-    // handle messages
-  },
-  presence: function (p) {
-    // handle presence
-  },
-  signal: function (s) {
-    // handle signals
-  },
-  objects: (objectEvent) => {
-    // handle objects
-  },
-  messageAction: function (ma) {
-    // handle message actions
-  },
-  file: function (event) {
-    // handle files
-  },
-  status: function (s) {
-    // handle status
-  },
-});
 
 const router = createBrowserRouter([
   {
@@ -63,9 +29,7 @@ const router = createBrowserRouter([
               <LocationsProvider value={{ locations: [] }}>
                 <EmployeesProvider value={{ employees: [] }}>
                   <EventsProvider value={{ events: [] }}>
-                    <PubNubDataProvider value={{ pubnub: pubnub }}>
                      <Outlet />
-                    </PubNubDataProvider>
                   </EventsProvider>
                 </EmployeesProvider>
               </LocationsProvider>
@@ -99,9 +63,7 @@ const router = createBrowserRouter([
       {
         path: "/staff-management",
         element: (
-          <PubNubProvider client={pubnub}>
-            <EmployeePage />
-          </PubNubProvider>
+          <EmployeesAndChatPage isEmployee={true} />
         ),
         errorElement: <ErrorPage />,
       },
@@ -118,9 +80,7 @@ const router = createBrowserRouter([
       {
         path: "/chat",
         element: (
-          <PubNubProvider client={pubnub}>
-            <ChatPage />
-          </PubNubProvider>
+          <EmployeesAndChatPage isEmployee={false} />
         ),
         errorElement: <ErrorPage />,
       },
