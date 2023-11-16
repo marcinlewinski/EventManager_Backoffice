@@ -23,14 +23,13 @@ function SimpleChat() {
   const pubnub = usePubNub();
   const [directChannelList, setDirectChannelList] = useState([]);
   const [socialChannelList, setSocialChannelList] = useState([]);
-  const allChannelIds = socialChannelList.map(channel => channel.id);
+  const allChannelIds = [...directChannelList, ...socialChannelList].map((channel) => channel.id);
   const [users, setUsers] = useState();
   const [theme, setTheme] = useState("light");
   const [showMembers, setShowMembers] = useState(false);
   const [showChannels, setShowChannels] = useState(true);
   const [welcomeMessages, setWelcomeMessages] = useState({});
   const [presenceData] = usePresence({ channels: allChannelIds });
-  
   const [currentChannel, setCurrentChannel] = useState(directChannelList?.[0] ?? {});
   const [createChatModalOpen, setCreateChatModalOpen] = useState(false);
   const { user } = useUser();
@@ -41,6 +40,8 @@ function SimpleChat() {
     });
   }, [pubnub, getAllUsersData]);
   const currentUser = users?.find((u) => u.id === user.id);
+
+  console.log(allChannelIds)
 
   const presentUUIDs = presenceData[currentChannel.id]?.occupants?.map(
     (o) => o.uuid
@@ -56,7 +57,7 @@ function SimpleChat() {
   
         // Separating channels into direct and social channels
         const directChannels = channels.filter(channel => channel.id.startsWith("direct."));
-        const socialChannels = channels.filter(channel => !channel.id.startsWith("direct."));
+        const socialChannels = channels.filter(channel => channel.id.startsWith("group."));
   
         // Updating state
         setDirectChannelList(directChannels);
@@ -78,7 +79,7 @@ function SimpleChat() {
         theme={theme}
         users={users}
         currentChannel={currentChannel.id}
-      // channels={allChannelIds}
+        channels={allChannelIds}
       >
         <div className={`channels ${showChannels && "shown"}`}>
           <div className="user">
