@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { createRoot } from 'react-dom/client';
 import mapboxgl from 'mapbox-gl';
 import { saveMap } from "../../../services/api/MapService";
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import Marker from "./Marker"
 import './Map.css'
 import MapDialog from "../dialog/MapDialog";
@@ -26,12 +26,19 @@ const Map = ({ mapLocations }) => {
         bearing: mapData.bearing
       }, []);
       mapData.locations.forEach((location, index) => {
+        const markerPopup = new mapboxgl.Popup({ offset: [0, -15] })
+          .setHTML(`<h5>${location.title}</h5>`);
+
         const ref = React.createRef();
         ref.current = document.createElement('div');
         createRoot(ref.current).render(<Marker feature={location} index={index + 1} />);
         new mapboxgl.Marker(ref.current)
           .setLngLat([location.coordinateDTO.longitude, location.coordinateDTO.latitude])
+          .setPopup(markerPopup)
           .addTo(map);
+
+
+
       });
       map.addControl(new mapboxgl.NavigationControl(), 'top-right');
       map.on('move', () => {
@@ -48,15 +55,15 @@ const Map = ({ mapLocations }) => {
   }, [mapLocations]);
 
 
-  return <div>
+  return <Box>
     <Button variant="contained" onClick={() => setConfirmDialogOpen(true)}>Save current map setting</Button>
-    <div className="map-container" ref={mapContainerRef} />
+    <Box className="map-container" ref={mapContainerRef} />
     <MapDialog
       open={confirmDialogOpen}
       handleClose={() => setConfirmDialogOpen(false)}
       handleConfirm={() => saveMap(token, mapSave)}
     />
-  </div>
+  </Box>
     ;
 };
 
