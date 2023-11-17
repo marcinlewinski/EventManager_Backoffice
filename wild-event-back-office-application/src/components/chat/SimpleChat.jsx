@@ -17,6 +17,7 @@ import { Button } from "@mui/material";
 import { getAllUsersData } from "./pubNubService";
 import { useUser } from "../../services/providers/LoggedUserProvider";
 import CreateChatModal from "./CreateChatModal";
+import { Typography } from "@mui/material";
 
 
 function SimpleChat() {
@@ -136,7 +137,7 @@ function SimpleChat() {
         <div className={`channels ${showChannels && "shown"}`}>
           <div className="user">
             {currentUser?.profileUrl && (
-              <img src={currentUser?.profileUrl} alt="User avatar " />
+              <img src={currentUser?.profileUrl} alt="User avatar" />
             )}
             <h4>
               {currentUser?.name}{" "}
@@ -149,13 +150,13 @@ function SimpleChat() {
             Create Chat
           </Button>
           {createChatModalOpen && (
-        <CreateChatModal 
-          users={users} 
-          currentUser={currentUser} 
-          setCurrentChannel={setCurrentChannel} 
-          hideModal={() => setCreateChatModalOpen(false)} 
-        />
-      )}
+            <CreateChatModal 
+              users={users} 
+              currentUser={currentUser} 
+              setCurrentChannel={setCurrentChannel} 
+              hideModal={() => setCreateChatModalOpen(false)} 
+            />
+          )}
           <h4>Channels</h4>
           <div>
             <ChannelList
@@ -169,8 +170,6 @@ function SimpleChat() {
               channels={directChannelList}
               onChannelSwitched={(channel) => setCurrentChannel(channel)}
             />
-            <div>
-            </div>
           </div>
           <div className="toggle">
             <span>Dark Mode</span>
@@ -185,36 +184,50 @@ function SimpleChat() {
         </div>
 
         <div className="chat">
-          <div
-            className={`people ${showMembers ? "active" : ""}`}
-            onClick={() => setShowMembers(!showMembers)}
-          >
-            <span>{presenceData[currentChannel.id]?.occupancy || 0}</span>
-            <PeopleGroup />
-          </div>
+          {currentChannel.id ? (
+            <>
+              <div
+                className={`people ${showMembers ? "active" : ""}`}
+                onClick={() => setShowMembers(!showMembers)}
+              >
+                <span>{presenceData[currentChannel.id]?.occupancy || 0}</span>
+                <PeopleGroup />
+              </div>
 
-          <div className="info">
-            <span className="hamburger" onClick={() => setShowChannels(true)}>
-              ☰
-            </span>
-            <h4>{currentChannel.name}</h4>
-            <small>{currentChannel.description}</small>
-            <hr />
-          </div>
-          <MessageList
-            fetchMessages={100}
-            enableReactions
-            emojiPicker={<EmojiPicker onEmojiClick={(event, emojiObject) => { /* obsługa wybranego emoji */ }} />}
-          >
-            <TypingIndicator showAsMessage />
-          </MessageList>
-          <hr />
-          <MessageInput
-            senderInfo={true}
-            typingIndicator
-            fileUpload="all"
-            emojiPicker={<EmojiPicker onEmojiClick={(event, emojiObject) => { /* obsługa wybranego emoji */ }} />}
-          />
+              <div className="info">
+                <span className="hamburger" onClick={() => setShowChannels(true)}>
+                  ☰
+                </span>
+                <h4>{currentChannel.name}</h4>
+                <small>{currentChannel.description}</small>
+                <hr />
+              </div>
+
+              <MessageList
+                fetchMessages={100}
+                enableReactions
+                emojiPicker={<EmojiPicker onEmojiClick={(event, emojiObject) => {}} />}
+              >
+                <TypingIndicator showAsMessage />
+              </MessageList>
+              <hr />
+              <MessageInput
+                senderInfo={true}
+                typingIndicator
+                fileUpload="all"
+                emojiPicker={<EmojiPicker onEmojiClick={(event, emojiObject) => {}} />}
+              />
+            </>
+          ) : (
+            <Typography 
+              variant="subtitle1" 
+              color="textSecondary" 
+              align="center" 
+              style={{ marginTop: '20px' }}
+            >
+              Select existing chat or create new one to start conversation.
+            </Typography>
+          )}
         </div>
 
         <div className={`members ${showMembers && "shown"}`}>
