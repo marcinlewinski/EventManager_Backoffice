@@ -60,11 +60,3 @@
 .mapboxgl-ctrl-bottom-right {
   display: none;
 }
-
-.custom-popup {
-  max-width: 300px; /* Maksymalna szerokość okna podpowiedzi */
-  background-color: #888; /* Szary kolor tła */
-  color: #fff; /* Biały kolor tekstu */
-  padding: 10px; /* Dodaj wypełnienie wokół treści */
-  border-radius: 5px; /* Zaokrąglij narożniki */
-}
