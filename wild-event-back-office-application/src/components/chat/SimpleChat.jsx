@@ -30,7 +30,7 @@ function SimpleChat() {
   const [showChannels, setShowChannels] = useState(true);
   const [welcomeMessages, setWelcomeMessages] = useState({});
   const [presenceData] = usePresence({ channels: allChannelIds });
-  const [currentChannel, setCurrentChannel] = useState(directChannelList?.[0] ?? {});
+  const [currentChannel, setCurrentChannel] = useState({});
   const [createChatModalOpen, setCreateChatModalOpen] = useState(false);
   const { user } = useUser();
 
@@ -41,28 +41,24 @@ function SimpleChat() {
   }, [pubnub, getAllUsersData]);
   const currentUser = users?.find((u) => u.id === user.id);
 
-  console.log(allChannelIds)
-
   const presentUUIDs = presenceData[currentChannel.id]?.occupants?.map(
     (o) => o.uuid
   );
   const presentUsers = presentUUIDs?.length ? users.filter((u) => presentUUIDs.includes(u.id)) : [];
+
+  console.log(users)
   
   useEffect(() => {
     const fetchChannels = async () => {
       try {
-        // Fetching all channel metadata
         const response = await pubnub.objects.getAllChannelMetadata();
         const channels = response.data;
   
-        // Separating channels into direct and social channels
         const directChannels = channels.filter(channel => channel.id.startsWith("direct."));
         const socialChannels = channels.filter(channel => channel.id.startsWith("group."));
   
-        // Updating state
         setDirectChannelList(directChannels);
         setSocialChannelList(socialChannels);
-  
       } catch (error) {
         console.error('Error fetching channels:', error);
       }
@@ -70,8 +66,64 @@ function SimpleChat() {
   
     fetchChannels();
   }, [pubnub]);
+
+  useEffect(() => {
+    // Subscribe to the current channel
+    if (currentChannel && currentChannel.id) {
+      pubnub.subscribe({ channels: [currentChannel.id] });
+      console.log(`Subscribed to channel: ${currentChannel.id}`);
+    }
+
+    // Unsubscribe when the component unmounts or when the channel changes
+    return () => {
+      if (currentChannel && currentChannel.id) {
+        pubnub.unsubscribe({ channels: [currentChannel.id] });
+        console.log(`Unsubscribed from channel: ${currentChannel.id}`);
+      }
+    };
+  }, [currentChannel, pubnub]);
+
+  useEffect(() => {
+    const fetchChannelMessages = async () => {
+      if (currentChannel && currentChannel.id) {
+        try {
+          const response = await pubnub.fetchMessages({
+            channels: [currentChannel.id],
+            count: 100, // Number of messages to retrieve
+          });
+
+          const messages = response.channels[currentChannel.id];
+          console.log(response)
+        } catch (error) {
+          console.error('Error fetching messages:', error);
+        }
+      }
+    };
+
+    fetchChannelMessages();
+  }, [currentChannel, pubnub]);
   
 
+  useEffect(() => {
+    const fetchChannelMessages = async () => {
+      if (currentChannel.id) {
+        try {
+          const response = await pubnub.fetchMessages({
+            channels: [currentChannel.id],
+            count: 100, // Liczba ostatnich wiadomości do pobrania
+          });
+  
+          const messages = response.channels[currentChannel.id] || [];
+          setWelcomeMessages({ ...welcomeMessages, [currentChannel.id]: messages });
+        } catch (error) {
+          console.error('Error fetching messages:', error);
+        }
+      }
+    };
+  
+    fetchChannelMessages();
+  }, [pubnub, currentChannel.id]);
+  
 
   return (
     <div className={`app-simple ${theme}`}>
@@ -150,8 +202,7 @@ function SimpleChat() {
             <hr />
           </div>
           <MessageList
-            fetchMessages={0}
-            welcomeMessages={welcomeMessages[currentChannel.id]}
+            fetchMessages={100}
             enableReactions
             emojiPicker={<EmojiPicker onEmojiClick={(event, emojiObject) => { /* obsługa wybranego emoji */ }} />}
           >
@@ -159,6 +210,7 @@ function SimpleChat() {
           </MessageList>
           <hr />
           <MessageInput
+            senderInfo={true}
             typingIndicator
             fileUpload="all"
             emojiPicker={<EmojiPicker onEmojiClick={(event, emojiObject) => { /* obsługa wybranego emoji */ }} />}

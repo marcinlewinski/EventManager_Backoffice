@@ -5,21 +5,20 @@ import { PubNubProvider } from "pubnub-react";
 import PubNub from "pubnub";
 import { useUser } from "../../services/providers/LoggedUserProvider"
 
-export const EmployeesAndChatPageDesktop = ({isEmployeePage}) => {
+export const EmployeesAndChatPageDesktop = ({isEmployee}) => {
     const { user } = useUser(); 
-    console.log(isEmployeePage)
 
 	const pubnub = new PubNub({
 		publishKey: `${process.env.REACT_APP_PUBNUB_PUB_KEY}`,
 		subscribeKey: `${process.env.REACT_APP_PUBNUB_SUB_KEY}`,
-		userId: `${user.Id}`,
+		uuid: user.id,
 	  });
 
     return (
         <>
             <DesktopLayout>
                 <PubNubProvider client={pubnub}> 
-                {isEmployeePage ? <EmployeeTable /> : <SimpleChat />}
+                {isEmployee ? <EmployeeTable /> : <SimpleChat />}
                 </PubNubProvider>
             </DesktopLayout>
         </>
