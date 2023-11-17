@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import mapboxgl from 'mapbox-gl';
 import './Map.css'
+import { Box } from "@mui/material";
 
 const MapForm = ({ mapLocations, location, coordinate, setCoordinate}) => {
-
   const [isUpdating, setIsUpdating] = useState(true)
-
   const mapContainerRef = useRef(null);
   
   mapboxgl.accessToken = `${process.env.REACT_APP_API_KEY}`;
@@ -59,9 +58,9 @@ const MapForm = ({ mapLocations, location, coordinate, setCoordinate}) => {
     };
   }, [isUpdating]);
   return (
-    <div>
-      <div className="map-form-container" ref={mapContainerRef} />
-    </div>
+    <Box>
+      <Box className="map-form-container" ref={mapContainerRef} />
+    </Box>
   );
 };
 

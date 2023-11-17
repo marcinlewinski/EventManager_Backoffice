@@ -11,7 +11,6 @@ export const MapConfig = () => {
     const [mapKey, setMapKey] = useState(1);
 
     const update = () => {
-        console.log(mapKey)
         setMapKey(prevKey => prevKey + 1);
     };
 
