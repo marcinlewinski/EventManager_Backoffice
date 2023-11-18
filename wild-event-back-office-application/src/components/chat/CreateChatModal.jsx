@@ -4,6 +4,7 @@ import { MemberList, getNameInitials, getPredefinedColor } from "@pubnub/react-c
 import { TextField } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import IconButton from '@mui/material/IconButton';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import CloseIcon from '@mui/icons-material/Close';
 
 const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal }) => {
@@ -89,9 +90,9 @@ const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal }) =
       <div className="modal create-chat-modal">
         <div className="header">
           {showGroups && (
-            <button className="material-icons-outlined" onClick={() => setShowGroups(false)}>
-              chevron_left
-            </button>
+            <IconButton onClick={() => setShowGroups(false)}>
+              <ChevronLeftIcon />
+            </IconButton>
           )}
           <strong>New chat</strong>
           <IconButton onClick={() => hideModal()}>
