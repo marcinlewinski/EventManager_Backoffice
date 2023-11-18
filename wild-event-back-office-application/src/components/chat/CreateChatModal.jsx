@@ -3,6 +3,8 @@ import { usePubNub } from "pubnub-react";
 import { MemberList, getNameInitials, getPredefinedColor } from "@pubnub/react-chat-components";
 import { TextField } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 
 const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal }) => {
   const pubnub = usePubNub();
@@ -92,9 +94,9 @@ const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal }) =
             </button>
           )}
           <strong>New chat</strong>
-          <button className="material-icons-outlined" onClick={() => hideModal()}>
-            close
-          </button>
+          <IconButton onClick={() => hideModal()}>
+            <CloseIcon />
+          </IconButton>
         </div>
 
         <div>
@@ -114,14 +116,14 @@ const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal }) =
         </div>
 
         {showGroups ? (
-         <TextField
-         onChange={(e) => setChannelName(e.target.value)}
-         label="Chat name"
-         placeholder="Group chat name (optional)"
-         type="text"
-         size="small"
-         value={channelName}
-       />
+          <TextField
+            onChange={(e) => setChannelName(e.target.value)}
+            label="Chat name"
+            placeholder="Group chat name (optional)"
+            type="text"
+            size="small"
+            value={channelName}
+          />
         ) : (
           <button className="group-button" onClick={() => setShowGroups(true)}>
             <i className="material-icons-outlined">people</i>
