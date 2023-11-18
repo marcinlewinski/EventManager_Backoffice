@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { usePubNub } from "pubnub-react";
 import { MemberList, getNameInitials, getPredefinedColor } from "@pubnub/react-chat-components";
-import { TextField } from "@mui/material";
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton, Button } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
-import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import CloseIcon from '@mui/icons-material/Close';
-import Button from '@mui/material/Button';
+import PeopleIcon from '@mui/icons-material/People';
 
 const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal }) => {
   const pubnub = usePubNub();
@@ -87,50 +86,37 @@ const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal }) =
 
 
   return (
-    <div className="overlay">
-      <div className="modal create-chat-modal">
-        <div className="header">
-          {showGroups && (
-            <IconButton onClick={() => setShowGroups(false)}>
-              <ChevronLeftIcon />
-            </IconButton>
-          )}
-          <strong>New chat</strong>
-          <IconButton onClick={() => hideModal()}>
-            <CloseIcon />
-          </IconButton>
-        </div>
+    <Dialog open={true} onClose={hideModal} fullWidth maxWidth="sm">
+      <IconButton
+        onClick={hideModal}
+        style={{ position: 'absolute', right: 0, top: 0 }}
+      >
+        <CloseIcon />
+      </IconButton>
+      <DialogTitle style={{ textAlign: 'center' }}>
+        New Chat
+      </DialogTitle>
+      <DialogContent>
+        <TextField
+          label="Search"
+          onChange={(e) => setUsersFilter(e.target.value)}
+          type="text"
+          size="small"
+          fullWidth
+          value={usersFilter}
+          InputProps={{ endAdornment: <SearchIcon /> }}
+        />
 
-        <div>
-          <TextField
-            label="Search"
-            onChange={(e) => setUsersFilter(e.target.value)}
-            type="text"
-            size="small"
-            value={usersFilter}
-            InputProps={{
-              endAdornment: (
-                <SearchIcon />
-              ),
-            }}
-          />
-        </div>
-
-        {showGroups ? (
+        {showGroups && (
           <TextField
             onChange={(e) => setChannelName(e.target.value)}
             label="Chat name"
             placeholder="Group chat name (optional)"
             type="text"
             size="small"
+            fullWidth
             value={channelName}
           />
-        ) : (
-          <button className="group-button" onClick={() => setShowGroups(true)}>
-            <i className="material-icons-outlined">people</i>
-            <p>New group chat</p>
-            <i className="material-icons-outlined">chevron_right</i>
-          </button>
         )}
 
         <h2>Users</h2>
@@ -143,29 +129,23 @@ const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal }) =
               : undefined
           }
         />
-        {!!selectedUsers.length && (
-          <div className="footer">
-            <Button
-              variant="contained"
-              color="primary"
-              disabled={creatingChannel}
-              onClick={() => createChat()}
-              style={{
-                color: 'white',             
-                padding: '10px 20px',       
-                fontSize: '12px',           
-                fontWeight: 'bold',        
-                boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)', 
-                marginTop: '10px',          
-                textTransform: 'none',   
-              }}
-            >
-              Create group chat
-            </Button>
-          </div>
+      </DialogContent>
+      <DialogActions>
+        {showGroups && selectedUsers.length > 0 && (
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={creatingChannel}
+            onClick={() => createChat()}
+          >
+            Create group chat
+          </Button>
         )}
-      </div>
-    </div>
+        <IconButton onClick={() => setShowGroups(!showGroups)}>
+          {showGroups ? <ChevronLeftIcon /> : <PeopleIcon />}
+        </IconButton>
+      </DialogActions>
+    </Dialog>
   );
 };
 
