@@ -6,6 +6,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import CloseIcon from '@mui/icons-material/Close';
+import Button from '@mui/material/Button';
 
 const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal }) => {
   const pubnub = usePubNub();
@@ -104,7 +105,6 @@ const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal }) =
           <TextField
             label="Search"
             onChange={(e) => setUsersFilter(e.target.value)}
-            // placeholder="Search in users"
             type="text"
             size="small"
             value={usersFilter}
@@ -145,9 +145,23 @@ const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal }) =
         />
         {!!selectedUsers.length && (
           <div className="footer">
-            <button disabled={creatingChannel} onClick={() => createChat()}>
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={creatingChannel}
+              onClick={() => createChat()}
+              style={{
+                color: 'white',             
+                padding: '10px 20px',       
+                fontSize: '12px',           
+                fontWeight: 'bold',        
+                boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)', 
+                marginTop: '10px',          
+                textTransform: 'none',   
+              }}
+            >
               Create group chat
-            </button>
+            </Button>
           </div>
         )}
       </div>
