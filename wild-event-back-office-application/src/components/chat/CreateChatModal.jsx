@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { usePubNub } from "pubnub-react";
 import { MemberList, getNameInitials, getPredefinedColor } from "@pubnub/react-chat-components";
+import { TextField } from "@mui/material";
+import SearchIcon from '@mui/icons-material/Search';
 
 const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal }) => {
   const pubnub = usePubNub();
@@ -61,7 +63,7 @@ const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal }) =
     const userSelected = selectedUsers.find((m) => m.id === user.id);
     return (
       <div key={user.id} className="pn-member" onClick={() => handleCheck(user)}>
-             <div className="pn-member__avatar" style={{ backgroundColor: getPredefinedColor(user.id) }}>
+        <div className="pn-member__avatar" style={{ backgroundColor: getPredefinedColor(user.id) }}>
           {user.profileUrl ? (
             <img src={user.profileUrl} alt="User avatar" />
           ) : (
@@ -78,11 +80,11 @@ const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal }) =
       </div>
     );
   };
-  
+
 
   return (
     <div className="overlay">
-       <div className="modal create-chat-modal">
+      <div className="modal create-chat-modal">
         <div className="header">
           {showGroups && (
             <button className="material-icons-outlined" onClick={() => setShowGroups(false)}>
@@ -95,24 +97,31 @@ const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal }) =
           </button>
         </div>
 
-        <div className="filter-input">
-          <input
+        <div>
+          <TextField
+            label="Search"
             onChange={(e) => setUsersFilter(e.target.value)}
-            placeholder="Search in users"
+            // placeholder="Search in users"
             type="text"
+            size="small"
             value={usersFilter}
+            InputProps={{
+              endAdornment: (
+                <SearchIcon />
+              ),
+            }}
           />
-          <i className="material-icons-outlined">search</i>
         </div>
 
         {showGroups ? (
-          <input
-            className="large"
-            onChange={(e) => setChannelName(e.target.value)}
-            placeholder="Group chat name (optional)"
-            type="text"
-            value={channelName}
-          />
+         <TextField
+         onChange={(e) => setChannelName(e.target.value)}
+         label="Chat name"
+         placeholder="Group chat name (optional)"
+         type="text"
+         size="small"
+         value={channelName}
+       />
         ) : (
           <button className="group-button" onClick={() => setShowGroups(true)}>
             <i className="material-icons-outlined">people</i>

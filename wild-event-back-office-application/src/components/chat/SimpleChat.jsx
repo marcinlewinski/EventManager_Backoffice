@@ -54,9 +54,10 @@ function SimpleChat() {
       try {
         const response = await pubnub.objects.getAllChannelMetadata();
         const channels = response.data;
-  
+        
         const directChannels = channels.filter(channel => channel.id.startsWith("direct."));
         const socialChannels = channels.filter(channel => channel.id.startsWith("group."));
+        
   
         setDirectChannelList(directChannels);
         setSocialChannelList(socialChannels);
@@ -82,26 +83,6 @@ function SimpleChat() {
         console.log(`Unsubscribed from channel: ${currentChannel.id}`);
       }
     };
-  }, [currentChannel, pubnub]);
-
-  useEffect(() => {
-    const fetchChannelMessages = async () => {
-      if (currentChannel && currentChannel.id) {
-        try {
-          const response = await pubnub.fetchMessages({
-            channels: [currentChannel.id],
-            count: 100, // Number of messages to retrieve
-          });
-
-          const messages = response.channels[currentChannel.id];
-          console.log(response)
-        } catch (error) {
-          console.error('Error fetching messages:', error);
-        }
-      }
-    };
-
-    fetchChannelMessages();
   }, [currentChannel, pubnub]);
   
 
