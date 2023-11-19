@@ -18,6 +18,8 @@ import { getAllUsersData } from "./pubNubService";
 import { useUser } from "../../services/providers/LoggedUserProvider";
 import CreateChatModal from "./CreateChatModal";
 import { Typography } from "@mui/material";
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 
 
 function SimpleChat() {
@@ -85,26 +87,28 @@ function SimpleChat() {
     };
   }, [currentChannel, pubnub]);
   
-
-  useEffect(() => {
-    const fetchChannelMessages = async () => {
-      if (currentChannel.id) {
-        try {
-          const response = await pubnub.fetchMessages({
-            channels: [currentChannel.id],
-            count: 100, // Liczba ostatnich wiadomości do pobrania
-          });
+  const deleteChat = async (channelId) => {
+    try {
+      // Delete the channel metadata
+      await pubnub.objects.removeChannelMetadata({ channel: channelId });
   
-          const messages = response.channels[currentChannel.id] || [];
-          setWelcomeMessages({ ...welcomeMessages, [currentChannel.id]: messages });
-        } catch (error) {
-          console.error('Error fetching messages:', error);
-        }
+      // Unsubscribe from the channel
+      pubnub.unsubscribe({ channels: [channelId] });
+  
+      // Update the UI by filtering out the deleted channel
+      setDirectChannelList(directChannelList.filter(channel => channel.id !== channelId));
+      setSocialChannelList(socialChannelList.filter(channel => channel.id !== channelId));
+  
+      // Reset current channel if it's the one being deleted
+      if (currentChannel.id === channelId) {
+        setCurrentChannel({});
       }
-    };
   
-    fetchChannelMessages();
-  }, [pubnub, currentChannel.id]);
+      console.log(`Chat ${channelId} deleted successfully`);
+    } catch (error) {
+      console.error('Error deleting chat:', error);
+    }
+  };
   
 
   return (
@@ -143,6 +147,19 @@ function SimpleChat() {
             <ChannelList
               channels={socialChannelList}
               onChannelSwitched={(channel) => setCurrentChannel(channel)}
+              onDeleteChannel={(channel) => deleteChat(channel.id)}
+              renderItem={(channel) => (
+                <div className="channel-item">
+                  <span>{channel.name}</span>
+                  <IconButton 
+                    size="small" 
+                    onClick={() => deleteChat(channel.id)}
+                    aria-label="delete"
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </div>
+              )}
             />
           </div>
           <h4>Direct Chats</h4>
