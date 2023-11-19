@@ -22,6 +22,8 @@ import { useRoles } from '../../../services/providers/RolesProvider';
 import { useLocations } from '../../../services/providers/LocationsProvider';
 import { useEmployees } from '../../../services/providers/EmployeeProvider';
 import Skeleton from '@mui/material/Skeleton';
+import { usePubNub } from 'pubnub-react';
+import { deactivateUserFromPubNub } from '../../chat/service/pubNubService';
 import { useUser } from "../../../services/providers/LoggedUserProvider"
 import { deactivateUser } from '../../../services/api/EmployeeManagement';
 
@@ -37,6 +39,7 @@ const EmployeeTable = () => {
     const { roles } = useRoles();
     const { locations } = useLocations();
     const { employees, deactivateEmployee } = useEmployees();
+    const pubnub = usePubNub();
     const isLoading = !roles || !locations || !employees;
     const { user, token } = useUser();
     const [isLoadingBTN, setIsLoadingBTN] = useState(false);
@@ -46,7 +49,7 @@ const EmployeeTable = () => {
             setIsLoadingBTN(true);
             await deactivateEmployee(pickedUser.id)
             await deactivateUser(pickedUser.id, token);
-
+            deactivateUserFromPubNub(pubnub, pickedUser.id);
         } catch (error) {
             console.error(error);
         } finally {
@@ -54,7 +57,6 @@ const EmployeeTable = () => {
             setIsLoadingBTN(false);
             setSnackbarInfo({ open: true, message: 'Employee has been deactivated!', severity: 'success' });
         }
-
     };
 
     const handleEditUser = (userId) => {

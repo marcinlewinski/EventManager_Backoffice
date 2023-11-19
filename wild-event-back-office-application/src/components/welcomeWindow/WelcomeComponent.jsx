@@ -1,10 +1,11 @@
 import React from "react"
 import { Paper, Typography } from "@mui/material"
-import { useUser } from "../../services/providers/LoggedUserProvider"
+import { useUser } from "../../services/providers/LoggedUserProvider";
 
-export const WelcomeWindow = ({ userId }) => {
+export const WelcomeWindow = () => {
 	const { user } = useUser(); 
-
+	  
+	
 	return (
 		<Paper elevation={3} sx={{ padding: "20px", textAlign: "center" }}>
 			<Typography variant='h5' gutterBottom>

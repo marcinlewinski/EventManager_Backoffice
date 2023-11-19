@@ -7,8 +7,8 @@ import {
   LogoutPage,
   EventPage,
   MyEventPage,
-  EmployeePage,
   MapPage,
+  EmployeesAndChatPage
 } from "./pages/index";
 import { UserProvider } from "./services/providers/LoggedUserProvider";
 import { DarkModeProvider } from "./components/darkMode/DarkModeProvider";
@@ -16,9 +16,7 @@ import { RolesProvider } from "./services/providers/RolesProvider";
 import { LocationsProvider } from "./services/providers/LocationsProvider";
 import { EmployeesProvider } from "./services/providers/EmployeeProvider";
 import { MapProvider } from "./services/providers/MapProvider";
-import { ChatPage } from "./pages/chatPage/ChatPage";
 import { EventsProvider } from "./services/providers/EventsManagementProvider";
-
 
 const router = createBrowserRouter([
   {
@@ -31,7 +29,7 @@ const router = createBrowserRouter([
               <LocationsProvider value={{ locations: [] }}>
                 <EmployeesProvider value={{ employees: [] }}>
                   <EventsProvider value={{ events: [] }}>
-                    <Outlet />
+                     <Outlet />
                   </EventsProvider>
                 </EmployeesProvider>
               </LocationsProvider>
@@ -64,7 +62,9 @@ const router = createBrowserRouter([
       },
       {
         path: "/staff-management",
-        element: <EmployeePage />,
+        element: (
+          <EmployeesAndChatPage isEmployee={true} />
+        ),
         errorElement: <ErrorPage />,
       },
       {
@@ -79,7 +79,9 @@ const router = createBrowserRouter([
       },
       {
         path: "/chat",
-        element: <ChatPage />,
+        element: (
+          <EmployeesAndChatPage isEmployee={false} />
+        ),
         errorElement: <ErrorPage />,
       },
       {

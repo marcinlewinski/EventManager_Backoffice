@@ -1,7 +1,7 @@
 import { PhoneLayout } from "../layout/PhoneLayout"
-import EmployeeTable from "../../components/employeeManager/mainTable/EmployeeTable"
+import EmployeeTable from "../../components/employeeManager/mainTable/EmployeeTable";
 
-export const EmployeePagePhone = () => {
+export const EmployeesAndChatPagePhone = () => {
 	return (
 		<>
 			<PhoneLayout>
