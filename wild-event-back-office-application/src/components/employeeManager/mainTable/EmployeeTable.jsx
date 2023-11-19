@@ -24,6 +24,8 @@ import { useEmployees } from '../../../services/providers/EmployeeProvider';
 import Skeleton from '@mui/material/Skeleton';
 import { usePubNub } from 'pubnub-react';
 import { deactivateUserFromPubNub } from '../../chat/service/pubNubService';
+import { useUser } from "../../../services/providers/LoggedUserProvider"
+import { deactivateUser } from '../../../services/api/EmployeeManagement';
 
 const EmployeeTable = () => {
     const [page, setPage] = useState(0);
@@ -39,12 +41,22 @@ const EmployeeTable = () => {
     const { employees, deactivateEmployee } = useEmployees();
     const pubnub = usePubNub();
     const isLoading = !roles || !locations || !employees;
+    const { user, token } = useUser();
+    const [isLoadingBTN, setIsLoadingBTN] = useState(false);
 
     const handleDeactivateUser = async () => {
-        deactivateEmployee(pickedUser.id)
-        deactivateUserFromPubNub(pubnub, pickedUser.id);
-        setSnackbarInfo({ open: true, message: 'Employee has been deactivated!', severity: 'success' });
-        toggleDialog('confirm', false);
+        try {
+            setIsLoadingBTN(true);
+            await deactivateEmployee(pickedUser.id)
+            await deactivateUser(pickedUser.id, token);
+            deactivateUserFromPubNub(pubnub, pickedUser.id);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            toggleDialog('confirm', false);
+            setIsLoadingBTN(false);
+            setSnackbarInfo({ open: true, message: 'Employee has been deactivated!', severity: 'success' });
+        }
     };
 
     const handleEditUser = (userId) => {
@@ -162,26 +174,27 @@ const EmployeeTable = () => {
                                         (selectedRole === "" || user.roles.includes(selectedRole)) &&
                                         (selectedLocation === "" || user.locations.includes(selectedLocation));
                                 })
-                            ).map((user) => (
-                                <TableRow key={user.id}>
+                            ).map((userElement) => (
+                                <TableRow key={userElement.id}>
                                     <TableCell component="th" scope="row">
-                                        {user.name}
+                                        {userElement.name}
                                     </TableCell>
-                                    <TableCell align="center">{user.email}</TableCell>
-                                    <TableCell align="center">{user.phone}</TableCell>
+                                    <TableCell align="center">{userElement.email}</TableCell>
+                                    <TableCell align="center">{userElement.phone}</TableCell>
                                     <TableCell align="center">
-                                        {Array.isArray(user.locations) ? user.locations.join(', ') : user.locations}
+                                        {Array.isArray(userElement.locations) ? userElement.locations.join(', ') : userElement.locations}
                                     </TableCell>
                                     <TableCell align="center">
-                                        {Array.isArray(user.roles) ? user.roles.join(', ') : user.roles}
+                                        {Array.isArray(userElement.roles) ? userElement.roles.join(', ') : userElement.roles}
                                     </TableCell>
                                     <TableCell align="center">
                                         <UserActionsMenu
                                             onEdit={() => {
-                                                handleEditUser(user.id);
+                                                handleEditUser(userElement.id);
                                             }}
+                                            onDisabled={userElement.id === user.id}
                                             onDeactivate={() => {
-                                                setPickedUser(user);
+                                                setPickedUser(userElement);
                                                 toggleDialog('confirm', true);
                                             }}
                                         />
@@ -216,7 +229,7 @@ const EmployeeTable = () => {
                 Add New Employee
             </Button>
             <AddEmployeeDialog open={dialogState.add} handleClose={handleCloseAdd} allRoles={roles} allLocations={locations} />
-            <ConfirmationDialog open={dialogState.confirm} handleClose={() => toggleDialog('confirm', false)} handleConfirm={handleDeactivateUser} />
+            <ConfirmationDialog isLoading={isLoadingBTN} open={dialogState.confirm} handleClose={() => toggleDialog('confirm', false)} handleConfirm={handleDeactivateUser} />
             <EditEmployeeDialog open={dialogState.edit} handleClose={handleCloseEdit} allRoles={roles} allLocations={locations} userToEdit={pickedUser} />
             <Snackbar open={snackbarInfo.open} autoHideDuration={3000} onClose={handleCloseSnackbar}>
                 <MuiAlert onClose={handleCloseSnackbar} severity={snackbarInfo.severity} elevation={6} variant="filled">

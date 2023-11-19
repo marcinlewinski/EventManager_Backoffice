@@ -12,14 +12,12 @@ import Snackbar from "@mui/material/Snackbar"
 import MuiAlert from "@mui/material/Alert"
 import { useUser } from "../../../services/providers/LoggedUserProvider"
 import { getAllMyEvents } from "../../../services/api/MyEventService"
-import { useRoles } from "../../../services/providers/RolesProvider";
 import CircularProgress from '@mui/material/CircularProgress';
 import Tooltip from '@mui/material/Tooltip';
 import { useLocations } from '../../../services/providers/LocationsProvider';
 import { useEmployees } from '../../../services/providers/EmployeeProvider';
 import { useEvents } from "../../../services/providers/EventsManagementProvider"
-
-
+import { useAdminStatus } from "../../utils/useAdminStatus"
 
 const Calendar = ({ isMyCalendar, isMobileView }) => {
     const [snackbarInfo, setSnackbarInfo] = useState({
@@ -27,7 +25,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         message: "",
         severity: "success",
     })
-    const { user, token } = useUser();
+    const { token } = useUser();
     const [open, setOpen] = useState(false);
     const [isTimeGridWeek, setIsTimeGridWeek] = useState({});
     const [isUpdateEvent, setIsUpdateEvent] = useState(false);
@@ -38,23 +36,13 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
         end: "",
         locationId: {},
     });
-    const { roles } = useRoles();
     const { locations } = useLocations();
     const { employees } = useEmployees();
     const calendarRef = useRef(null);
     const { events, deleteEventFromContext, updateEventContext, addEventIntoContext } = useEvents()
     const [isLoading, setIsLoading] = useState(true);
     const [eventsData, setEventsData] = useState([]);
-
-    const isAdmin = () => {
-        const allPossibleRoles = roles?.map(role => role.name);
-        const userRolesArr = user.roles?.map(role => role.name);
-
-        if (!roles || !userRolesArr) {
-            return false;
-        }
-        return userRolesArr.every(role => allPossibleRoles.includes(role));
-    }
+    const isAdmin = useAdminStatus();
 
     const getEvents = async () => {
         try {
@@ -82,11 +70,12 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
                     }
                 })
             );
-            setIsLoading(false);
 
         } catch (error) {
             console.error("Error fetching events", error)
             setEventsData([]);
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -239,6 +228,10 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
     const getContextEventForm = (eventData, idValue) => {
         const foundLocation = locations?.find(el => el.id === eventData.locationId);
         const locationTitle = foundLocation ? foundLocation.title : 'N/A';
+        const foundOrganizers = eventData.organizers.map(organizerId => {
+            const user = employees?.find(user => user.id === organizerId)
+            return user ? user.name : null
+        })
         return {
             id: idValue,
             title: eventData.title,
@@ -246,7 +239,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
             startsAt: eventData.dateRange.startsAt,
             endsAt: eventData.dateRange.endsAt,
             location: locationTitle,
-            organizers: eventData.organizers,
+            organizers: foundOrganizers,
             openToPublic: eventData.openToPublic,
         }
 
@@ -310,17 +303,17 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
 
     const renderEventContent = (eventInfo) => {
         const organizers = eventInfo.event.extendedProps.organizers;
-        const organizersStr = Array.isArray(organizers) ? organizers.join(', ') : 'N/A';
+        const organizersStr = Array.isArray(organizers) ? organizers.join(', ') : 'NO';
 
         return (
             <Tooltip title={
                 <>
                     <Typography variant="body2">{eventInfo.event.title}</Typography>
-                    <Typography variant="body3">Start: {eventInfo.event.start ? eventInfo.event.start.toLocaleString() : 'N/A'}</Typography>
-                    <Typography variant="body3">End: {eventInfo.event.end ? eventInfo.event.end.toLocaleString() : 'N/A'}</Typography>
-                    <Typography variant="body3">Description: {eventInfo.event.extendedProps.description}</Typography>
-                    <Typography variant="body3">Location: {eventInfo.event.extendedProps.location}</Typography>
-                    <Typography variant="body3">Organizers: {organizersStr}</Typography>
+                    <Typography variant="body3"> Start: {eventInfo.event.start ? eventInfo.event.start.toLocaleString() : 'N/A'}</Typography>
+                    <Typography variant="body3"> End: {eventInfo.event.end ? eventInfo.event.end.toLocaleString() : 'N/A'}</Typography>
+                    <Typography variant="body3"> Description: {eventInfo.event.extendedProps.description}</Typography>
+                    <Typography variant="body3"> Location: {eventInfo.event.extendedProps.location}</Typography>
+                    <Typography variant="body3"> Organizers: {organizersStr}</Typography>
                 </>
             }>
                 <Box sx={{ '& > *:not(:last-child)': { marginBottom: 'auto' } }}>
@@ -350,7 +343,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
     const initialViewMode = isMobileView ? "timeGridDay" : "dayGridMonth"
     return (
         <>
-            {(isLoading || !eventsData) ?
+            {(isLoading || eventsData.length === 0) ?
                 (<Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                     <CircularProgress />
                 </Box>
@@ -364,13 +357,13 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
                                 plugins={plugins}
                                 headerToolbar={headerToolbar}
                                 initialView={initialViewMode}
-                                editable={!isMyCalendar && isAdmin()}
-                                selectable={!isMyCalendar && isAdmin()}
+                                editable={!isMyCalendar && isAdmin}
+                                selectable={!isMyCalendar && isAdmin}
                                 select={handleDateClick}
                                 eventClick={handleEventClick}
                                 events={eventsData}
-                                selectMirror={!isMyCalendar && isAdmin()}
-                                dayMaxEvents={!isMyCalendar && isAdmin()}
+                                selectMirror={!isMyCalendar && isAdmin}
+                                dayMaxEvents={!isMyCalendar && isAdmin}
                                 eventDrop={handleDateUpdate}
                                 eventResize={handleDateUpdate}
                                 validRange={{

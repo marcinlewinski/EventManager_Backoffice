@@ -23,6 +23,8 @@ import {
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import backgroundImage from '../../assets/logo2.jpg';
+import SendIcon from '@mui/icons-material/Send';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 const defaultTheme = createTheme();
 
@@ -58,9 +60,6 @@ const LoginForm = () => {
       }
     },
   });
-
-  const openDialog = () => setDialogOpen(true);
-  const closeDialog = () => setDialogOpen(false);
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -107,12 +106,21 @@ const LoginForm = () => {
                 error={formik.touched.password && Boolean(formik.errors.password)}
                 helperText={formik.touched.password && formik.errors.password}
               />
-              <Button type="submit" disabled={disableBtn} fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-                Sign In
-              </Button>
+              <LoadingButton
+                fullWidth
+                size="medium"
+                color="primary"
+                onClick={formik.handleSubmit}
+                loadingPosition="end"
+                endIcon={<SendIcon />}
+                loading={disableBtn}
+                variant="contained"
+              >
+                <span>Sign In</span>
+              </LoadingButton>
               <Grid container>
                 <Grid item xs>
-                  <Link href="#" variant="body2" onClick={openDialog}>
+                  <Link href="#" variant="body2" onClick={() => setDialogOpen(true)}>
                     Forgot password?
                   </Link>
                 </Grid>
@@ -121,12 +129,12 @@ const LoginForm = () => {
           </Box>
         </Grid>
       </Grid>
-      <Dialog open={isDialogOpen} onClose={closeDialog} maxWidth="sm" fullWidth>
+      <Dialog open={isDialogOpen} onClose={() => setDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogContent>
           <ResetPasswordRequestByEmail />
         </DialogContent>
         <DialogActions>
-          <Button onClick={closeDialog} color="primary">
+          <Button onClick={() => setDialogOpen(false)} color="primary">
             Close
           </Button>
         </DialogActions>
