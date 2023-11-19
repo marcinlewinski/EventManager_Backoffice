@@ -51,9 +51,9 @@ function SimpleChat() {
   useEffect(() => {
     const fetchChannels = async () => {
       try {
-        const response = await pubnub.objects.getAllChannelMetadata();
-        const channels = response.data;
-
+        const response = await pubnub.objects.getMemberships({ uuid: user.id });
+        const channels = response.data.map((channel) => channel.channel);
+        
         const directChannels = channels.filter(channel => channel.id.startsWith("direct."));
         const socialChannels = channels.filter(channel => channel.id.startsWith("group."));
 

@@ -41,6 +41,7 @@ const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal }) =
       remoteData = {
         name: users.map((m) => m.name).sort().join(" and "),
         custom,
+        members: "."
       };
       localData = {
         name: user.name,
@@ -51,7 +52,7 @@ const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal }) =
       uuids = users.map((m) => m.id).sort();
       channel = `group.${randomHex}`;
       const name = channelName || users.map((m) => m.name?.split(" ")[0]).sort().join(", ");
-      remoteData = { name, custom };
+      remoteData = { name, custom, members: '/' };
       localData = remoteData;
     }
 
