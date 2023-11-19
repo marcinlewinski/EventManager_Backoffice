@@ -22,6 +22,8 @@ import { useRoles } from '../../../services/providers/RolesProvider';
 import { useLocations } from '../../../services/providers/LocationsProvider';
 import { useEmployees } from '../../../services/providers/EmployeeProvider';
 import Skeleton from '@mui/material/Skeleton';
+import { usePubNub } from 'pubnub-react';
+import { deactivateUserFromPubNub } from '../../chat/pubNubService';
 
 const EmployeeTable = () => {
     const [page, setPage] = useState(0);
@@ -35,10 +37,12 @@ const EmployeeTable = () => {
     const { roles } = useRoles();
     const { locations } = useLocations();
     const { employees, deactivateEmployee } = useEmployees();
+    const pubnub = usePubNub();
     const isLoading = !roles || !locations || !employees ;
 
-    const handleDeactivateUser = () => {
+    const handleDeactivateUser = async () => {
         deactivateEmployee(pickedUser.id)
+        deactivateUserFromPubNub(pubnub, String(pickedUser.id));
         setSnackbarInfo({ open: true, message: 'Employee has been deactivated!', severity: 'success' });
         toggleDialog('confirm', false);
     };

@@ -26,3 +26,12 @@ export const getUserData = async (pubnub, uuid) => {
         console.error('Error getting users metadata:', error);
     }
 };
+
+export const deactivateUserFromPubNub = async (pubnub, uuid) => {
+    try {
+        await pubnub.objects.removeUUIDMetadata({ uuid: uuid });
+    } catch (error) {
+        console.error('Error removing user from PubNub:', error);
+        return;
+    }
+};
