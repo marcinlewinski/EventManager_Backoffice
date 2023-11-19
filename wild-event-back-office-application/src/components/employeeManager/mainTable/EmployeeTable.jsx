@@ -23,7 +23,7 @@ import { useLocations } from '../../../services/providers/LocationsProvider';
 import { useEmployees } from '../../../services/providers/EmployeeProvider';
 import Skeleton from '@mui/material/Skeleton';
 import { usePubNub } from 'pubnub-react';
-import { deactivateUserFromPubNub } from '../../chat/pubNubService';
+import { deactivateUserFromPubNub } from '../../chat/service/pubNubService';
 
 const EmployeeTable = () => {
     const [page, setPage] = useState(0);
@@ -38,11 +38,11 @@ const EmployeeTable = () => {
     const { locations } = useLocations();
     const { employees, deactivateEmployee } = useEmployees();
     const pubnub = usePubNub();
-    const isLoading = !roles || !locations || !employees ;
+    const isLoading = !roles || !locations || !employees;
 
     const handleDeactivateUser = async () => {
         deactivateEmployee(pickedUser.id)
-        deactivateUserFromPubNub(pubnub, String(pickedUser.id));
+        deactivateUserFromPubNub(pubnub, pickedUser.id);
         setSnackbarInfo({ open: true, message: 'Employee has been deactivated!', severity: 'success' });
         toggleDialog('confirm', false);
     };
@@ -127,7 +127,7 @@ const EmployeeTable = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {(isLoading || employees.length === 0)  ? (
+                        {(isLoading || employees.length === 0) ? (
                             Array.from(new Array(rowsPerPage)).map((_, index) => (
                                 <TableRow key={index}>
                                     <TableCell component="th" scope="row">
