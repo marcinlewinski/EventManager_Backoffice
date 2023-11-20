@@ -102,7 +102,7 @@ function SimpleChat() {
               </span>
             </h4>
           </div>
-          <Button variant="outlined" color="primary" onClick={() => setCreateChatModalOpen(true)}>
+          <Button variant="contained" color="primary" onClick={() => setCreateChatModalOpen(true)}>
             Create Chat
           </Button>
           {createChatModalOpen && (
