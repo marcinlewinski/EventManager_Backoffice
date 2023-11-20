@@ -7,7 +7,8 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import CloseIcon from '@mui/icons-material/Close';
 import PeopleIcon from '@mui/icons-material/People';
 
-const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal }) => {
+
+const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal, onChannelCreated }) => {
   const pubnub = usePubNub();
   const [creatingChannel, setCreatingChannel] = useState(false);
   const [showGroups, setShowGroups] = useState(false);
@@ -60,6 +61,7 @@ const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal }) =
     await pubnub.objects.setChannelMembers({ channel, uuids });
     setCurrentChannel({ id: channel, ...localData });
     setCreatingChannel(false);
+    onChannelCreated();
     hideModal();
   };
 
@@ -106,7 +108,19 @@ const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal }) =
               value={usersFilter}
               InputProps={{ endAdornment: <SearchIcon /> }}
             />
-          </Grid>
+           </Grid>
+    {showGroups && (
+      <Grid item xs={12}>
+        <TextField
+          label="Channel name (optional)"
+          onChange={(e) => setChannelName(e.target.value)}
+          type="text"
+          size="small"
+          fullWidth
+          value={channelName}
+        />
+      </Grid>
+    )}  
           <Grid item xs={12}>
             <h2 style={{ margin: '10px 0' }}>Users</h2>
           </Grid>

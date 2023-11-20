@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import DarkModeToggle from "react-dark-mode-toggle";
 import { usePubNub } from "pubnub-react";
 import {
@@ -10,7 +10,6 @@ import {
   TypingIndicator,
   usePresence
 } from "@pubnub/react-chat-components";
-import EmojiPicker from 'emoji-picker-react';
 import "./styles/simple-chat.scss";
 import { ReactComponent as PeopleGroup } from "../../../assets/people-group.svg";
 import { Button } from "@mui/material";
@@ -18,9 +17,8 @@ import { getAllUsersData } from "../service/pubNubService";
 import { useUser } from "../../../services/providers/LoggedUserProvider";
 import CreateChatModal from "../modal/CreateChatModal";
 import { Typography } from "@mui/material";
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
-
+import emojiData from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
 
 function SimpleChat() {
   const pubnub = usePubNub();
@@ -40,7 +38,8 @@ function SimpleChat() {
     getAllUsersData(pubnub).then(allUsers => {
       setUsers(allUsers);
     });
-  }, [pubnub, getAllUsersData]);
+  }, []);
+
   const currentUser = users?.find((u) => u.id === user.id);
 
   const presentUUIDs = presenceData[currentChannel.id]?.occupants?.map(
@@ -48,25 +47,20 @@ function SimpleChat() {
   );
   const presentUsers = presentUUIDs?.length ? users.filter((u) => presentUUIDs.includes(u.id)) : [];
 
-  useEffect(() => {
-    const fetchChannels = async () => {
-      try {
-        const response = await pubnub.objects.getMemberships({ uuid: user.id });
-        const channels = response.data.map((channel) => channel.channel);
-        
-        const directChannels = channels.filter(channel => channel.id.startsWith("direct."));
-        const socialChannels = channels.filter(channel => channel.id.startsWith("group."));
+  const fetchChannels = useCallback(async () => {
+    try {
+      const response = await pubnub.objects.getMemberships({ uuid: user.id });
+      const channels = response.data.map((channel) => channel.channel);
 
+      const directChannels = channels.filter(channel => channel.id.startsWith("direct."));
+      const socialChannels = channels.filter(channel => channel.id.startsWith("group."));
 
-        setDirectChannelList(directChannels);
-        setSocialChannelList(socialChannels);
-      } catch (error) {
-        console.error('Error fetching channels:', error);
-      }
-    };
-
-    fetchChannels();
-  }, [pubnub]);
+      setDirectChannelList(directChannels);
+      setSocialChannelList(socialChannels);
+    } catch (error) {
+      console.error('Error fetching channels:', error);
+    }
+  }, [pubnub, user.id]);
 
   useEffect(() => {
     if (currentChannel && currentChannel.id) {
@@ -80,6 +74,10 @@ function SimpleChat() {
     };
   }, [currentChannel, pubnub]);
 
+  useEffect(() => {
+    fetchChannels();
+  }, []);
+  
 
   return (
     <div className={`app-simple ${theme}`}>
@@ -110,6 +108,7 @@ function SimpleChat() {
               currentUser={currentUser}
               setCurrentChannel={setCurrentChannel}
               hideModal={() => setCreateChatModalOpen(false)}
+              onChannelCreated={fetchChannels}
             />
           )}
           <h4>Channels</h4>
@@ -117,7 +116,7 @@ function SimpleChat() {
             <ChannelList
               channels={socialChannelList}
               onChannelSwitched={(channel) => setCurrentChannel(channel)}
-             />
+            />
           </div>
           <h4>Direct Chats</h4>
           <div>
@@ -161,7 +160,7 @@ function SimpleChat() {
               <MessageList
                 fetchMessages={100}
                 enableReactions
-                emojiPicker={<EmojiPicker onEmojiClick={(event, emojiObject) => { }} />}
+                reactionsPicker={<Picker data={emojiData} />}
               >
                 <TypingIndicator showAsMessage />
               </MessageList>
@@ -169,8 +168,8 @@ function SimpleChat() {
               <MessageInput
                 senderInfo={true}
                 typingIndicator
+                emojiPicker={<Picker data={emojiData} />}
                 fileUpload="all"
-                emojiPicker={<EmojiPicker onEmojiClick={(event, emojiObject) => { }} />}
               />
             </>
           ) : (
