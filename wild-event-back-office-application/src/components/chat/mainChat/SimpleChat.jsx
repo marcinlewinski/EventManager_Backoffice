@@ -22,7 +22,7 @@ import Picker from "@emoji-mart/react";
 import { useDarkMode } from "../../darkMode/DarkModeProvider";
 import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import deleteChannelDialog from "../modal/deleteChannelDialog";
+import DeleteChannelDialog from "../modal/DeleteChannelDialog";
 
 function SimpleChat() {
   const pubnub = usePubNub();
@@ -75,12 +75,12 @@ function SimpleChat() {
       await pubnub.objects.removeMemberships({
         channels: [currentChannel.id]
       });
-  
+
       await pubnub.objects.removeChannelMetadata({ channel: currentChannel.id });
-  
+
       fetchChannels();
-      setCurrentChannel({}); 
-  
+      setCurrentChannel({});
+
     } catch (error) {
       console.error('Error deleting channel:', error);
     }
@@ -102,8 +102,8 @@ function SimpleChat() {
     fetchChannels();
   }, []);
 
-  
-  
+
+
 
   return (
     <div className={`app-simple ${theme}`}>
@@ -125,15 +125,15 @@ function SimpleChat() {
               </span>
             </h4>
           </div>
-          <Button variant="contained" color="primary" onClick={() => setCreateChatModalOpen(true)}>
+          <Button variant="contained" color="primary" onClick={() => setModalOpen({...modalOpen, createChatModal: true })}>
             Create Chat
           </Button>
-          {createChatModalOpen && (
+          {modalOpen.createChatModal && (
             <CreateChatModal
               users={users}
               currentUser={currentUser}
               setCurrentChannel={setCurrentChannel}
-              hideModal={() => setCreateChatModalOpen(false)}
+              hideModal={() => setModalOpen({...modalOpen, createChatModal: false })}
               onChannelCreated={fetchChannels}
             />
           )}
@@ -164,12 +164,12 @@ function SimpleChat() {
               </div>
               <IconButton
                 aria-label="delete"
-                onClick={deleteChannel}
+                onClick={() => setModalOpen({...modalOpen, confirmDialog: true })}
               >
                 <DeleteIcon />
               </IconButton>
-                
-              <div></div>
+              <div>
+              </div>
 
               <div className="info">
                 <span className="hamburger" onClick={() => setShowChannels(true)}>
@@ -216,6 +216,11 @@ function SimpleChat() {
           </h4>
           <MemberList members={presentUsers} />
         </div>
+        <DeleteChannelDialog
+          open={modalOpen.confirmDialog}
+          onClose={() => setModalOpen({ ...modalOpen, confirmDialog: false })}
+          onConfirm={deleteChannel}
+        />
       </Chat>
     </div>
   );

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
 
-const deleteChannelDialog = ({ open, onClose, onConfirm }) => {
+const DeleteChannelDialog = ({ open, onClose, onConfirm }) => {
   return (
     <Dialog
       open={open}
@@ -12,7 +12,7 @@ const deleteChannelDialog = ({ open, onClose, onConfirm }) => {
       <DialogTitle id="confirmation-dialog-title">Delete channel</DialogTitle>
       <DialogContent>
         <DialogContentText id="confirmation-dialog-description">
-          Are you sure you want to delete this channel? This action cannot be undone. 
+          Are you sure you want to delete this channel? This action cannot be undone.
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -27,4 +27,4 @@ const deleteChannelDialog = ({ open, onClose, onConfirm }) => {
   );
 };
 
-export default deleteChannelDialog;
+export default DeleteChannelDialog;
