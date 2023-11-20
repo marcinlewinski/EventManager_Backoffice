@@ -15,6 +15,7 @@ const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal, onC
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [usersFilter, setUsersFilter] = useState("");
   const [channelName, setChannelName] = useState("");
+  const [channelDescription, setChannelDescription] = useState("");
 
   const handleCheck = (member) => {
     setSelectedUsers((users) => {
@@ -40,9 +41,8 @@ const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal, onC
       uuids = users.map((m) => m.id).sort();
       channel = `direct.${uuids.join("@")}`;
       remoteData = {
-        name: users.map((m) => m.name).sort().join(" and "),
+        name: users.name,
         custom,
-        members: "."
       };
       localData = {
         name: user.name,
@@ -53,7 +53,7 @@ const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal, onC
       uuids = users.map((m) => m.id).sort();
       channel = `group.${randomHex}`;
       const name = channelName || users.map((m) => m.name?.split(" ")[0]).sort().join(", ");
-      remoteData = { name, custom, members: '/' };
+      remoteData = { name, custom, description: channelDescription };
       localData = remoteData;
     }
 
@@ -108,19 +108,30 @@ const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal, onC
               value={usersFilter}
               InputProps={{ endAdornment: <SearchIcon /> }}
             />
-           </Grid>
-    {showGroups && (
-      <Grid item xs={12}>
-        <TextField
-          label="Channel name (optional)"
-          onChange={(e) => setChannelName(e.target.value)}
-          type="text"
-          size="small"
-          fullWidth
-          value={channelName}
-        />
-      </Grid>
-    )}  
+          </Grid>
+          {showGroups && (
+            <Grid item xs={12}>
+              <TextField
+                label="Channel name (optional)"
+                onChange={(e) => setChannelName(e.target.value)}
+                type="text"
+                size="small"
+                fullWidth
+                value={channelName}
+              />
+              <Grid item xs={12}>
+                <TextField
+                  label="Description of the channel (optional)"
+                  onChange={(e) => setChannelDescription(e.target.value)}
+                  type="text"
+                  size="small"
+                  fullWidth
+                  value={channelDescription}
+                  sx={{marginTop: '10px'} }
+                />
+              </Grid>
+            </Grid>
+          )}
           <Grid item xs={12}>
             <h2 style={{ margin: '10px 0' }}>Users</h2>
           </Grid>
@@ -137,9 +148,9 @@ const CreateChatModal = ({ users, currentUser, setCurrentChannel, hideModal, onC
           </Grid>
         </Grid>
       </DialogContent>
-      <DialogActions style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton onClick={() => setShowGroups(!showGroups)} style={{ display: 'flex', alignItems: 'center' }}>
+      <DialogActions style={{ justifyContent: 'space-between', padding: '10px 20px' }}>
+        <div style={{ alignItems: 'center' }}>
+          <IconButton onClick={() => setShowGroups(!showGroups)} style={{ alignItems: 'center' }}>
             {showGroups ? <ChevronLeftIcon /> : <PeopleIcon />}
             <span style={{ marginLeft: 8, fontSize: '14px' }}>Create group chat</span>
           </IconButton>
