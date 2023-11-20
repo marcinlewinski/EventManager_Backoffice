@@ -20,6 +20,8 @@ import { Typography } from "@mui/material";
 import emojiData from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { useDarkMode } from "../../darkMode/DarkModeProvider";
+import { IconButton } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 function SimpleChat() {
   const pubnub = usePubNub();
@@ -54,7 +56,7 @@ function SimpleChat() {
     try {
       const response = await pubnub.objects.getMemberships({ uuid: user.id });
       const channels = response.data.map((channel) => channel.channel);
-
+      console.log(channels)
       const directChannels = channels.filter(channel => channel.id.startsWith("direct."));
       const socialChannels = channels.filter(channel => channel.id.startsWith("group."));
 
@@ -64,6 +66,22 @@ function SimpleChat() {
       console.error('Error fetching channels:', error);
     }
   }, [pubnub, user.id]);
+
+  const deleteChannel = async () => {
+    try {
+      await pubnub.objects.removeMemberships({
+        channels: [currentChannel.id]
+      });
+  
+      await pubnub.objects.removeChannelMetadata({ channel: currentChannel.id });
+  
+      fetchChannels();
+      setCurrentChannel({}); 
+  
+    } catch (error) {
+      console.error('Error deleting channel:', error);
+    }
+  };
 
   useEffect(() => {
     if (currentChannel && currentChannel.id) {
@@ -80,6 +98,8 @@ function SimpleChat() {
   useEffect(() => {
     fetchChannels();
   }, []);
+
+  
   
 
   return (
@@ -139,6 +159,14 @@ function SimpleChat() {
                 <span>{presenceData[currentChannel.id]?.occupancy || 0}</span>
                 <PeopleGroup />
               </div>
+              <IconButton
+                aria-label="delete"
+                onClick={deleteChannel}
+              >
+                <DeleteIcon />
+              </IconButton>
+                
+              <div></div>
 
               <div className="info">
                 <span className="hamburger" onClick={() => setShowChannels(true)}>
