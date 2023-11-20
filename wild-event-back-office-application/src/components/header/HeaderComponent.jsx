@@ -4,9 +4,8 @@ import {
 	CssBaseline,
 	Toolbar,
 	Typography,
-	IconButton,
 } from "@mui/material"
-import Brightness4Icon from "@mui/icons-material/Brightness4"
+import DarkModeToggle from "react-dark-mode-toggle";
 import { useDarkMode } from "../../components/darkMode/DarkModeProvider"
 import { useUser } from "../../services/providers/LoggedUserProvider"
 
@@ -33,12 +32,11 @@ export const HeaderComponent = () => {
 						}}>
 						{user.name}
 					</Typography>
-					<IconButton
-						color='inherit'
-						onClick={toggleDarkMode}
-						sx={{ marginLeft: "auto" }}>
-						<Brightness4Icon />
-					</IconButton>
+						<DarkModeToggle 
+						size={50}
+						checked={darkMode === true}
+						onChange={toggleDarkMode}
+						/>
 				</Toolbar>
 			</AppBar>
 		</Box>

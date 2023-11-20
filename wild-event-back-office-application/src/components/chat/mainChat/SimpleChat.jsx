@@ -19,6 +19,7 @@ import CreateChatModal from "../modal/CreateChatModal";
 import { Typography } from "@mui/material";
 import emojiData from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
+import { useDarkMode } from "../../darkMode/DarkModeProvider";
 
 function SimpleChat() {
   const pubnub = usePubNub();
@@ -26,13 +27,15 @@ function SimpleChat() {
   const [socialChannelList, setSocialChannelList] = useState([]);
   const allChannelIds = [...directChannelList, ...socialChannelList].map((channel) => channel.id);
   const [users, setUsers] = useState();
-  const [theme, setTheme] = useState("light");
   const [showMembers, setShowMembers] = useState(false);
   const [showChannels, setShowChannels] = useState(true);
   const [presenceData] = usePresence({ channels: allChannelIds });
   const [currentChannel, setCurrentChannel] = useState({});
   const [createChatModalOpen, setCreateChatModalOpen] = useState(false);
   const { user } = useUser();
+  const { darkMode } = useDarkMode();
+
+  const theme = darkMode ? "dark" : "light";
 
   useEffect(() => {
     getAllUsersData(pubnub).then(allUsers => {
@@ -125,18 +128,7 @@ function SimpleChat() {
               onChannelSwitched={(channel) => setCurrentChannel(channel)}
             />
           </div>
-          <div className="toggle">
-            <span>Dark Mode</span>
-            <DarkModeToggle
-              size={50}
-              checked={theme === "dark"}
-              onChange={(isDark) =>
-                isDark ? setTheme("dark") : setTheme("light")
-              }
-            />
-          </div>
         </div>
-
         <div className="chat">
           {currentChannel.id ? (
             <>
