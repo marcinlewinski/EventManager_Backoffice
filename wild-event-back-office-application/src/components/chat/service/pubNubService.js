@@ -1,6 +1,7 @@
 export const getAllUsersData = async (pubnub) => {
     try {
-        const response = await pubnub.objects.getAllUUIDMetadata();
+        const response = await pubnub.objects.getAllUUIDMetadata({include: {customFields: true}});
+        console.log(response.data)
         return response.data;
     } catch (error) {
         console.error('Error getting users metadata:', error);

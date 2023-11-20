@@ -22,6 +22,7 @@ import Picker from "@emoji-mart/react";
 import { useDarkMode } from "../../darkMode/DarkModeProvider";
 import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import deleteChannelDialog from "../modal/deleteChannelDialog";
 
 function SimpleChat() {
   const pubnub = usePubNub();
@@ -33,10 +34,12 @@ function SimpleChat() {
   const [showChannels, setShowChannels] = useState(true);
   const [presenceData] = usePresence({ channels: allChannelIds });
   const [currentChannel, setCurrentChannel] = useState({});
-  const [createChatModalOpen, setCreateChatModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState({
+    createChatModal: false,
+    confirmDialog: false,
+  });
   const { user } = useUser();
   const { darkMode } = useDarkMode();
-
   const theme = darkMode ? "dark" : "light";
 
   useEffect(() => {
