@@ -46,8 +46,7 @@
 }
 
 .marker {
-  background: image-set('../../../assets/map-marker.svg');
-  cursor: pointer;
+  background: url('../../../assets/map-marker.svg');  cursor: pointer;
   text-decoration: none;
   border: none;
   width: 28px;
@@ -56,6 +55,7 @@
   margin: auto;
 
 }
+
 
 .mapboxgl-ctrl-bottom-right {
   display: none;
