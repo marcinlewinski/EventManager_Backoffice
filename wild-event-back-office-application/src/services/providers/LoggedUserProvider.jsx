@@ -16,7 +16,7 @@ export const UserProvider = ({ children }) => {
 
   const [user, setUser] = useState(initialUser);
   const [token, setToken] = useState(initialToken);
-  
+
   const login = (userData, userToken) => {
     setUser(userData);
     setToken(userToken);

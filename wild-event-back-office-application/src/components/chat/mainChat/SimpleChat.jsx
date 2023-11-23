@@ -23,6 +23,9 @@ import { useDarkMode } from "../../darkMode/DarkModeProvider";
 import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DeleteChannelDialog from "../modal/DeleteChannelDialog";
+import moment from 'moment';
+
+
 
 function SimpleChat() {
   const pubnub = usePubNub();
@@ -40,13 +43,61 @@ function SimpleChat() {
   });
   const { user } = useUser();
   const { darkMode } = useDarkMode();
+  const [unreadedMessages, setUnreadedMessages] = useState({});
   const theme = darkMode ? "dark" : "light";
+  console.log(unreadedMessages)
+ 
+
+  const convertTimestampWithMoment = (timestamp) => {
+    return moment(timestamp).format('HH:mm:ss');
+  };
 
   useEffect(() => {
     getAllUsersData(pubnub).then(allUsers => {
       setUsers(allUsers);
     });
   }, []);
+
+  const getChannelsTimetokens = async () => { 
+    try {
+    const response = await pubnub.objects.getMemberships({ include: { customFields: true } });
+    const timetokens = response.data.map((channel) => channel.custom.lastReadTimetoken);
+    return timetokens;
+
+    } catch (error) {
+      console.error('Error fetching channels:', error);
+    }
+    
+  }
+
+  const getChannelsIds = async () => {
+    try {
+      const response = await pubnub.objects.getMemberships({ include: { customFields: true } });
+      const channelsIds = response.data.map((channel) => channel.channel.id);
+      return channelsIds;
+    } catch (error) {
+      console.error('Error fetching channels:', error);
+    }
+  }
+
+  const getUnreadedMessages = async () => {
+    const timetokens = await getChannelsTimetokens();
+    const channelsIds = await getChannelsIds();
+    try {
+      const unreads = await pubnub.messageCounts({
+        channels: [channelsIds],
+        channelTimetokens: [timetokens],
+      })
+      setUnreadedMessages(unreads.channels);
+    } catch (error) { 
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    getUnreadedMessages();
+  }, [currentChannel]);
+
 
   const currentUser = users?.find((u) => u.id === user.id);
 
@@ -57,18 +108,17 @@ function SimpleChat() {
 
   const fetchChannels = useCallback(async () => {
     try {
-      const response = await pubnub.objects.getMemberships({ uuid: user.id });
+      const response = await pubnub.objects.getMemberships({ include: { customFields: true } });
       const channels = response.data.map((channel) => channel.channel);
-      console.log(channels)
+
       const directChannels = channels.filter(channel => channel.id.startsWith("direct."));
       const socialChannels = channels.filter(channel => channel.id.startsWith("group."));
-
       setDirectChannelList(directChannels);
       setSocialChannelList(socialChannels);
     } catch (error) {
       console.error('Error fetching channels:', error);
     }
-  }, [pubnub, user.id]);
+  }, []);
 
   const deleteChannel = async () => {
     try {
@@ -87,23 +137,71 @@ function SimpleChat() {
   };
 
   useEffect(() => {
-    if (currentChannel && currentChannel.id) {
-      pubnub.subscribe({ channels: [currentChannel.id] });
-    }
-
-    return () => {
-      if (currentChannel && currentChannel.id) {
-        pubnub.unsubscribe({ channels: [currentChannel.id] });
+      
+      try {
+        let timestamp = new Date().getTime();
+          pubnub.subscribe({ channels: allChannelIds });
       }
-    };
-  }, [currentChannel, pubnub]);
+      catch (error) {
+        console.error("error")
+      }
+  
+    return () => {
+
+        let timestamp = new Date().getTime();
+        try {
+          pubnub.unsubscribe({ channels: allChannelIds });
+        }
+        catch (error) {
+          console.error("error")
+        }
+    }
+  }, []);
+
+  
 
   useEffect(() => {
     fetchChannels();
   }, []);
 
 
+  const setTimetoken = (channelId) => {
+    
+    let timestamp = new Date().getTime() * 10000;
+    pubnub.objects.setMemberships({
+      channels: [{
+        id: channelId,
+        custom: {
+          lastReadTimetoken: timestamp.toString()
+        }
+      }]
+    });
+  }
 
+  const markAsRead = (channelId) => {
+    unreadedMessages[channelId] = 0;
+  }
+
+  const renderChannel = (channel) => {
+    const unreadCount = unreadedMessages[channel.id] || 0;
+    const titleClass = unreadCount > 0 ? "channel-with-unread_name" : "pn-channel__name";
+    console.log(unreadCount)
+    return (
+      <div key={channel.id} className="pn-channel" onClick={() => {setCurrentChannel(channel); setTimetoken(channel.id); markAsRead(channel.id)}}>
+        <div className="pn-channel__title">
+          <p className={titleClass}>{channel.name} {unreadCount > 0 && "(new messages)"}</p> 
+         {channel.description && <p className="pn-channel__description">{channel.description}</p>}
+        </div>
+      </div>
+    );
+  };
+
+  
+  
+ // const unreadCount = unreadedMessages[channel.id] || 0;
+    // console.log(unreadCount)
+    // // const titleClass = unreadCount > 0 ? "pn-channel__title channel-with-unread" : "pn-channel__title";
+  
 
   return (
     <div className={`app-simple ${theme}`}>
@@ -125,7 +223,7 @@ function SimpleChat() {
               </span>
             </h4>
           </div>
-          <Button variant="contained" color="primary" onClick={() => setModalOpen({...modalOpen, createChatModal: true })}>
+          <Button variant="contained" color="primary" onClick={() => setModalOpen({ ...modalOpen, createChatModal: true })}>
             Create Chat
           </Button>
           {modalOpen.createChatModal && (
@@ -133,7 +231,7 @@ function SimpleChat() {
               users={users}
               currentUser={currentUser}
               setCurrentChannel={setCurrentChannel}
-              hideModal={() => setModalOpen({...modalOpen, createChatModal: false })}
+              hideModal={() => setModalOpen({ ...modalOpen, createChatModal: false })}
               onChannelCreated={fetchChannels}
             />
           )}
@@ -141,14 +239,22 @@ function SimpleChat() {
           <div>
             <ChannelList
               channels={socialChannelList}
-              onChannelSwitched={(channel) => setCurrentChannel(channel)}
+              onChannelSwitched={(channel) => { 
+                setCurrentChannel(channel);
+                 setTimetoken(channel.id); 
+                }}
+              channelRenderer={(channel) => renderChannel(channel)}
             />
           </div>
           <h4>Direct Chats</h4>
           <div>
             <ChannelList
               channels={directChannelList}
-              onChannelSwitched={(channel) => setCurrentChannel(channel)}
+              onChannelSwitched={(channel) => {
+                 setCurrentChannel(channel);
+                  setTimetoken(channel.id); 
+                }}
+              channelRenderer={(channel) => renderChannel(channel)}
             />
           </div>
         </div>
@@ -164,7 +270,7 @@ function SimpleChat() {
               </div>
               <IconButton
                 aria-label="delete"
-                onClick={() => setModalOpen({...modalOpen, confirmDialog: true })}
+                onClick={() => setModalOpen({ ...modalOpen, confirmDialog: true })}
               >
                 <DeleteIcon />
               </IconButton>
@@ -189,7 +295,6 @@ function SimpleChat() {
               </MessageList>
               <hr />
               <MessageInput
-                senderInfo={true}
                 typingIndicator
                 emojiPicker={<Picker data={emojiData} />}
                 fileUpload="all"

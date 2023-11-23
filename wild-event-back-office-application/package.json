@@ -31,6 +31,7 @@
     "emoji-mart": "^5.5.2",
     "formik": "^2.4.4",
     "mapbox-gl": "^2.15.0",
+    "moment": "^2.29.4",
     "notistack": "^3.0.1",
     "pubnub": "^7.4.3",
     "pubnub-react": "^3.0.2",
