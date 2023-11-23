@@ -37,8 +37,6 @@ const Map = ({ mapLocations }) => {
           .setPopup(markerPopup)
           .addTo(map);
 
-
-
       });
       map.addControl(new mapboxgl.NavigationControl(), 'top-right');
       map.on('move', () => {
