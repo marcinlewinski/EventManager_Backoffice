@@ -31,13 +31,11 @@ const Map = ({ mapLocations }) => {
 
         const ref = React.createRef();
         ref.current = document.createElement('div');
-        createRoot(ref.current).render(<Marker className='marker' feature={location} index={index + 1} />);
+        createRoot(ref.current).render(<Marker feature={location} index={index + 1} />);
         new mapboxgl.Marker(ref.current)
           .setLngLat([location.coordinateDTO.longitude, location.coordinateDTO.latitude])
           .setPopup(markerPopup)
           .addTo(map);
-
-
 
       });
       map.addControl(new mapboxgl.NavigationControl(), 'top-right');
