@@ -8,7 +8,8 @@ import {
   MessageInput,
   MessageList,
   TypingIndicator,
-  usePresence
+  usePresence,
+  useUsers
 } from "@pubnub/react-chat-components";
 import "./styles/simple-chat.scss";
 import { ReactComponent as PeopleGroup } from "../../../assets/people-group.svg";
@@ -23,7 +24,7 @@ import { useDarkMode } from "../../darkMode/DarkModeProvider";
 import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DeleteChannelDialog from "../modal/DeleteChannelDialog";
-import moment from 'moment';
+
 
 
 
@@ -32,7 +33,7 @@ function SimpleChat() {
   const [directChannelList, setDirectChannelList] = useState([]);
   const [socialChannelList, setSocialChannelList] = useState([]);
   const allChannelIds = [...directChannelList, ...socialChannelList].map((channel) => channel.id);
-  const [users, setUsers] = useState();
+  const [users] = useUsers();
   const [showMembers, setShowMembers] = useState(false);
   const [showChannels, setShowChannels] = useState(true);
   const [presenceData] = usePresence({ channels: allChannelIds });
@@ -45,18 +46,13 @@ function SimpleChat() {
   const { darkMode } = useDarkMode();
   const [unreadedMessages, setUnreadedMessages] = useState({});
   const theme = darkMode ? "dark" : "light";
-  console.log(unreadedMessages)
- 
+  console.log(users)
 
-  const convertTimestampWithMoment = (timestamp) => {
-    return moment(timestamp).format('HH:mm:ss');
-  };
-
-  useEffect(() => {
-    getAllUsersData(pubnub).then(allUsers => {
-      setUsers(allUsers);
-    });
-  }, []);
+  // useEffect(() => {
+  //   getAllUsersData(pubnub).then(allUsers => {
+  //     setUsers(allUsers);
+  //   });
+  // }, []);
 
   const getChannelsTimetokens = async () => { 
     try {
@@ -94,9 +90,9 @@ function SimpleChat() {
     }
   }
 
-  useEffect(() => {
-    getUnreadedMessages();
-  }, [currentChannel]);
+  // useEffect(() => {
+  //   getUnreadedMessages();
+  // }, [currentChannel]);
 
 
   const currentUser = users?.find((u) => u.id === user.id);
@@ -139,7 +135,6 @@ function SimpleChat() {
   useEffect(() => {
       
       try {
-        let timestamp = new Date().getTime();
           pubnub.subscribe({ channels: allChannelIds });
       }
       catch (error) {
@@ -147,8 +142,6 @@ function SimpleChat() {
       }
   
     return () => {
-
-        let timestamp = new Date().getTime();
         try {
           pubnub.unsubscribe({ channels: allChannelIds });
         }
@@ -164,6 +157,13 @@ function SimpleChat() {
     fetchChannels();
   }, []);
 
+
+  pubnub.addListener({
+    message: function(receivedMessage) {
+        getUnreadedMessages();
+        console.log("The message text is: ", receivedMessage);
+    }
+});
 
   const setTimetoken = (channelId) => {
     
@@ -187,7 +187,7 @@ function SimpleChat() {
     const titleClass = unreadCount > 0 ? "channel-with-unread_name" : "pn-channel__name";
     console.log(unreadCount)
     return (
-      <div key={channel.id} className="pn-channel" onClick={() => {setCurrentChannel(channel); setTimetoken(channel.id); markAsRead(channel.id)}}>
+      <div key={channel.id} className="pn-channel" onClick={() => {setCurrentChannel(channel); setTimetoken(channel.id); unreadedMessages[channel.id] = 0;}}>
         <div className="pn-channel__title">
           <p className={titleClass}>{channel.name} {unreadCount > 0 && "(new messages)"}</p> 
          {channel.description && <p className="pn-channel__description">{channel.description}</p>}
@@ -239,10 +239,6 @@ function SimpleChat() {
           <div>
             <ChannelList
               channels={socialChannelList}
-              onChannelSwitched={(channel) => { 
-                setCurrentChannel(channel);
-                 setTimetoken(channel.id); 
-                }}
               channelRenderer={(channel) => renderChannel(channel)}
             />
           </div>
@@ -250,10 +246,6 @@ function SimpleChat() {
           <div>
             <ChannelList
               channels={directChannelList}
-              onChannelSwitched={(channel) => {
-                 setCurrentChannel(channel);
-                  setTimetoken(channel.id); 
-                }}
               channelRenderer={(channel) => renderChannel(channel)}
             />
           </div>
