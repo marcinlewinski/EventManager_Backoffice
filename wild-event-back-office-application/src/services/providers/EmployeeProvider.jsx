@@ -51,9 +51,8 @@ export const EmployeesProvider = ({ children }) => {
     }
   };
 
-  const deactivateEmployee = async (employeeId) => {
+  const deactivateEmployee = (employeeId) => {
     try {
-      await deactivateUser(employeeId, token);
       const updatedEmployees = employees.filter(employee => employee.id !== employeeId);
       setEmployees(updatedEmployees);
     } catch (error) {

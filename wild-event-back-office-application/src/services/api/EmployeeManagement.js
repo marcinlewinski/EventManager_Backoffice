@@ -88,9 +88,11 @@ const deactivateUser = async (userId, token) => {
         },
       }
     );
+    
     if (!response.ok) {
       throw new Error("There is an issue with deactivating user!");
     }
+    return response;
   } catch (error) {
     console.error("Cannot deactivate user: ", error);
   }
