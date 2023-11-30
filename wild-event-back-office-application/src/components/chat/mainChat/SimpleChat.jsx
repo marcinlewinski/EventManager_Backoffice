@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import DarkModeToggle from "react-dark-mode-toggle";
 import { usePubNub } from "pubnub-react";
 import {
   ChannelList,
@@ -14,7 +13,6 @@ import {
 import "./styles/simple-chat.scss";
 import { ReactComponent as PeopleGroup } from "../../../assets/people-group.svg";
 import { Button } from "@mui/material";
-import { getAllUsersData } from "../service/pubNubService";
 import { useUser } from "../../../services/providers/LoggedUserProvider";
 import CreateChatModal from "../modal/CreateChatModal";
 import { Typography } from "@mui/material";
@@ -24,9 +22,7 @@ import { useDarkMode } from "../../darkMode/DarkModeProvider";
 import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DeleteChannelDialog from "../modal/DeleteChannelDialog";
-
-
-
+import { getChannelsTimetokens, getChannelsIds, setTimetoken } from "../service/pubNubService";
 
 function SimpleChat() {
   const pubnub = usePubNub();
@@ -46,61 +42,25 @@ function SimpleChat() {
   const { darkMode } = useDarkMode();
   const [unreadedMessages, setUnreadedMessages] = useState({});
   const theme = darkMode ? "dark" : "light";
-  console.log(users)
-
-  // useEffect(() => {
-  //   getAllUsersData(pubnub).then(allUsers => {
-  //     setUsers(allUsers);
-  //   });
-  // }, []);
-
-  const getChannelsTimetokens = async () => { 
-    try {
-    const response = await pubnub.objects.getMemberships({ include: { customFields: true } });
-    const timetokens = response.data.map((channel) => channel.custom.lastReadTimetoken);
-    return timetokens;
-
-    } catch (error) {
-      console.error('Error fetching channels:', error);
-    }
-    
-  }
-
-  const getChannelsIds = async () => {
-    try {
-      const response = await pubnub.objects.getMemberships({ include: { customFields: true } });
-      const channelsIds = response.data.map((channel) => channel.channel.id);
-      return channelsIds;
-    } catch (error) {
-      console.error('Error fetching channels:', error);
-    }
-  }
+  const currentUser = users?.find((u) => u.id === user.id);
+  const presentUUIDs = presenceData[currentChannel.id]?.occupants?.map(
+    (o) => o.uuid
+  );
+  const presentUsers = presentUUIDs?.length ? users.filter((u) => presentUUIDs.includes(u.id)) : [];
 
   const getUnreadedMessages = async () => {
-    const timetokens = await getChannelsTimetokens();
-    const channelsIds = await getChannelsIds();
+    const timetokens = await getChannelsTimetokens(pubnub);
+    const channelsIds = await getChannelsIds(pubnub);
     try {
       const unreads = await pubnub.messageCounts({
         channels: [channelsIds],
         channelTimetokens: [timetokens],
       })
       setUnreadedMessages(unreads.channels);
-    } catch (error) { 
+    } catch (error) {
       console.error(error);
     }
   }
-
-  // useEffect(() => {
-  //   getUnreadedMessages();
-  // }, [currentChannel]);
-
-
-  const currentUser = users?.find((u) => u.id === user.id);
-
-  const presentUUIDs = presenceData[currentChannel.id]?.occupants?.map(
-    (o) => o.uuid
-  );
-  const presentUsers = presentUUIDs?.length ? users.filter((u) => presentUUIDs.includes(u.id)) : [];
 
   const fetchChannels = useCallback(async () => {
     try {
@@ -133,75 +93,51 @@ function SimpleChat() {
   };
 
   useEffect(() => {
-      
+    try {
+      pubnub.subscribe({ channels: allChannelIds });
+    }
+    catch (error) {
+      console.error("error")
+    }
+
+    return () => {
       try {
-          pubnub.subscribe({ channels: allChannelIds });
+        pubnub.unsubscribe({ channels: allChannelIds });
       }
       catch (error) {
         console.error("error")
       }
-  
-    return () => {
-        try {
-          pubnub.unsubscribe({ channels: allChannelIds });
-        }
-        catch (error) {
-          console.error("error")
-        }
     }
   }, []);
 
-  
-
-  useEffect(() => {
+  useEffect(() => { 
     fetchChannels();
   }, []);
 
 
   pubnub.addListener({
-    message: function(receivedMessage) {
-        getUnreadedMessages();
-        console.log("The message text is: ", receivedMessage);
+    message: function () {
+      getUnreadedMessages();
     }
-});
-
-  const setTimetoken = (channelId) => {
-    
-    let timestamp = new Date().getTime() * 10000;
-    pubnub.objects.setMemberships({
-      channels: [{
-        id: channelId,
-        custom: {
-          lastReadTimetoken: timestamp.toString()
-        }
-      }]
-    });
-  }
-
-  const markAsRead = (channelId) => {
-    unreadedMessages[channelId] = 0;
-  }
+  });
 
   const renderChannel = (channel) => {
     const unreadCount = unreadedMessages[channel.id] || 0;
     const titleClass = unreadCount > 0 ? "channel-with-unread_name" : "pn-channel__name";
-    console.log(unreadCount)
+
     return (
-      <div key={channel.id} className="pn-channel" onClick={() => {setCurrentChannel(channel); setTimetoken(channel.id); unreadedMessages[channel.id] = 0;}}>
+      <div key={channel.id} className="pn-channel" onClick={() => {
+        setCurrentChannel(channel);
+        setTimetoken(pubnub, channel.id);
+        unreadedMessages[channel.id] = 0;
+      }}>
         <div className="pn-channel__title">
-          <p className={titleClass}>{channel.name} {unreadCount > 0 && "(new messages)"}</p> 
-         {channel.description && <p className="pn-channel__description">{channel.description}</p>}
+          <p className={titleClass}>{channel.name} {unreadCount > 0 && "(new messages)"}</p>
+          {channel.description && <p className="pn-channel__description">{channel.description}</p>}
         </div>
       </div>
     );
   };
-
-  
-  
- // const unreadCount = unreadedMessages[channel.id] || 0;
-    // console.log(unreadCount)
-    // // const titleClass = unreadCount > 0 ? "pn-channel__title channel-with-unread" : "pn-channel__title";
-  
 
   return (
     <div className={`app-simple ${theme}`}>
