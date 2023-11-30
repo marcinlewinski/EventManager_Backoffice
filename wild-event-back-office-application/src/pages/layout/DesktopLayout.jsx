@@ -25,7 +25,7 @@ export const DesktopLayout = ({ children, drawerWidth }) => {
 				<HeaderComponent />
 				<Box
 					sx={{
-						width: "90%", 
+						width: "100%", 
 					}}
 				>
 					{children}

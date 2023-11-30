@@ -9,7 +9,7 @@ const itemList = [
   { text: "My events", icon: <NotificationIcon />, path: "/my-events/event", requiredRole: 'MY-EVENTS' },
   { text: "Employee management", icon: <PersonIcon />, path: "/staff-management", requiredRole: 'EMPLOYEE-MANAGEMENT' },
   { text: "Map configuration", icon: <MapIcon />, path: "/map-config/map", requiredRole: 'MAP-CONFIGURATION' },
-  { text: "Chat", icon: <ChatIcon />, path: "/chat" }
+  { text: "Chat", icon: <ChatIcon />, path: "/chat", unreadMessages: 0 }
 ];
 
 
