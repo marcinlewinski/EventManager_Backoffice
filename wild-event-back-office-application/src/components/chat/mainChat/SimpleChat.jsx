@@ -129,12 +129,18 @@ function SimpleChat() {
       <div key={channel.id} className="pn-channel" onClick={() => {
         setCurrentChannel(channel);
         setTimetoken(pubnub, channel.id);
-        unreadedMessages[channel.id] = 0;
+        getUnreadedMessages();
       }}>
         <div className="pn-channel__title">
           <p className={titleClass}>{channel.name} {unreadCount > 0 && "(new messages)"}</p>
           {channel.description && <p className="pn-channel__description">{channel.description}</p>}
         </div>
+        <div className="pn-channel__actions"><IconButton
+                aria-label="delete"
+                onClick={() => setModalOpen({ ...modalOpen, confirmDialog: true })}
+              >
+                <DeleteIcon />
+              </IconButton></div>
       </div>
     );
   };
@@ -196,12 +202,6 @@ function SimpleChat() {
                 <span>{presenceData[currentChannel.id]?.occupancy || 0}</span>
                 <PeopleGroup />
               </div>
-              <IconButton
-                aria-label="delete"
-                onClick={() => setModalOpen({ ...modalOpen, confirmDialog: true })}
-              >
-                <DeleteIcon />
-              </IconButton>
               <div>
               </div>
 
