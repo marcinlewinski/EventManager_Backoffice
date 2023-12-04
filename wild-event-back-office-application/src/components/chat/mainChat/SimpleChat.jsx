@@ -82,11 +82,13 @@ function SimpleChat() {
         channels: [currentChannel.id]
       });
 
-      await pubnub.objects.removeChannelMetadata({ channel: currentChannel.id });
+      await pubnub.objects.removeChannelMetadata({
+        channel: currentChannel.id
+      });
 
       fetchChannels();
       setCurrentChannel({});
-
+      setModalOpen({ ...modalOpen, confirmDialog: false });
     } catch (error) {
       console.error('Error deleting channel:', error);
     }
@@ -110,7 +112,7 @@ function SimpleChat() {
     }
   }, []);
 
-  useEffect(() => { 
+  useEffect(() => {
     fetchChannels();
   }, []);
 
@@ -135,12 +137,14 @@ function SimpleChat() {
           <p className={titleClass}>{channel.name} {unreadCount > 0 && "(new messages)"}</p>
           {channel.description && <p className="pn-channel__description">{channel.description}</p>}
         </div>
-        <div className="pn-channel__actions"><IconButton
-                aria-label="delete"
-                onClick={() => setModalOpen({ ...modalOpen, confirmDialog: true })}
-              >
-                <DeleteIcon />
-              </IconButton></div>
+        <div className="pn-channel__actions">
+          <IconButton
+            aria-label="delete"
+            onClick={() => setModalOpen({ ...modalOpen, confirmDialog: true })}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </div>
       </div>
     );
   };
