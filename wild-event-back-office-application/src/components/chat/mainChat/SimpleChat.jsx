@@ -20,7 +20,7 @@ import emojiData from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { useDarkMode } from "../../darkMode/DarkModeProvider";
 import { IconButton } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import DeleteChannelDialog from "../modal/DeleteChannelDialog";
 import { getChannelsTimetokens, getChannelsIds, setTimetoken } from "../service/pubNubService";
 
@@ -82,8 +82,12 @@ function SimpleChat() {
         channels: [currentChannel.id]
       });
 
-      await pubnub.objects.removeChannelMetadata({
-        channel: currentChannel.id
+      pubnub.publish({
+        message: {
+          type: 'system',
+          text: 'Hello, this is an announcement'
+        },
+        channel: currentChannel.id,
       });
 
       fetchChannels();
@@ -142,7 +146,7 @@ function SimpleChat() {
             aria-label="delete"
             onClick={() => setModalOpen({ ...modalOpen, confirmDialog: true })}
           >
-            <DeleteIcon />
+            <ExitToAppIcon />
           </IconButton>
         </div>
       </div>
