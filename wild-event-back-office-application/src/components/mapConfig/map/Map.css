@@ -8,6 +8,26 @@
   height: 600px;
 }
 
+.mapboxgl-popup-content {
+  background-image: linear-gradient(180deg, #fff, #ddd 20%, #999999);
+  max-width: 200px;
+  box-shadow: 8px 8px 5px #7f7e7e;
+  border-radius: 25%;
+  text-align: center;
+  max-width: 200px;
+  max-height: 200px;
+}
+
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip{
+  align-self: center;
+  border-bottom: none; 
+  border-top-color: #a0a0a0dd ;
+}
+.mapboxgl-popup-anchor-left .mapboxgl-popup-tip{
+  align-self: center;
+  border-left: none;
+  border-right-color: #ddd;
+}
 .map-form-container {
   position: relative;
   top: 0;
