@@ -41,7 +41,7 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
     const calendarRef = useRef(null);
     const { events, deleteEventFromContext, updateEventContext, addEventIntoContext } = useEvents()
     const [isLoading, setIsLoading] = useState(true);
-    const [eventsData, setEventsData] = useState([]);
+    const [eventsData, setEventsData] = useState(null);
     const isAdmin = useAdminStatus();
 
     const getEvents = async () => {
@@ -69,27 +69,27 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
                         organizers: eventDataFromDB.organizers,
                     }
                 })
-            );
 
+            );
+            setIsLoading(false);
         } catch (error) {
             console.error("Error fetching events", error)
-            setEventsData([]);
-        } finally {
-            setIsLoading(false);
+            setEventsData(null);
         }
     }
 
-    const isDatesDifferenceOneDay = (date1, date2) => {
-        const oneDayMilliseconds = 24 * 60 * 60 * 1000;
-        const differenceMilliseconds = Math.abs(date1 - date2);
-        return differenceMilliseconds === oneDayMilliseconds;
-    }
 
     useEffect(() => {
         setIsLoading(true);
         getEvents();
     }, [events]);
 
+
+    const isDatesDifferenceOneDay = (date1, date2) => {
+        const oneDayMilliseconds = 24 * 60 * 60 * 1000;
+        const differenceMilliseconds = Math.abs(date1 - date2);
+        return differenceMilliseconds === oneDayMilliseconds;
+    }
     const handleDateClick = selected => {
         setOpen(true);
         setIsUpdateEvent(false);
@@ -343,11 +343,8 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
     const initialViewMode = isMobileView ? "timeGridDay" : "dayGridMonth"
     return (
         <>
-            {(isLoading || eventsData.length === 0) ?
-                (<Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                    <CircularProgress />
-                </Box>
-                ) : (
+            {employees.length > 0 && locations.length > 0 && !isLoading ?
+                (
                     <Container maxWidth="lg" sx={{ mt: { xs: 2, sm: 3, md: 10 } }}>
                         <Box>
                             <FullCallendar
@@ -373,6 +370,10 @@ const Calendar = ({ isMyCalendar, isMobileView }) => {
                             />
                         </Box>
                     </Container>
+                ) : (
+                    <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                        <CircularProgress />
+                    </Box>
                 )}
             {eventsData !== null && !isMyCalendar && Object.keys(pickedEvent).length > 0 && (
                 <EventForm

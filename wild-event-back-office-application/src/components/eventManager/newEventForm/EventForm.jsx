@@ -49,6 +49,7 @@ const EventForm = ({
                 ? (id = await updateEvent(values, pickedEvent.id, token))
                 : (id = await addEvent(values, token));
             await handleEvent(values, id);
+           
             await handleModalClose();
             formik.resetForm()
         },
