@@ -22,6 +22,8 @@ import { useDarkMode } from "../../darkMode/DarkModeProvider";
 import { IconButton } from '@mui/material';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import DeleteChannelDialog from "../modal/DeleteChannelDialog";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import { getChannelsTimetokens, getChannelsIds, setTimetoken } from "../service/pubNubService";
 
 function SimpleChat() {
@@ -41,6 +43,7 @@ function SimpleChat() {
   const { user } = useUser();
   const { darkMode } = useDarkMode();
   const [unreadedMessages, setUnreadedMessages] = useState({});
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' });
   const theme = darkMode ? "dark" : "light";
   const currentUser = users?.find((u) => u.id === user.id);
   const presentUUIDs = presenceData[currentChannel.id]?.occupants?.map(
@@ -80,14 +83,6 @@ function SimpleChat() {
     try {
       await pubnub.objects.removeMemberships({
         channels: [currentChannel.id]
-      });
-
-      pubnub.publish({
-        message: {
-          type: 'system',
-          text: 'Hello, this is an announcement'
-        },
-        channel: currentChannel.id,
       });
 
       fetchChannels();
