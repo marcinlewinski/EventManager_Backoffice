@@ -20,8 +20,10 @@ import emojiData from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { useDarkMode } from "../../darkMode/DarkModeProvider";
 import { IconButton } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import DeleteChannelDialog from "../modal/DeleteChannelDialog";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import { getChannelsTimetokens, getChannelsIds, setTimetoken } from "../service/pubNubService";
 
 function SimpleChat() {
@@ -41,6 +43,7 @@ function SimpleChat() {
   const { user } = useUser();
   const { darkMode } = useDarkMode();
   const [unreadedMessages, setUnreadedMessages] = useState({});
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' });
   const theme = darkMode ? "dark" : "light";
   const currentUser = users?.find((u) => u.id === user.id);
   const presentUUIDs = presenceData[currentChannel.id]?.occupants?.map(
@@ -82,11 +85,9 @@ function SimpleChat() {
         channels: [currentChannel.id]
       });
 
-      await pubnub.objects.removeChannelMetadata({ channel: currentChannel.id });
-
       fetchChannels();
       setCurrentChannel({});
-
+      setModalOpen({ ...modalOpen, confirmDialog: false });
     } catch (error) {
       console.error('Error deleting channel:', error);
     }
@@ -110,7 +111,7 @@ function SimpleChat() {
     }
   }, []);
 
-  useEffect(() => { 
+  useEffect(() => {
     fetchChannels();
   }, []);
 
@@ -129,11 +130,19 @@ function SimpleChat() {
       <div key={channel.id} className="pn-channel" onClick={() => {
         setCurrentChannel(channel);
         setTimetoken(pubnub, channel.id);
-        unreadedMessages[channel.id] = 0;
+        getUnreadedMessages();
       }}>
         <div className="pn-channel__title">
           <p className={titleClass}>{channel.name} {unreadCount > 0 && "(new messages)"}</p>
           {channel.description && <p className="pn-channel__description">{channel.description}</p>}
+        </div>
+        <div className="pn-channel__actions">
+          <IconButton
+            aria-label="delete"
+            onClick={() => setModalOpen({ ...modalOpen, confirmDialog: true })}
+          >
+            <ExitToAppIcon />
+          </IconButton>
         </div>
       </div>
     );
@@ -196,12 +205,6 @@ function SimpleChat() {
                 <span>{presenceData[currentChannel.id]?.occupancy || 0}</span>
                 <PeopleGroup />
               </div>
-              <IconButton
-                aria-label="delete"
-                onClick={() => setModalOpen({ ...modalOpen, confirmDialog: true })}
-              >
-                <DeleteIcon />
-              </IconButton>
               <div>
               </div>
 
