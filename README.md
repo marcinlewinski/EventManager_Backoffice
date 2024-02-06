@@ -1,22 +1,17 @@
 # WILD EVENT MANAGER - FRONTEND BACKOFFICE
 
- Our project is already deployed, you can see it here: 
  
 
- 1. [Backoffice](http://wildeventmanager.com/) - login: admin@wildeventmanager.com | password: WildEvent2023
- 2. [Clients app](http://wildevent.com.pl/) - designed for mobile devices
 
 Here you can find other repositories for this project: 
 
- 1. [Backend](https://github.com/michalz18/wild-event-manager-backend)
- 2. [Clients app](https://github.com/CodecoolGlobal/epg-2-java-marcinlewinski)
+ 1. [BACKEND](https://github.com/marcinlewinski/EventManager_backend)
+ 2. [CLIENT APP](https://github.com/marcinlewinski/EventManager_client)
 
 ## 🌟 Project aim
 
   
-
-A dynamic event management solution crafted to provide an immersive experience for both event attendees and organizers. Designed to adapt to a wide range of venues, this tool integrates cutting-edge map interactivity, real-time event details, and an intuitive dashboard for organizers. This project is our original idea.
-
+The project is a web application designed to streamline the process of organizing various events within a specific area. It serves as a significant component of a larger project, functioning as a backlog for managing planning, coordination, and progress tracking of event organization.
   
 
 ## 📖 Table of contents
@@ -29,9 +24,12 @@ A dynamic event management solution crafted to provide an immersive experience f
 
 - [Project status](#-project-status)
 
+- [Demo](#-demo)
+
 - [Technologies](#%EF%B8%8F-technologies--tools)
 
 - [License](#-license)
+
 
 ## 👥 Team
 
@@ -61,7 +59,6 @@ Mentors: Michał Kruczkowski
 
 - Implement CI/CD
 
-- Data cache
 
   
 
@@ -69,19 +66,26 @@ Mentors: Michał Kruczkowski
 
   
 
-- Interactive map
+- Event Management:
+The application allows for the creation, editing, and deletion of events, facilitating efficient planning and updating of event schedules for organizers.
 
-- Interactive calendar
+- Event Calendar:
+It features an interactive calendar presenting dates and times of various events in a clear manner, aiding both organizers and participants in tracking event schedules.
 
-- Employee, event and location management (CRUD)
+- Resource Management:
+The application enables the management of resources essential for event organization, such as venues, and personnel, ensuring their availability and effective utilization.
 
-- Relational DB
+- Team Communication:
+It offers internal communication features, facilitating rapid information exchange among members of the organizational team and enhancing effective coordination of activities.
 
-- Authentication and authorization users by JWT
+- Integration of Map with Event Location:
+The application allows for the integration of a map displaying the event location, aiding participant orientation and providing additional information about the surroundings.
 
-- Application deployment
+- Application Responsiveness:
+The project is designed with responsiveness in mind, meaning that the application adjusts to different screen sizes, allowing convenient use on computers, tablets, and smartphones.
 
-- Both applications are responsive, but the client part of the project is mainly intended for users using phones
+- Assigning Locations to Events:
+Organizers have the ability to assign specific locations to individual events, streamlining planning and increasing transparency regarding the venues for various events.
 
   
 
@@ -96,6 +100,30 @@ This project is considered complete and stable, and all planned features have be
 Thank you for your interest in this project. We hope that you find it useful. Please feel free to fork this repository and use it as a starting point for your own project, or to learn from the code.
 
   
+## 🖼️ Demo 
+
+| Main view |
+|:-------------------------:|
+| ![Main view](./.github/images/mainView.png) |
+
+| SignIn | Password reset  |
+|:-------------------------:|:-------------------------:|
+| ![SignIn](./.github/images/SignIn.png) | ![Password reset](./.github/images/resetPassword.png) |
+
+| My events |  Chat |
+|:-------------------------:|:-------------------------:|
+| ![My events](./.github/images/eventsAssignedToMe.png) | ![Chat](./.github/images/Chat.png) |
+
+| Map config | New Location |
+|:-------------------------:|:-------------------------:|
+| ![Map](./.github/images/map.png) | ![New Location](./.github/images/newLocation.png) |
+
+| Add event | New employee  |
+|:-------------------------:|:-------------------------:|
+| ![Add Event](./.github/images/addEvent.gif) | ![New employee](./.github/images/addEmployee.gif) |
+
+
+
 
 ## 🛠️ Technologies & Tools
 
