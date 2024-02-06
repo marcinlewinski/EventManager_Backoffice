@@ -1,0 +1,77 @@
+{
+  "name": "wild-event-back-office-application",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@date-io/date-fns": "^2.17.0",
+    "@emoji-mart/data": "^1.1.2",
+    "@emoji-mart/react": "^1.1.1",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@fullcalendar/core": "^6.1.8",
+    "@fullcalendar/daygrid": "^6.1.8",
+    "@fullcalendar/interaction": "^6.1.8",
+    "@fullcalendar/list": "^6.1.8",
+    "@fullcalendar/react": "^6.1.8",
+    "@fullcalendar/timegrid": "^6.1.8",
+    "@mui/icons-material": "^5.14.3",
+    "@mui/lab": "^5.0.0-alpha.139",
+    "@mui/material": "^5.14.4",
+    "@mui/styled-engine-sc": "^5.12.0",
+    "@mui/x-data-grid": "^6.11.0",
+    "@mui/x-date-pickers": "^6.11.0",
+    "@pubnub/react-chat-components": "^0.32.0",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "date-fns": "^2.30.0",
+    "date-fns-tz": "^2.0.0",
+    "dayjs": "^1.11.9",
+    "dotenv": "^16.3.1",
+    "emoji-mart": "^5.5.2",
+    "formik": "^2.4.4",
+    "mapbox-gl": "^2.15.0",
+    "moment": "^2.29.4",
+    "notistack": "^3.0.1",
+    "pubnub": "^7.4.3",
+    "pubnub-react": "^3.0.2",
+    "react": "^18.2.0",
+    "react-chat-elements": "^12.0.10",
+    "react-dark-mode-toggle": "^0.2.0",
+    "react-dom": "^18.2.0",
+    "react-responsive": "^9.0.2",
+    "react-router-dom": "^6.14.2",
+    "react-scripts": "5.0.1",
+    "sass": "^1.69.5",
+    "sockjs-client": "^1.6.1",
+    "stompjs": "^2.3.3",
+    "styled-components": "^5.3.11",
+    "uuid": "^9.0.0",
+    "web-vitals": "^2.1.4",
+    "yup": "^1.2.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
